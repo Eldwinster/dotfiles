@@ -10,6 +10,7 @@
   - [[#keybindings-to-open-dired][Keybindings To Open Dired]]
   - [[#keybindings-within-dired][Keybindings Within Dired]]
   - [[#keybindings-within-dired-with-peep-dired-mode-enabled][Keybindings Within Dired With Peep-Dired-Mode Enabled]]
+  - [[#code-block][Code block]]
 - [[#doom-theme][DOOM THEME]]
 - [[#emojis][EMOJIS]]
 - [[#elfeed][ELFEED]]
@@ -97,7 +98,7 @@ Dired is the file manager within Emacs.  Below, I setup keybindings for image pr
 | peep-dired           | /Toggle previews within dired/             | SPC d p    |
 | peep-dired-next-file | /Move to next file in peep-dired-mode/     | j          |
 | peep-dired-prev-file | /Move to previous file in peep-dired-mode/ | k          |
-
+** Code block
 #+BEGIN_SRC emacs-lisp
 (map! :leader
       (:prefix ("d" . "dired")
@@ -283,6 +284,10 @@ A git client for Emacs.  Often cited as a killer feature for Emacs.
   (call-interactively 'magit-status))
 
 (use-package magit)
+
+(map! :leader
+       :desc "magit-status-bare" "g b"'me/magit-status-bare
+       :desc "magit-status" "g g"'me/magit-status)
  #+end_src
 
 * NEOTREE
