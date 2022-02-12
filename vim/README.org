@@ -5,6 +5,25 @@
 :header-args: :tangle .vimrc
 :END:
 
+* Table of contents :TOC:
+- [[#vimrc][vimrc]]
+  - [[#general][General]]
+  - [[#vundle][Vundle]]
+  - [[#vim-user-interface][VIM user interface]]
+  - [[#colors-and-fonts][Colors and Fonts]]
+  - [[#files-backups-and-undo][Files, backups and undo]]
+  - [[#text-tab-and-indent-related][Text, tab and indent related]]
+  - [[#visual-mode-related][Visual mode related]]
+  - [[#command-mode-related][Command mode related]]
+  - [[#moving-around-tabs-windows-and-buffers][Moving around, tabs, windows and buffers]]
+  - [[#status-line][Status line]]
+  - [[#editing-mappings][Editing mappings]]
+  - [[#ack-searching-and-cope-displaying][Ack searching and cope displaying]]
+  - [[#spell-checking][Spell checking]]
+  - [[#misc][Misc]]
+  - [[#helper-functions][Helper functions]]
+  - [[#plugin-config][Plugin config]]
+
 * vimrc
 ** General
 *** Sets how many lines of history VIM has to remember
