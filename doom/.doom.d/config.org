@@ -126,6 +126,7 @@ Dired is the file manager within Emacs.  Below, I setup keybindings for image pr
   (kbd "T") 'dired-do-touch
   (kbd "Y") 'dired-copy-filenamecopy-filename-as-kill ; copies filename to kill ring.
   (kbd "+") 'dired-create-directory
+  (kbd "f") 'dired-create-empty-file
   (kbd "-") 'dired-up-directory
   (kbd "% l") 'dired-downcase
   (kbd "% u") 'dired-upcase
@@ -167,26 +168,24 @@ Emojify is an Emacs extension to display emojis. It can display github style emo
 * ELFEED
 An RSS newsfeed reader for Emacs.
 
-#+BEGIN_SRC emacs-lisp
-;; (use-package! elfeed-goodies)
-;; (elfeed-goodies/setup)
-;; (setq elfeed-goodies/entry-pane-size 0.5)
-;; (add-hook 'elfeed-show-mode-hook 'visual-line-mode)
-;; (evil-define-key 'normal elfeed-show-mode-map
-;;   (kbd "J") 'elfeed-goodies/split-show-next
-;;   (kbd "K") 'elfeed-goodies/split-show-prev)
-;; (evil-define-key 'normal elfeed-search-mode-map
-;;   (kbd "J") 'elfeed-goodies/split-show-next
-;;   (kbd "K") 'elfeed-goodies/split-show-prev)
-;; (setq elfeed-feeds (quote
-;;                     (("https://www.iacr.org/news/rss" )
-;;                      ("https://www.schneier.com/feed/atom/" )
-;;                      ("https://rdist.root.org/feed/" )
-;;                      ("https://www.lightbluetouchpaper.org/feed/" )
-;;                      ("https://www.bunniestudios.com/blog/?feed=rss2" )
-;;                      ("https://eprint.iacr.org/rss/rss.xml" )
-;;                      ("https://crypto.stackexchange.com/feeds" ))))
-#+END_SRC
+(use-package! elfeed-goodies)
+(elfeed-goodies/setup)
+(setq elfeed-goodies/entry-pane-size 0.5)
+(add-hook 'elfeed-show-mode-hook 'visual-line-mode)
+(evil-define-key 'normal elfeed-show-mode-map
+  (kbd "J") 'elfeed-goodies/split-show-next
+  (kbd "K") 'elfeed-goodies/split-show-prev)
+(evil-define-key 'normal elfeed-search-mode-map
+  (kbd "J") 'elfeed-goodies/split-show-next
+  (kbd "K") 'elfeed-goodies/split-show-prev)
+(setq elfeed-feeds (quote
+                    (("https://www.iacr.org/news/rss" )
+                     ("https://www.schneier.com/feed/atom/" )
+                     ("https://rdist.root.org/feed/" )
+                     ("https://www.lightbluetouchpaper.org/feed/" )
+                     ("https://www.bunniestudios.com/blog/?feed=rss2" )
+                     ("https://eprint.iacr.org/rss/rss.xml" )
+                     ("https://crypto.stackexchange.com/feeds" ))))
 * IVY
 Ivy is a generic completion mechanism for Emacs.
 
@@ -314,7 +313,7 @@ Keybindings to open files that I work with all the time using the find-file comm
 
 | PATH TO FILE                   | DESCRIPTION           | KEYBINDING |
 |--------------------------------+-----------------------+------------|
-| ~/Org/agenda.org               | /Edit agenda file/      | SPC - a    |
+| ~/org/agenda.org               | /Edit agenda file/      | SPC - a    |
 | ~/.config/doom/config.org"     | /Edit doom config.org/  | SPC - c    |
 | ~/.config/doom/eshell/aliases" | /Edit eshell aliases/   | SPC - e a  |
 | ~/.config/doom/eshell/profile" | /Edit eshell profile/   | SPC - e p  |
@@ -324,7 +323,7 @@ Keybindings to open files that I work with all the time using the find-file comm
 #+BEGIN_SRC emacs-lisp
 (map! :leader
       (:prefix ("-" . "open file")
-       :desc "Edit agenda file" "a" #'(lambda () (interactive) (find-file "~/Org/agenda.org"))
+       :desc "Edit agenda file" "a" #'(lambda () (interactive) (find-file "~/org/agenda.org"))
        :desc "Edit doom config.org" "c" #'(lambda () (interactive) (find-file "~/.doom.d/config.org"))
        :desc "Edit eshell aliases" "e a" #'(lambda () (interactive) (find-file "~/.doom.d/eshell/aliases"))
        :desc "Edit eshell aliases" "e p" #'(lambda () (interactive) (find-file "~/.doom.d/eshell/profile"))
@@ -361,15 +360,15 @@ Note that I wrapped most of this in (after! org).  Without this, my settings mig
 ** Defining a few things and org link abbreviations and todo keywords
 #+BEGIN_SRC emacs-lisp
 (map! :leader
-      :desc "Org babel tangle" "m B" #'org-babel-tangle)
+      :desc "org babel tangle" "m B" #'org-babel-tangle)
 (after! org
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-  (setq org-directory "~/Org/"
-        org-agenda-files '("~/Org/agenda.org")
+  (setq org-directory "~/org/"
+        org-agenda-files '("~/org/agenda.org")
         org-default-notes-file (expand-file-name "notes.org" org-directory)
         org-ellipsis " ▼ "
         org-log-done 'time
-        org-journal-dir "~/Org/journal/"
+        org-journal-dir "~/org/journal/"
         org-journal-date-format "%B %d, %Y (%A) "
         org-journal-file-format "%Y-%m-%d.org"
         org-hide-emphasis-markers t
@@ -383,10 +382,7 @@ Note that I wrapped most of this in (after! org).  Without this, my settings mig
         org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
           '((sequence
              "TODO(t)"           ; A task that is ready to be tackled
-             "BLOG(b)"           ; Blog writing assignments
-             "GYM(g)"            ; Things to accomplish at the gym
              "PROJ(p)"           ; A project that contains other tasks
-             "VIDEO(v)"          ; Video assignments
              "WAIT(w)"           ; Something is holding up this task
              "|"                 ; The pipe necessary to separate "active" states and "inactive" states
              "DONE(d)"           ; Task has been completed
@@ -403,7 +399,7 @@ Toc-org helps you to have an up-to-date table of contents in org files without e
 #+end_src
 
 ** Font size
-Setting the font sizes for each header level in Org mode.
+Setting the font sizes for each header level in org mode.
 #+begin_src emacs-lisp
 (custom-set-faces
   '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
@@ -415,7 +411,7 @@ Setting the font sizes for each header level in Org mode.
 #+end_src
 
 ** ox-man and ox-gemini
-We need ox-man for "Org eXporting" to manpage format.
+We need ox-man for "org eXporting" to manpage format.
 #+BEGIN_SRC emacs-lisp
 (use-package ox-man)
 (use-package ox-gemini)
