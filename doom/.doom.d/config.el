@@ -145,10 +145,6 @@
 
 (use-package magit)
 
-(map! :leader
-       :desc "magit-status-bare" "g b"'me/magit-status-bare
-       :desc "magit-status" "g g"'me/magit-status)
-
 (after! neotree
   (setq neo-smart-open t
         neo-window-fixed-size nil))
