@@ -1,0 +1,7 @@
+[core]
+	editor = vim
+[user]
+	name = Eldwinster
+	email = yann.arby@gmail.com
+[init]
+	defaultBranch = main

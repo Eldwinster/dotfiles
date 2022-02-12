@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =8
+let g:netrw_dirhist_8='/home/yann/github/vimrc/vimrcs'
+let g:netrw_dirhist_7='/home/yann/github/vimrc'
+let g:netrw_dirhist_6='/home/yann/github/vimrc/vimrcs'
+let g:netrw_dirhist_5='/home/yann/github/vimrc'
+let g:netrw_dirhist_4='/home/yann/github/vimrc/temp_dirs'
+let g:netrw_dirhist_3='/home/yann/github/vimrc'
+let g:netrw_dirhist_2='/home/yann/github/vimrc/sources_non_forked'
+let g:netrw_dirhist_1='/home/yann/github/vimrc'
+let g:netrw_dirhist_0='/home/yann/github/vimrc/sources_forked'
+let g:netrw_dirhist_9='/home/yann/github/vimrc'
