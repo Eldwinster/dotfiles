@@ -1,17 +1,50 @@
--- Xmonad is a dynamically tiling X11 window manager that is written and
--- configured in Haskell. Official documentation: https://xmonad.org
+#+TITLE: XMonad Config
+#+AUTHOR: Edwin Elminster (Eldwinster)
+#+STARTUP: showeverything
+:PROPERTIES:
+:header-args: :tangle xmonad.hs
+:END:
 
--- This is the xmonad configuration of Derek Taylor (DistroTube)
--- My YouTube: http://www.youtube.com/c/DistroTube
--- My GitLab:  http://www.gitlab.com/dwt1/
 
--- This config is massively long. It is purposely bloated with a ton of
--- examples of what you can do with xmonad. It is written more as a
--- study guide rather than a config that you should download and use.
+* Table Of Contents :toc:
+- [[#about-this-config][About This Config]]
+- [[#imports][Imports]]
+- [[#variables][Variables]]
+- [[#autostart-the-startup-hook][Autostart (The Startup Hook)]]
+- [[#gridselect][Gridselect]]
+- [[#xprompt-settings][Xprompt settings]]
+- [[#custom-prompt][Custom prompt]]
+- [[#lxprompt-keymap-emacs-like-key-bindings-for-xprompts][lXPROMPT KEYMAP (emacs-like key bindings for xprompts)]]
+- [[#search-engines][Search engines]]
+- [[#workspaces][Workspaces]]
+- [[#managehook][Managehook]]
+- [[#loghook][Loghook]]
+- [[#layouts][Layouts]]
+- [[#scratchpads][Scratchpads]]
+- [[#keybindings][Keybindings]]
+- [[#main][Main]]
 
-------------------------------------------------------------------------
--- IMPORTS
-------------------------------------------------------------------------
+* About This Config
+#+CAPTION: XMonad Scrot
+#+ATTR_HTML: :alt XMonad Scrot :title XMonad Scrot :align left
+[[https://gitlab.com/dwt1/dotfiles/-/raw/master/.screenshots/dotfiles05-thumb.png]]
+
+Xmonad is a dynamically tiling X11 window manager that is written and configured in Haskell.
+- XMonad Official Website: [[https://xmonad.org][https://xmonad.org]]
+- Haskell Official Website: [[https://haskell.org][https://haskell.org]]
+
+This is the xmonad configuration of Derek Taylor (DistroTube)
+- My YouTube: [[http://www.youtube.com/c/DistroTube][http://www.youtube.com/c/DistroTube]]
+- My GitLab:  [[http://www.gitlab.com/dwt1/][http://www.gitlab.com/dwt1/]]
+
+Keep in mind, that my configs are purposely bloated with examples of what you can do with xmonad. It is written more as a study guide rather than a config that you should download and use.
+
+NOTE: You will also need my xmobar config, which is located here: https://gitlab.com/dwt1/dotfiles/-/tree/master/.config/xmobar
+
+* Imports
+These are Haskell modules that we must import so that we can use their functions later in the config.
+
+#+BEGIN_SRC haskell
     -- Base
 import XMonad
 import System.Exit (exitSuccess)
@@ -88,13 +121,12 @@ import XMonad.Util.SpawnOnce
 import qualified DBus as D
 import qualified DBus.Client as D
 import qualified Codec.Binary.UTF8.String as UTF8
+#+END_SRC
 
-------------------------------------------------------------------------
--- VARIABLES
-------------------------------------------------------------------------
--- It's nice to assign values to stuff that you will use more than once
--- in the config. Setting values for things like font, terminal and editor
--- means you only have to change the value here to make changes globally.
+* Variables
+It's nice to assign values to stuff that you will use more than once in the config. Setting values for things like font, terminal and editor means you only have to change the value here to make changes globally.
+
+#+BEGIN_SRC haskell
 myFont :: String
 myFont = "xft:Mononoki Nerd Font:bold:size=9"
 
@@ -130,23 +162,33 @@ color1 = "#7F7F7F"
 color2 = "#c792ea"
 color3 = "#900000"
 color4 = "#2E9AFE"
+#+END_SRC
 
-------------------------------------------------------------------------
--- AUTOSTART
-------------------------------------------------------------------------
+* Autostart (The Startup Hook)
+These are commands we want XMonad to execute on startup, such as running a compositor, setting our wallpaper, starting the emacs daemon, and starting our system tray and the applications that belong in it.
+
+#+BEGIN_SRC haskell
 myStartupHook :: X ()
 myStartupHook = do
-          spawnOnce "nitrogen --restore &"
           spawnOnce "picom &"
           spawnOnce "/usr/bin/emacs --daemon &"
-          spawnOnce "~/.config/polybar/launch-xmonad.sh &"
-          setWMName "LG3D"
+          spawnOnce "~/.config/polybar/launch.sh &"
+#+END_SRC
 
-------------------------------------------------------------------------
--- GRID SELECT
-------------------------------------------------------------------------
--- GridSelect displays items (programs, open windows, etc.) in a 2D grid
--- and lets the user select from it with the cursor/hjkl keys or the mouse.
+Select only =ONE= of the following four ways to set the wallpaper.
+
+#+BEGIN_SRC haskell
+    -- spawnOnce "xargs xwallpaper --stretch < ~/.cache/wall"
+    spawnOnce "~/.fehbg &"  -- set last saved feh wallpaper
+    -- spawnOnce "feh --randomize --bg-fill ~/wallpapers/*"  -- feh set random wallpaper
+    -- spawnOnce "nitrogen --restore &"   -- if you prefer nitrogen to feh
+    setWMName "LG3D"
+#+END_SRC
+
+* Gridselect
+GridSelect displays items (programs, open windows, etc.) in a 2D grid and lets the user select from it with the cursor/hjkl keys or the mouse.
+
+#+BEGIN_SRC haskell
 myColorizer :: Window -> Bool -> X (String, String)
 myColorizer = colorRangeFromClassName
                   (0x29,0x2d,0x3e) -- lowest inactive bg
@@ -229,24 +271,10 @@ myConfigs = [ ("bashrc", myEditor ++ "~/.bashrc", "the bourne again shell")
             , ("zshrc", myEditor ++ "~/.zshrc", "config for the z shell")
             ]
 
--- Let's take myApplications, myBookmarks and myConfigs and take only
--- the first two values from those 3-tuples (for GridSelect).
-myAppGrid :: [(String, String)]
-myAppGrid = [ (a,b) | (a,b,c) <- xs]
-  where xs = myApplications
+#+END_SRC
 
-myBookmarkGrid :: [(String, String)]
-myBookmarkGrid = [ (a,b) | (a,b,c) <- xs]
-  where xs = myBookmarks
-
-myConfigGrid :: [(String, String)]
-myConfigGrid = [ (a,b) | (a,b,c) <- xs]
-  where xs = myConfigs
-
-
-------------------------------------------------------------------------
--- XPROMPT SETTINGS
-------------------------------------------------------------------------
+* Xprompt settings
+#+begin_src haskell
 dtXPConfig :: XPConfig
 dtXPConfig = def
       { font                = myFont
@@ -293,13 +321,13 @@ promptList = [ ("m", manPrompt)          -- manpages prompt
 promptList' :: [(String, XPConfig -> String -> X (), String)]
 promptList' = [ ("c", calcPrompt, "qalc")         -- requires qalculate-gtk
               ]
+#+end_src
+* Custom prompt
+ calcPrompt requires a cli calculator called qalcualte-gtk.
+ You could use this as a template for other custom prompts that
+ use command line programs that return a single line of output.
 
-------------------------------------------------------------------------
--- CUSTOM PROMPTS
-------------------------------------------------------------------------
--- calcPrompt requires a cli calculator called qalcualte-gtk.
--- You could use this as a template for other custom prompts that
--- use command line programs that return a single line of output.
+#+begin_src haskell
 calcPrompt :: XPConfig -> String -> X ()
 calcPrompt c ans =
     inputPrompt c (trim ans) ?+ \input ->
@@ -307,10 +335,10 @@ calcPrompt c ans =
     where
         trim  = f . f
             where f = reverse . dropWhile isSpace
+#+end_src
 
-------------------------------------------------------------------------
--- XPROMPT KEYMAP (emacs-like key bindings for xprompts)
-------------------------------------------------------------------------
+* lXPROMPT KEYMAP (emacs-like key bindings for xprompts)
+#+begin_src haskell
 dtXPKeymap :: M.Map (KeyMask,KeySym) (XP ())
 dtXPKeymap = M.fromList $
      map (first $ (,) controlMask)   -- control + <key>
@@ -349,13 +377,13 @@ dtXPKeymap = M.fromList $
      , (xK_Up, moveHistory W.focusDown')
      , (xK_Escape, quit)
      ]
+#+end_src
+* Search engines
 
-------------------------------------------------------------------------
--- SEARCH ENGINES
-------------------------------------------------------------------------
--- Xmonad has several search engines available to use located in
--- XMonad.Actions.Search. Additionally, you can add other search engines
--- such as those listed below.
+ Xmonad has several search engines available to use located in
+ XMonad.Actions.Search. Additionally, you can add other search engines
+ such as those listed below.
+#+begin_src haskell
 archwiki, ebay, news, reddit, urban :: S.SearchEngine
 
 archwiki = S.searchEngine "archwiki" "https://wiki.archlinux.org/index.php?search="
@@ -384,12 +412,12 @@ searchList = [ ("a", archwiki)
              , ("y", S.youtube)
              , ("z", S.amazon)
              ]
+#+end_src
+* Workspaces
 
+TreeSelect workspaces
 
-------------------------------------------------------------------------
--- WORKSPACES
-------------------------------------------------------------------------
--- TreeSelect workspaces
+#+begin_src haskell
 myWorkspaces :: Forest String
 myWorkspaces = [ Node "dev"
                    [ Node "terminal" []
@@ -424,16 +452,15 @@ myWorkspaces = [ Node "dev"
                    , Node "video player" []
                    ]
                ]
+#+END_SRC
 
-------------------------------------------------------------------------
--- MANAGEHOOK
-------------------------------------------------------------------------
--- Sets some rules for certain programs. Examples include forcing certain
--- programs to always float, or to always appear on a certain workspace.
--- Forcing programs to a certain workspace with a doShift requires xdotool
--- if you are using clickable workspaces. You need the className or title
--- of the program. Use xprop to get this info.
-
+* Managehook
+ Sets some rules for certain programs. Examples include forcing certain
+ programs to always float, or to always appear on a certain workspace.
+ Forcing programs to a certain workspace with a doShift requires xdotool
+ if you are using clickable workspaces. You need the className or title
+ of the program. Use xprop to get this info.
+#+BEGIN_SRC haskell
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
      -- using 'doShift ( myWorkspaces !! 7)' sends program to workspace 8!
@@ -451,12 +478,12 @@ myManageHook = composeAll
      , className =? "VirtualBox Manager" --> doShift  ( "dev.virtualization" )
      , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
      ] <+> namedScratchpadManageHook myScratchPads
+#+END_SRC
 
-------------------------------------------------------------------------
--- LOGHOOK
-------------------------------------------------------------------------
--- Override the PP values as you would otherwise, adding colors etc depending
--- on the statusbar used
+* Loghook
+ Override the PP values as you would otherwise, adding colors etc depending
+ on the statusbar used
+#+begin_src haskell
 myLogHook :: D.Client -> PP
 myLogHook dbus = def
     { ppOutput  = dbusOutput dbus
@@ -467,10 +494,11 @@ myLogHook dbus = def
     , ppTitle   = wrap ("%{F" ++ color2 ++ "}")"%{F-}"
     , ppSep     = "  |  "
     }
+#+end_src
+* Layouts
+Defining the layouts that I want to have available.
 
-------------------------------------------------------------------------
--- LAYOUTS
-------------------------------------------------------------------------
+#+BEGIN_SRC haskell
 -- Makes setting the spacingRaw simpler to write. The spacingRaw
 -- module adds a configurable amount of space around windows.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
@@ -551,12 +579,15 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                                  -- ||| spirals
                                  -- ||| threeCol
                                  -- ||| threeRow
+#+END_SRC
 
-------------------------------------------------------------------------
--- SCRATCHPADS
-------------------------------------------------------------------------
--- Allows to have several floating scratchpads running different applications.
--- Import Util.NamedScratchpad.  Bind a key to namedScratchpadSpawnAction.
+* Scratchpads
+Allows to have several floating scratchpads running different applications.  Import Util.NamedScratchpad and bind a key to namedScratchpadSpawnAction.  In the example below, I have created named scratchpads for:
++ alacritty -- my terminal
++ mocp -- a terminal music player
++ qalculate-gtk -- a nice calculator
+
+#+BEGIN_SRC haskell
 myScratchPads :: [NamedScratchpad]
 myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
                 , NS "mocp" spawnMocp findMocp manageMocp
@@ -578,12 +609,37 @@ myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
                  w = 0.9
                  t = 0.95 -h
                  l = 0.95 -w
+#+END_SRC
 
-------------------------------------------------------------------------
--- KEYBINDINGS
-------------------------------------------------------------------------
--- I am using the Xmonad.Util.EZConfig module which allows keybindings
--- to be written in simpler, emacs-like format.
+* Keybindings
+I am using the Xmonad.Util.EZConfig module which allows keybindings to be written in simpler, emacs-like format.  The Super/Windows key is 'M' (the modkey).  The ALT key is 'M1'.  SHIFT is 'S' and CTR is 'C'.
+
+| A FEW KEYBINDINGS       | ASSOCIATED ACTION                                            |
+|-------------------------+--------------------------------------------------------------|
+| MODKEY + RETURN         | opens terminal (alacritty)                                   |
+| MODKEY + SHIFT + RETURN | opens run launcher (dmenu)                                   |
+| MODKEY + TAB            | rotates through the available layouts                        |
+| MODKEY + SPACE          | toggles fullscreen on/off (useful for watching videos)       |
+| MODKEY + SHIFT + c      | closes window with focus                                     |
+| MODKEY + SHIFT + r      | restarts xmonad                                              |
+| MODKEY + SHIFT + q      | quits xmonad                                                 |
+| MODKEY + 1-9            | switch focus to workspace (1-9)                              |
+| MODKEY + SHIFT + 1-9    | send focused window to workspace (1-9)                       |
+| MODKEY + j              | windows focus down (switches focus between windows in stack) |
+| MODKEY + k              | windows focus up (switches focus between windows in stack)   |
+| MODKEY + SHIFT + j      | windows swap down (swap windows in the stack)                |
+| MODKEY + SHIFT + k      | windows swap up (swap the windows in the stack)              |
+| MODKEY + h              | shrink window (decreases window width)                       |
+| MODKEY + l              | expand window (increases window width)                       |
+| MODKEY + w              | switches focus to monitor 1                                  |
+| MODKEY + e              | switches focus to monitor 2                                  |
+| MODKEY + r              | switches focus to monitor 3                                  |
+| MODKEY + period         | switch focus to next monitor                                 |
+| MODKEY + comma          | switch focus to prev monitor                                 |
+| MODKEY + SPACE          | toggles fullscreen on/off (useful for watching videos)       |
+| MODKEY + t              | force floating window back into tiling                       |
+
+#+BEGIN_SRC haskell
 myKeys :: [(String, X ())]
 myKeys =
     -- Xmonad
@@ -711,10 +767,12 @@ myKeys =
         -- The following lines are needed for named scratchpads.
           where nonNSP          = WSIs (return (\ws -> W.tag ws /= "nsp"))
                 nonEmptyNonNSP  = WSIs (return (\ws -> isJust (W.stack ws) && W.tag ws /= "nsp"))
+#+END_SRC
 
-------------------------------------------------------------------------
--- MAIN
-------------------------------------------------------------------------
+* Main
+This is the "main" of XMonad. This where everything in our configs comes together and works.
+
+#+BEGIN_SRC haskell
 main :: IO ()
 main = do
     dbus <- D.connectSession
@@ -751,3 +809,4 @@ defaults = def
     , borderWidth         = myBorderWidth
     , startupHook         = myStartupHook
     } `additionalKeysP` myKeys
+#+END_SRC

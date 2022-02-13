@@ -34,7 +34,7 @@ import Data.Char (isSpace)
 import Data.Monoid
 import Data.Maybe (isJust)
 import Data.Tree
--- import qualified Data.Tuple.Extra as TE
+import qualified Data.Tuple.Extra as TE
 import qualified Data.Map as M
 
     -- Hooks
@@ -243,6 +243,96 @@ myConfigGrid :: [(String, String)]
 myConfigGrid = [ (a,b) | (a,b,c) <- xs]
   where xs = myConfigs
 
+------------------------------------------------------------------------
+-- TREE SELECT
+------------------------------------------------------------------------
+-- TreeSelect displays your workspaces or actions in a Tree-like format.
+-- You can select desired workspace/action with the cursor or hjkl keys.
+
+treeselectAction :: TS.TSConfig (X ()) -> X ()
+treeselectAction a = TS.treeselectAction a
+   [ Node (TS.TSNode "applications" "a list of programs I use often" (return ()))
+     [Node (TS.TSNode (TE.fst3 $ myApplications !! n)
+                      (TE.thd3 $ myApplications !! n)
+                      (spawn $ TE.snd3 $ myApplications !! n)
+           ) [] | n <- [0..(length myApplications - 1)]
+     ]
+   , Node (TS.TSNode "bookmarks" "a list of web bookmarks" (return ()))
+     [Node (TS.TSNode(TE.fst3 $ myBookmarks !! n)
+                     (TE.thd3 $ myBookmarks !! n)
+                     (spawn $ TE.snd3 $ myBookmarks !! n)
+           ) [] | n <- [0..(length myBookmarks - 1)]
+     ]
+   , Node (TS.TSNode "config files" "config files that edit often" (return ()))
+     [Node (TS.TSNode (TE.fst3 $ myConfigs !! n)
+                      (TE.thd3 $ myConfigs !! n)
+                      (spawn $ TE.snd3 $ myConfigs !! n)
+           ) [] | n <- [0..(length myConfigs - 1)]
+     ]
+   ]
+
+-- Configuration options for treeSelect
+tsDefaultConfig :: TS.TSConfig a
+tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
+                              , TS.ts_background   = 0xdd292d3e
+                              , TS.ts_font         = myFont
+                              , TS.ts_node         = (0xffd0d0d0, 0xff202331)
+                              , TS.ts_nodealt      = (0xffd0d0d0, 0xff292d3e)
+                              , TS.ts_highlight    = (0xffffffff, 0xff755999)
+                              , TS.ts_extra        = 0xffd0d0d0
+                              , TS.ts_node_width   = 200
+                              , TS.ts_node_height  = 20
+                              , TS.ts_originX      = 0
+                              , TS.ts_originY      = 0
+                              , TS.ts_indent       = 80
+                              , TS.ts_navigate     = myTreeNavigation
+                              }
+
+-- Keybindings for treeSelect menus. Use h-j-k-l to navigate.
+-- Use 'o' and 'i' to move forward/back in the workspace history.
+-- Single KEY's are for top-level nodes. SUPER+KEY are for the
+-- second-level nodes. SUPER+ALT+KEY are third-level nodes.
+myTreeNavigation = M.fromList
+    [ ((0, xK_Escape),   TS.cancel)
+    , ((0, xK_Return),   TS.select)
+    , ((0, xK_space),    TS.select)
+    , ((0, xK_Up),       TS.movePrev)
+    , ((0, xK_Down),     TS.moveNext)
+    , ((0, xK_Left),     TS.moveParent)
+    , ((0, xK_Right),    TS.moveChild)
+    , ((0, xK_k),        TS.movePrev)
+    , ((0, xK_j),        TS.moveNext)
+    , ((0, xK_h),        TS.moveParent)
+    , ((0, xK_l),        TS.moveChild)
+    , ((0, xK_o),        TS.moveHistBack)
+    , ((0, xK_i),        TS.moveHistForward)
+    , ((0, xK_d),        TS.moveTo ["dev"])
+    , ((0, xK_g),        TS.moveTo ["graphics"])
+    , ((0, xK_m),        TS.moveTo ["music"])
+    , ((0, xK_v),        TS.moveTo ["video"])
+    , ((0, xK_w),        TS.moveTo ["web"])
+    , ((mod4Mask, xK_b), TS.moveTo ["web", "browser"])
+    , ((mod4Mask, xK_c), TS.moveTo ["web", "chat"])
+    , ((mod4Mask, xK_m), TS.moveTo ["web", "email"])
+    , ((mod4Mask, xK_r), TS.moveTo ["web", "rss"])
+    , ((mod4Mask, xK_w), TS.moveTo ["web", "web conference"])
+    , ((mod4Mask, xK_d), TS.moveTo ["dev", "docs"])
+    , ((mod4Mask, xK_e), TS.moveTo ["dev", "emacs"])
+    , ((mod4Mask, xK_f), TS.moveTo ["dev", "files"])
+    , ((mod4Mask, xK_p), TS.moveTo ["dev", "programming"])
+    , ((mod4Mask, xK_t), TS.moveTo ["dev", "terminal"])
+    , ((mod4Mask, xK_z), TS.moveTo ["dev", "virtualization"])
+    , ((mod4Mask, xK_g), TS.moveTo ["graphics", "gimp"])
+    , ((mod4Mask, xK_i), TS.moveTo ["graphics", "image viewer"])
+    , ((mod4Mask, xK_a), TS.moveTo ["music", "audio editor"])
+    , ((mod4Mask, xK_u), TS.moveTo ["music", "music player"])
+    , ((mod4Mask, xK_o), TS.moveTo ["video", "obs"])
+    , ((mod4Mask, xK_v), TS.moveTo ["video", "video player"])
+    , ((mod4Mask, xK_k), TS.moveTo ["video", "kdenlive"])
+    , ((mod4Mask .|. altMask, xK_h), TS.moveTo ["dev", "programming", "haskell"])
+    , ((mod4Mask .|. altMask, xK_p), TS.moveTo ["dev", "programming", "python"])
+    , ((mod4Mask .|. altMask, xK_s), TS.moveTo ["dev", "programming", "shell"])
+    ]
 
 ------------------------------------------------------------------------
 -- XPROMPT SETTINGS
@@ -612,6 +702,14 @@ myKeys =
         , ("C-g c", spawnSelected' myConfigGrid)              -- grid select useful config files
         , ("C-g t", goToSelected $ mygridConfig myColorizer)  -- goto selected window
         , ("C-g b", bringSelected $ mygridConfig myColorizer) -- bring selected window
+
+    -- Tree Select/
+        -- tree select actions menu
+        , ("C-t a", treeselectAction tsDefaultConfig)
+        -- tree select workspaces menu
+        , ("C-t t", TS.treeselectWorkspace tsDefaultConfig myWorkspaces W.greedyView)
+        -- tree select choose workspace to send window
+        , ("C-t g", TS.treeselectWorkspace tsDefaultConfig myWorkspaces W.shift)
 
     -- Windows navigation
         , ("M-m", windows W.focusMaster)     -- Move focus to the master window
