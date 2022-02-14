@@ -8,17 +8,6 @@
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;(package! some-package)
-(package! flycheck-aspell)
-(package! dired-open)
-;; (package! elfeed-goodies)
-(package! emojify)
-(package! evil-tutor)
-(package! ivy-posframe)
-(package! keychain-environment)
-(package! org-bullets)
-(package! ox-gemini)
-(package! toc-org)
-
 
 ;; To install a package directly from a remote git repo, you must specify a
 ;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
@@ -59,3 +48,23 @@
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
+
+;; (package! gitconfig-mode
+;; 	  :recipe (:host github :repo "magit/git-modes"
+;; 			 :files ("gitconfig-mode.el")))
+;; (package! gitignore-mode
+;; 	  :recipe (:host github :repo "magit/git-modes"
+;; 			 :files ("gitignore-mode.el")))
+(package! flycheck-aspell)
+(package! dired-open)
+(package! dired-subtree)
+(package! elfeed-goodies)
+(package! emojify)
+(package! evil-tutor)
+(package! ivy-posframe)
+(package! keychain-environment)
+(package! org-board)
+(package! org-bullets)
+(package! ox-gemini)
+(package! peep-dired)
+(package! rainbow-mode)
