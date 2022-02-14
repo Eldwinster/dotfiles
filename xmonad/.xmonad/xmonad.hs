@@ -1,17 +1,3 @@
--- Xmonad is a dynamically tiling X11 window manager that is written and
--- configured in Haskell. Official documentation: https://xmonad.org
-
--- This is the xmonad configuration of Derek Taylor (DistroTube)
--- My YouTube: http://www.youtube.com/c/DistroTube
--- My GitLab:  http://www.gitlab.com/dwt1/
-
--- This config is massively long. It is purposely bloated with a ton of
--- examples of what you can do with xmonad. It is written more as a
--- study guide rather than a config that you should download and use.
-
-------------------------------------------------------------------------
--- IMPORTS
-------------------------------------------------------------------------
     -- Base
 import XMonad
 import System.Exit (exitSuccess)
@@ -20,11 +6,9 @@ import qualified XMonad.StackSet as W
     -- Actions
 import XMonad.Actions.CopyWindow (kill1, killAllOtherCopies)
 import XMonad.Actions.CycleWS (moveTo, shiftTo, WSType(..), nextScreen, prevScreen)
-import XMonad.Actions.GridSelect
 import XMonad.Actions.MouseResize
 import XMonad.Actions.Promote
 import XMonad.Actions.RotSlaves (rotSlavesDown, rotAllDown)
-import qualified XMonad.Actions.TreeSelect as TS
 import XMonad.Actions.WindowGo (runOrRaise)
 import XMonad.Actions.WithAll (sinkAll, killAll)
 import qualified XMonad.Actions.Search as S
@@ -33,7 +17,6 @@ import qualified XMonad.Actions.Search as S
 import Data.Char (isSpace)
 import Data.Monoid
 import Data.Maybe (isJust)
-import Data.Tree
 -- import qualified Data.Tuple.Extra as TE
 import qualified Data.Map as M
 
@@ -42,16 +25,17 @@ import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, PP(..))
 import XMonad.Hooks.EwmhDesktops  -- for some fullscreen events, also for xcomposite in obs.
 import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.ManageDocks (avoidStruts, docks, docksEventHook, ToggleStruts(..))
+import XMonad.Hooks.ManageHelpers (isFullscreen, doFullFloat, doCenterFloat)
 import XMonad.Hooks.ServerMode
 import XMonad.Hooks.SetWMName
 
     -- Layouts
-import XMonad.Layout.GridVariants (Grid(Grid))
 import XMonad.Layout.SimplestFloat
 import XMonad.Layout.Spiral
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.GridVariants (Grid(Grid))
 
     -- Layouts modifiers
 import XMonad.Layout.LayoutModifier
@@ -61,7 +45,6 @@ import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed (renamed, Rename(Replace))
-import XMonad.Layout.ShowWName
 import XMonad.Layout.Spacing
 import XMonad.Layout.WindowArranger (windowArrange, WindowArrangerMsg(..))
 import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
@@ -89,14 +72,8 @@ import qualified DBus as D
 import qualified DBus.Client as D
 import qualified Codec.Binary.UTF8.String as UTF8
 
-------------------------------------------------------------------------
--- VARIABLES
-------------------------------------------------------------------------
--- It's nice to assign values to stuff that you will use more than once
--- in the config. Setting values for things like font, terminal and editor
--- means you only have to change the value here to make changes globally.
 myFont :: String
-myFont = "xft:Mononoki Nerd Font:bold:size=9"
+myFont = "xft:Iosevka:bold:size=9"
 
 myModMask :: KeyMask
 myModMask = mod4Mask       -- Sets modkey to super/windows key
@@ -104,9 +81,13 @@ myModMask = mod4Mask       -- Sets modkey to super/windows key
 myTerminal :: String
 myTerminal = "alacritty"   -- Sets default terminal
 
+term :: String
+term = "st"
+
 myBrowser :: String
-myBrowser = myTerminal ++ " -e lynx "  -- Sets lynx as browser for tree select
+-- myBrowser = myTerminal ++ " -e lynx "  -- Sets lynx as browser for tree select
 -- myBrowser = "firefox "                 -- Sets firefox as browser for tree select
+myBrowser = "vivaldi-stable"
 
 myEditor :: String
 myEditor = "emacsclient -c -a emacs "  -- Sets emacs as editor for tree select
@@ -131,122 +112,29 @@ color2 = "#c792ea"
 color3 = "#900000"
 color4 = "#2E9AFE"
 
-------------------------------------------------------------------------
--- AUTOSTART
-------------------------------------------------------------------------
 myStartupHook :: X ()
 myStartupHook = do
-          spawnOnce "nitrogen --restore &"
           spawnOnce "picom &"
+          spawnOnce "xbanish &"
           spawnOnce "/usr/bin/emacs --daemon &"
-          spawnOnce "~/.config/polybar/launch-xmonad.sh &"
+          spawnOnce "picom &"
+          spawnOnce "xbanish &"
+          -- spawnOnce "clight &"
+          -- spawnOnce "inkscape-figures watch"
+          -- spawnOnce "python3 ~/.scripts/inkscape-shortcut-manager/main.py &"
+          spawnOnce "setxkbmap us qwerty-fr &"
+          spawnOnce "wallpaper.sh random auto 60m &"
+          -- spawnOnce "~/.config/polybar/launch.sh &"
+          spawn "$HOME/.config/polybar/polybar-restart"
           setWMName "LG3D"
 
-------------------------------------------------------------------------
--- GRID SELECT
-------------------------------------------------------------------------
--- GridSelect displays items (programs, open windows, etc.) in a 2D grid
--- and lets the user select from it with the cursor/hjkl keys or the mouse.
-myColorizer :: Window -> Bool -> X (String, String)
-myColorizer = colorRangeFromClassName
-                  (0x29,0x2d,0x3e) -- lowest inactive bg
-                  (0x29,0x2d,0x3e) -- highest inactive bg
-                  (0xc7,0x92,0xea) -- active bg
-                  (0xc0,0xa7,0x9a) -- inactive fg
-                  (0x29,0x2d,0x3e) -- active fg
+-- Select only =ONE= of the following four ways to set the wallpaper.
 
--- gridSelect menu layout
-mygridConfig :: p -> GSConfig Window
-mygridConfig colorizer = (buildDefaultGSConfig myColorizer)
-    { gs_cellheight   = 40
-    , gs_cellwidth    = 200
-    , gs_cellpadding  = 6
-    , gs_originFractX = 0.5
-    , gs_originFractY = 0.5
-    , gs_font         = myFont
-    }
+          -- spawnOnce "~/.fehbg &"  -- set last saved feh wallpaper
+          -- spawnOnce "xargs xwallpaper --stretch < ~/.cache/wall"
+          -- spawnOnce "feh --randomize --bg-fill ~/wallpapers/*"  -- feh set random wallpaper
+          -- spawnOnce "nitrogen --restore &"   -- if you prefer nitrogen to feh
 
-spawnSelected' :: [(String, String)] -> X ()
-spawnSelected' lst = gridselect conf lst >>= flip whenJust spawn
-    where conf = def
-                   { gs_cellheight   = 40
-                   , gs_cellwidth    = 200
-                   , gs_cellpadding  = 6
-                   , gs_originFractX = 0.5
-                   , gs_originFractY = 0.5
-                   , gs_font         = myFont
-                   }
-
--- The lists below are actually 3-tuples for use with gridSelect and treeSelect.
--- TreeSelect uses all three values in the 3-tuples but GridSelect only needs first
--- two values in each list (see myAppGrid, myBookmarkGrid and myConfigGrid below).
-myApplications :: [(String, String, String)]
-myApplications = [ ("Audacity", "audacity", "Graphical cross-platform audio eidtor")
-                 , ("Deadbeef", "deadbeef", "Lightweight GUI audio player")
-                 , ("Emacs", "emacs", "Much more than a text editor")
-                 , ("Firefox", "firefox", "The famous open source web browser")
-                 , ("Geany", "geany", "A nice text editor")
-                 , ("Geary", "geary", "Email client that is attractive")
-                 , ("Gimp", "gimp", "Open source alternative to Photoshop")
-                 , ("Kdenlive", "kdenlive", "A great open source video editor")
-                 , ("LibreOffice Impress", "loimpress", "For making presentations")
-                 , ("LibreOffice Writer", "lowriter", "A fully featured word processor")
-                 , ("OBS", "obs", "Open broadcaster software")
-                 , ("PCManFM", "pcmanfm", "Lightweight graphical file manager")
-                 , ("Simple Terminal", "st", "Suckless simple terminal")
-                 , ("Steam", "steam", "Proprietary gaming platform")
-                 , ("Surf Browser", "surf suckless.org", "Suckless surf web browser")
-                 , ("Xonotic", "xonotic-glx", "A fast-paced first person shooter")
-                 ]
-
-myBookmarks :: [(String, String, String)]
-myBookmarks = [ ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              , ("Site Name", myBrowser ++ "https://www.distrotube.com", "Official website for DistroTube")
-              ]
-
-myConfigs :: [(String, String, String)]
-myConfigs = [ ("bashrc", myEditor ++ "~/.bashrc", "the bourne again shell")
-            , ("doom emacs config.el", myEditor ++ "~/.doom.d/config.el", "doom emacs config")
-            , ("doom emacs init.el", myEditor ++ "~/.doom.d/init.el", "doom emacs init")
-            , ("dwm", myEditor ++ "~/dwm-distrotube/config.h", "dwm config file")
-            , ("qtile", myEditor ++ "~/.config/qtile/config.py", "qtile config")
-            , ("xmonad.hs", myEditor ++ "~/.xmonad/xmonad.hs", "xmonad config")
-            , ("zshrc", myEditor ++ "~/.zshrc", "config for the z shell")
-            ]
-
--- Let's take myApplications, myBookmarks and myConfigs and take only
--- the first two values from those 3-tuples (for GridSelect).
-myAppGrid :: [(String, String)]
-myAppGrid = [ (a,b) | (a,b,c) <- xs]
-  where xs = myApplications
-
-myBookmarkGrid :: [(String, String)]
-myBookmarkGrid = [ (a,b) | (a,b,c) <- xs]
-  where xs = myBookmarks
-
-myConfigGrid :: [(String, String)]
-myConfigGrid = [ (a,b) | (a,b,c) <- xs]
-  where xs = myConfigs
-
-
-------------------------------------------------------------------------
--- XPROMPT SETTINGS
-------------------------------------------------------------------------
 dtXPConfig :: XPConfig
 dtXPConfig = def
       { font                = myFont
@@ -294,12 +182,6 @@ promptList' :: [(String, XPConfig -> String -> X (), String)]
 promptList' = [ ("c", calcPrompt, "qalc")         -- requires qalculate-gtk
               ]
 
-------------------------------------------------------------------------
--- CUSTOM PROMPTS
-------------------------------------------------------------------------
--- calcPrompt requires a cli calculator called qalcualte-gtk.
--- You could use this as a template for other custom prompts that
--- use command line programs that return a single line of output.
 calcPrompt :: XPConfig -> String -> X ()
 calcPrompt c ans =
     inputPrompt c (trim ans) ?+ \input ->
@@ -308,9 +190,6 @@ calcPrompt c ans =
         trim  = f . f
             where f = reverse . dropWhile isSpace
 
-------------------------------------------------------------------------
--- XPROMPT KEYMAP (emacs-like key bindings for xprompts)
-------------------------------------------------------------------------
 dtXPKeymap :: M.Map (KeyMask,KeySym) (XP ())
 dtXPKeymap = M.fromList $
      map (first $ (,) controlMask)   -- control + <key>
@@ -350,17 +229,9 @@ dtXPKeymap = M.fromList $
      , (xK_Escape, quit)
      ]
 
-------------------------------------------------------------------------
--- SEARCH ENGINES
-------------------------------------------------------------------------
--- Xmonad has several search engines available to use located in
--- XMonad.Actions.Search. Additionally, you can add other search engines
--- such as those listed below.
-archwiki, ebay, news, reddit, urban :: S.SearchEngine
+archwiki, reddit, urban :: S.SearchEngine
 
 archwiki = S.searchEngine "archwiki" "https://wiki.archlinux.org/index.php?search="
-ebay     = S.searchEngine "ebay" "https://www.ebay.com/sch/i.html?_nkw="
-news     = S.searchEngine "news" "https://news.google.com/search?q="
 reddit   = S.searchEngine "reddit" "https://www.reddit.com/search/?q="
 urban    = S.searchEngine "urban" "https://www.urbandictionary.com/define.php?term="
 
@@ -369,11 +240,9 @@ urban    = S.searchEngine "urban" "https://www.urbandictionary.com/define.php?te
 searchList :: [(String, S.SearchEngine)]
 searchList = [ ("a", archwiki)
              , ("d", S.duckduckgo)
-             , ("e", ebay)
              , ("g", S.google)
              , ("h", S.hoogle)
              , ("i", S.images)
-             , ("n", news)
              , ("r", reddit)
              , ("s", S.stackage)
              , ("t", S.thesaurus)
@@ -385,78 +254,35 @@ searchList = [ ("a", archwiki)
              , ("z", S.amazon)
              ]
 
-
-------------------------------------------------------------------------
--- WORKSPACES
-------------------------------------------------------------------------
--- TreeSelect workspaces
-myWorkspaces :: Forest String
-myWorkspaces = [ Node "dev"
-                   [ Node "terminal" []
-                   , Node "emacs" []
-                   , Node "docs" []
-                   , Node "files" []
-                   , Node "programming"
-                     [ Node "haskell" []
-                     , Node "python" []
-                     , Node "shell" []
-                     ]
-                   , Node "virtualization" []
-                   ]
-               , Node "web"
-                   [ Node "browser" []
-                   , Node "chat" []
-                   , Node "email" []
-                   , Node "rss" []
-                   , Node "web conference" []
-                   ]
-               , Node "graphics"
-                   [ Node "gimp" []
-                   , Node "image viewer" []
-                   ]
-              , Node "music"
-                   [ Node "audio editor" []
-                   , Node "music player" []
-                   ]
-               , Node "video"
-                   [ Node "obs" []
-                   , Node "kdenlive" []
-                   , Node "video player" []
-                   ]
-               ]
-
-------------------------------------------------------------------------
--- MANAGEHOOK
-------------------------------------------------------------------------
--- Sets some rules for certain programs. Examples include forcing certain
--- programs to always float, or to always appear on a certain workspace.
--- Forcing programs to a certain workspace with a doShift requires xdotool
--- if you are using clickable workspaces. You need the className or title
--- of the program. Use xprop to get this info.
+-- myWorkspaces = [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 "]
+myWorkspaces :: [String]
+myWorkspaces = ["dev", "www", "sys", "doc", "ssh", "chat", "mus", "vid", "gfx"]
 
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
+     -- 'doFloat' forces a window to float.  Useful for dialog boxes and such.
      -- using 'doShift ( myWorkspaces !! 7)' sends program to workspace 8!
-     -- I'm doing it this way because otherwise I would have to write out
-     -- the full name of my clickable workspaces, which would look like:
-     -- doShift "<action xdotool super+8>gfx</action>"
-     [ className =? "obs"     --> doShift ( "video.obs" )
-     , title =? "firefox"     --> doShift ( "web.browser" )
-     , title =? "qutebrowser" --> doShift ( "web.browser" )
-     , className =? "mpv"     --> doShift ( "video.movie player" )
-     , className =? "vlc"     --> doShift ( "video.movie player" )
-     , className =? "Gimp"    --> doShift ( "graphics.gimp")
-     , className =? "Gimp"    --> doFloat
-     , title =? "Oracle VM VirtualBox Manager"     --> doFloat
-     , className =? "VirtualBox Manager" --> doShift  ( "dev.virtualization" )
-     , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
+     -- I'm doing it this way because otherwise I would have to write out the full
+     -- name of my workspaces and the names would be very long if using clickable workspaces.
+     [ className =? "confirm"         --> doFloat
+     , className =? "file_progress"   --> doFloat
+     , className =? "dialog"          --> doFloat
+     , className =? "download"        --> doFloat
+     , className =? "error"           --> doFloat
+     -- , className =? "Gimp"            --> doFloat
+     , className =? "notification"    --> doFloat
+     -- , className =? "pinentry-gtk-2"  --> doFloat
+     -- , className =? "splash"          --> doFloat
+     , className =? "toolbar"         --> doFloat
+     , className =? "Yad"             --> doCenterFloat
+     , className =? "Vivaldi-stable"  --> doShift ( myWorkspaces !! 1 )
+     , className =? "discord"            --> doShift ( myWorkspaces !! 5 )
+     , resource =? "bashtop"             --> doShift ( myWorkspaces !! 8 )
+     , resource =? "ncdu"                --> doShift ( myWorkspaces !! 8 )
+     , resource =? "ssh"                 --> doShift ( myWorkspaces !! 4 )
+     , isFullscreen -->  doFullFloat
      ] <+> namedScratchpadManageHook myScratchPads
 
-------------------------------------------------------------------------
--- LOGHOOK
-------------------------------------------------------------------------
--- Override the PP values as you would otherwise, adding colors etc depending
--- on the statusbar used
 myLogHook :: D.Client -> PP
 myLogHook dbus = def
     { ppOutput  = dbusOutput dbus
@@ -468,9 +294,6 @@ myLogHook dbus = def
     , ppSep     = "  |  "
     }
 
-------------------------------------------------------------------------
--- LAYOUTS
-------------------------------------------------------------------------
 -- Makes setting the spacingRaw simpler to write. The spacingRaw
 -- module adds a configurable amount of space around windows.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
@@ -528,15 +351,6 @@ tabs     = renamed [Replace "tabs"]
                       , inactiveTextColor   = "#d0d0d0"
                       }
 
--- Theme for showWName which prints current workspace when you change workspaces.
-myShowWNameTheme :: SWNConfig
-myShowWNameTheme = def
-    { swn_font              = "xft:Sans:bold:size=60"
-    , swn_fade              = 1.0
-    , swn_bgcolor           = "#000000"
-    , swn_color             = "#FFFFFF"
-    }
-
 -- The layout hook
 myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts floats $
                mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
@@ -546,17 +360,12 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                                  ||| magnify
                                  ||| noBorders monocle
                                  ||| floats
-                                 -- ||| grid
                                  ||| noBorders tabs
+                                 ||| grid
                                  -- ||| spirals
                                  -- ||| threeCol
                                  -- ||| threeRow
 
-------------------------------------------------------------------------
--- SCRATCHPADS
-------------------------------------------------------------------------
--- Allows to have several floating scratchpads running different applications.
--- Import Util.NamedScratchpad.  Bind a key to namedScratchpadSpawnAction.
 myScratchPads :: [NamedScratchpad]
 myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
                 , NS "mocp" spawnMocp findMocp manageMocp
@@ -579,54 +388,59 @@ myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
                  t = 0.95 -h
                  l = 0.95 -w
 
-------------------------------------------------------------------------
--- KEYBINDINGS
-------------------------------------------------------------------------
--- I am using the Xmonad.Util.EZConfig module which allows keybindings
--- to be written in simpler, emacs-like format.
+-- START_KEYS
 myKeys :: [(String, X ())]
 myKeys =
-    -- Xmonad
+    -- KB_GROUP Xmonad
         [ ("M-C-r", spawn "xmonad --recompile")      -- Recompiles xmonad
         , ("M-S-r", spawn "xmonad --restart")        -- Restarts xmonad
         , ("M-S-q", io exitSuccess)                  -- Quits xmonad
 
-    -- Open my preferred terminal
-        , ("M-<Return>", spawn myTerminal)
+    -- KB_GROUP Get Help
+        , ("M-S-/", spawn "~/.xmonad/xmonad_keys.sh") -- Get list of keybindings
 
-    -- Run Prompt
+    -- KB_GROUP Useful programs to have a keybinding for launch
+        , ("M-<Return>", spawn myTerminal)
+        , ("M-w", spawn (myBrowser))
+        , ("M-b", spawn (term ++ " -n bashtop -e bashtop"))
+        , ("M-n", spawn (term ++ " -n ncdu -e ncdu"))
+        , ("M1-u", spawn (myTerminal ++ " -e matrix.sh"))
+        , ("M-v", spawn (myTerminal ++ " -e sh ./.config/vifm/scripts/vifmrun ~/ ~/"))
+
+    -- KB_GROUP Run Prompt
         , ("M-S-<Return>", shellPrompt dtXPConfig)   -- Shell Prompt
 
-    -- Windows
-        , ("M-S-c", kill1)                           -- Kill the currently focused client
+    -- KB_GROUP Kill windows
+        , ("M-c", kill1)                           -- Kill the currently focused client
         , ("M-S-a", killAll)                         -- Kill all windows on current workspace
 
-    -- Floating windows
+    -- KB_GROUP Workspaces
+        -- , ("M-.", nextScreen)  -- Switch focus to next monitor
+        -- , ("M-,", prevScreen)  -- Switch focus to prev monitor
+        , ("M-S-<KP_Add>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
+        , ("M-S-<KP_Subtract>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
+
+    -- KB_GROUP Floating windows
         , ("M-f", sendMessage (T.Toggle "floats"))       -- Toggles my 'floats' layout
         , ("M-<Delete>", withFocused $ windows . W.sink) -- Push floating window back to tile
         , ("M-S-<Delete>", sinkAll)                      -- Push ALL floating windows to tile
 
-    -- Grid Select (CTRL-g followed by a key)
-        , ("C-g g", spawnSelected' myAppGrid)                 -- grid select favorite apps
-        , ("C-g m", spawnSelected' myBookmarkGrid)            -- grid select some bookmarks
-        , ("C-g c", spawnSelected' myConfigGrid)              -- grid select useful config files
-        , ("C-g t", goToSelected $ mygridConfig myColorizer)  -- goto selected window
-        , ("C-g b", bringSelected $ mygridConfig myColorizer) -- bring selected window
-
-    -- Windows navigation
+    -- KB_GROUP Windows navigation
         , ("M-m", windows W.focusMaster)     -- Move focus to the master window
         , ("M-j", windows W.focusDown)       -- Move focus to the next window
         , ("M-k", windows W.focusUp)         -- Move focus to the prev window
-        --, ("M-S-m", windows W.swapMaster)    -- Swap the focused window and the master window
+        -- , ("M-S-m", windows W.swapMaster)    -- Swap the focused window and the master window
         , ("M-S-j", windows W.swapDown)      -- Swap focused window with next window
         , ("M-S-k", windows W.swapUp)        -- Swap focused window with prev window
         , ("M-<Backspace>", promote)         -- Moves focused window to master, others maintain order
-        , ("M1-S-<Tab>", rotSlavesDown)      -- Rotate all windows except master and keep focus in place
-        , ("M1-C-<Tab>", rotAllDown)         -- Rotate all the windows in the current stack
-        --, ("M-S-s", windows copyToAll)
+        -- , ("M1-S-<Tab>", rotSlavesDown)      -- Rotate all windows except master and keep focus in place
+        -- , ("M1-C-<Tab>", rotAllDown)         -- Rotate all the windows in the current stack
+        , ("M1-S-<Space>", rotSlavesDown)      -- Rotate all windows except master and keep focus in place
+        , ("M1-C-<Space>", rotAllDown)         -- Rotate all the windows in the current stack
+        -- , ("M-S-s", windows copyToAll)
         , ("M-C-s", killAllOtherCopies)
 
-        -- Layouts
+        -- KB_GROUP Layouts
         , ("M-<Tab>", sendMessage NextLayout)                -- Switch to next layout
         , ("M-C-M1-<Up>", sendMessage Arrange)
         , ("M-C-M1-<Down>", sendMessage DeArrange)
@@ -643,23 +457,17 @@ myKeys =
         , ("M-C-j", sendMessage MirrorShrink)               -- Shrink vert window width
         , ("M-C-k", sendMessage MirrorExpand)               -- Exoand vert window width
 
-    -- Workspaces
-        , ("M-.", nextScreen)  -- Switch focus to next monitor
-        , ("M-,", prevScreen)  -- Switch focus to prev monitor
-        , ("M-S-<KP_Add>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
-        , ("M-S-<KP_Subtract>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
-
-    -- Scratchpads
+    -- KB_GROUP Scratchpads
         , ("M-C-<Return>", namedScratchpadAction myScratchPads "terminal")
         , ("M-C-c", namedScratchpadAction myScratchPads "mocp")
 
-    -- Controls for mocp music player.
+    -- KB_GROUP Controls for mocp music player.
         , ("M-u p", spawn "mocp --play")
         , ("M-u l", spawn "mocp --next")
         , ("M-u h", spawn "mocp --previous")
         , ("M-u <Space>", spawn "mocp --toggle-pause")
 
-    -- Emacs (CTRL-e followed by a key)
+    -- KB_GROUP Emacs (CTRL-e followed by a key)
         , ("C-e e", spawn "emacsclient -c -a ''")                            -- start emacs
         , ("C-e b", spawn "emacsclient -c -a '' --eval '(ibuffer)'")         -- list emacs buffers
         , ("C-e d", spawn "emacsclient -c -a '' --eval '(dired nil)'")       -- dired emacs file manager
@@ -668,34 +476,38 @@ myKeys =
         , ("C-e s", spawn "emacsclient -c -a '' --eval '(eshell)'")          -- eshell within emacs
         , ("C-e t", spawn "emacsclient -c -a '' --eval '(+vterm/here nil)'") -- eshell within emacs
         -- emms is an emacs audio player. I set it to auto start playing in a specific directory.
-        , ("C-e a", spawn "emacsclient -c -a '' --eval '(emms)' --eval '(emms-play-directory-tree \"~/Music/Non-Classical/70s-80s/\")'")
+        -- , ("C-e a", spawn "emacsclient -c -a '' --eval '(emms)' --eval '(emms-play-directory-tree \"~/Music/Non-Classical/70s-80s/\")'")
 
-    --- My Applications (Super+Alt+Key)
-        , ("M-M1-a", spawn (myTerminal ++ " -e ncpamixer"))
-        , ("M-M1-b", spawn "surf www.youtube.com/c/DistroTube/")
-        , ("M-M1-e", spawn (myTerminal ++ " -e neomutt"))
-        , ("M-M1-f", spawn (myTerminal ++ " -e sh ./.config/vifm/scripts/vifmrun"))
-        , ("M-M1-i", spawn (myTerminal ++ " -e irssi"))
-        , ("M-M1-j", spawn (myTerminal ++ " -e joplin"))
-        , ("M-M1-l", spawn (myTerminal ++ " -e lynx -cfg=~/.lynx/lynx.cfg -lss=~/.lynx/lynx.lss gopher://distro.tube"))
-        , ("M-M1-m", spawn (myTerminal ++ " -e mocp"))
-        , ("M-M1-n", spawn (myTerminal ++ " -e newsboat"))
-        , ("M-M1-p", spawn (myTerminal ++ " -e pianobar"))
-        , ("M-M1-r", spawn (myTerminal ++ " -e rtv"))
-        , ("M-M1-t", spawn (myTerminal ++ " -e toot curses"))
-        , ("M-M1-w", spawn (myTerminal ++ " -e wopr report.xml"))
-        , ("M-M1-y", spawn (myTerminal ++ " -e youtube-viewer"))
+    -- KB_GROUP Rofi
+        , ("M-r", spawn ("rofi -show run -switchers 'run,window' -no-levenshtein-sort"))
+        , ("M-S-r", spawn ("rofi -show window -switchers 'run,window' -no-levenshtein-sort"))
 
-    -- Multimedia Keys
-        , ("<XF86AudioPlay>", spawn "cmus toggle")
-        , ("<XF86AudioPrev>", spawn "cmus prev")
-        , ("<XF86AudioNext>", spawn "cmus next")
-        -- , ("<XF86AudioMute>",   spawn "amixer set Master toggle")  -- Bug prevents it from toggling correctly in 12.04.
+    -- KB_GROUP My Applications (Super+Alt+Key)
+        , ("M-d", spawn "discord")
+        -- , ("M-M1-a", spawn (myTerminal ++ " -e ncpamixer"))
+        -- , ("M-M1-b", spawn "surf www.youtube.com/c/DistroTube/")
+        -- , ("M-M1-e", spawn (myTerminal ++ " -e neomutt"))
+        -- , ("M-M1-i", spawn (myTerminal ++ " -e irssi"))
+        -- , ("M-M1-j", spawn (myTerminal ++ " -e joplin"))
+        -- , ("M-M1-l", spawn (myTerminal ++ " -e lynx -cfg=~/.lynx/lynx.cfg -lss=~/.lynx/lynx.lss gopher://distro.tube"))
+        -- , ("M-M1-m", spawn (myTerminal ++ " -e mocp"))
+        -- , ("M-M1-n", spawn (myTerminal ++ " -e newsboat"))
+        -- , ("M-M1-p", spawn (myTerminal ++ " -e pianobar"))
+        -- , ("M-M1-r", spawn (myTerminal ++ " -e rtv"))
+        -- , ("M-M1-t", spawn (myTerminal ++ " -e toot curses"))
+        -- , ("M-M1-w", spawn (myTerminal ++ " -e wopr report.xml"))
+        -- , ("M-M1-y", spawn (myTerminal ++ " -e youtube-viewer"))
+
+    -- KB_GROUP Multimedia Keys
+        , ("<XF86ScreenSaver>", spawn (myTerminal ++ " -e unimatrix.sh"))
+        , ("<Pause>", spawn (myTerminal ++ " -e doas systemctl hibernate"))
+        , ("<XF86MonBrightnessUp>", spawn "xbacklight -inc 5 -time 100")
+        , ("<XF86MonBrightnessDown>", spawn "xbacklight -dec 5 -time 100")
         , ("<XF86AudioLowerVolume>", spawn "amixer set Master 5%- unmute")
         , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+ unmute")
-        , ("<XF86HomePage>", spawn "firefox")
-        , ("<XF86Search>", safeSpawn "firefox" ["https://www.google.com/"])
-        , ("<XF86Mail>", runOrRaise "geary" (resource =? "thunderbird"))
+        , ("<XF86AudioMute>", spawn "amixer set Master toggle")
+        , ("<XF86AudioMicMute>", spawn "amixer set Capture toggle")
+        , ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird"))
         , ("<XF86Calculator>", runOrRaise "gcalctool" (resource =? "gcalctool"))
         , ("<XF86Eject>", spawn "toggleeject")
         , ("<Print>", spawn "scrotd 0")
@@ -711,10 +523,8 @@ myKeys =
         -- The following lines are needed for named scratchpads.
           where nonNSP          = WSIs (return (\ws -> W.tag ws /= "nsp"))
                 nonEmptyNonNSP  = WSIs (return (\ws -> isJust (W.stack ws) && W.tag ws /= "nsp"))
+-- END_KEYS
 
-------------------------------------------------------------------------
--- MAIN
-------------------------------------------------------------------------
 main :: IO ()
 main = do
     dbus <- D.connectSession
@@ -743,8 +553,8 @@ defaults = def
                             <+> docksEventHook
     , modMask             = myModMask
     , terminal            = myTerminal
-    , workspaces          = TS.toWorkspaces myWorkspaces
-    , layoutHook          = showWName' myShowWNameTheme $ smartBorders $ myLayoutHook
+    , workspaces          = myWorkspaces
+    , layoutHook          = smartBorders $ myLayoutHook
     , normalBorderColor   = myNormColor
     , focusedBorderColor  = myFocusColor
     , manageHook          = myManageHook <+> manageHook def
