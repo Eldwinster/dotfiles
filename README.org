@@ -1,0 +1,8 @@
+#+TITLE: My dotfiles
+#+AUTHOR: Eldwin Elminster (Eldwinster)
+
+* TABLE OF CONTENTS :toc:
+- [[#introduction][INTRODUCTION]]
+
+* INTRODUCTION
+This is my dotfiles.
