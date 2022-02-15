@@ -1,238 +1,207 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export TERM="xterm-256color"                      # getting proper colors
+ export TERMINFO="/bin/zsh"
+export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|history|cd -|cd ..)"
+export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
+export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
 
-# Path to your oh-my-zsh installation.
-export ZSH="/home/yann/.oh-my-zsh"
-export PATH="$HOME/.bin:$PATH"
-export PATH="$HOME/.emacs.d/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.go/bin:$PATH"
-export PATH="$HOME/.scripts/uni:$PATH"
 
 export TZ="Europe/Paris"
+
+# You may need to manually set your language environment
 # export LANG=C
 export LANG=en_US.utf8
 export LC_CTYPE=en_US.utf8
+export JORMUNGANDR="192.168.1.75"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="gallois"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+bindkey -v
+# if not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+ZSH_THEME="random"
 
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+HIST_STAMPS="dd/mm/yyyy"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+plugins=(git)
 
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git dotbare)
+export ARCHFLAGS="-arch x86_64"
 
 source $ZSH/oh-my-zsh.sh
 
-# keychain keeps track of ssh-agents
-# [ -f $HOME/.keychain/$HOSTNAME-sh ] \
-#     && . $HOME/.keychain/$HOSTNAME-sh
-
-### pywal applying the theme to the new terminals
-# Import colorscheme from 'wal' asynchronously
-# & # Run the process in the background.
-# () # Hide shell job control messages.
 (cat ~/.cache/wal/sequences &)
-# To add support for TTs this line can be optionally added.
+
 source ~/.cache/wal/colors-tty.sh
 
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
- export MANPAGER="/bin/sh -c \"col -b | vim --not-a-term -c 'set ft=man ts=8 nomod nolist noma' -\""
- export TERMINFO="/bin/zsh"
- export VISUAL="vim"
- export EDITOR="vim"
- export SETH="192.168.1.75"
- export DOTBARE_DIR="$HOME/.dotfiles/.git"
- export DOTBARE_TREE="$HOME/.dotfiles"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
   export EDITOR='mvim'
 fi
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+if [ -d "$HOME/.bin" ] ;
+  then PATH="$HOME/.bin:$PATH"
+fi
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
+if [ -d "$HOME/.local/bin" ] ;
+  then PATH="$HOME/.local/bin:$PATH"
+fi
 
-### config alias
- alias vz="vim ~/.zshrc"
- alias ohmyzsh="vim ~/.oh-my-zsh"
- alias vv='vim ~/.vimrc'
- # alias vim='vim'
- alias v='vim'
- alias e='emacs'
+if [ -d "$HOME/.scripts" ] ;
+   then PATH="$HOME/.scripts"
 
-### alias shortcut
- alias awm='awman'
+if [ -d "$HOME/.scripts" ] ;
+   then PATH="$HOME/.scripts"
+fi
 
-### ssh
+export PATH="$HOME/.emacs.d/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.go/bin:$PATH"
 
-### doas
- alias pacman='doas pacman'
- alias mount='doas mount'
- alias umount='doas umount'
- alias sz='source ~/.zshrc'
- alias pacup='yes | pacman -Syu'
- alias pikup='pikaur -Syua'
+case ${TERM} in
+  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+        ;;
+  screen*)
+    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+    ;;
+esac
 
- alias paclog='vim /var/log/pacman.log'
- alias vifm='./.config/vifm/scripts/vifmrun'
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
 
-### pacman
-alias pacorphan='pacman -Rns $(pacman -Qtdq)'
-
-### taskbook
- alias tb='taskbook'
- alias tbcreate='tb --task'
- alias tbnote='tb --note'
- alias tbcheck='tb --check'
- alias tbbegin='tb --begin'
- alias tbstar='tb --star'
- alias tbcopy='tb --copy'
- alias tbtime='tb --timeline'
- alias tbpriority='tb --priority'
- alias tbmove='tb --move'
- alias tbdelete='tb --delete'
- alias tbclear='tb --clear'
- alias tbarchive='tb --archive'
- alias tbrestore='tb --restore'
- alias tblist='tb --list'
- alias tbfind='tb --find'
-
- alias ctb='clear && tb'
- alias cctime='clear && tbtime'
- alias ccarchive='clear && tbarchive'
-
-### git bare alias
-# alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-
-### Function
-
-# start an ssh and if no tmux session exist create a session called ssh_tmux if a session already exist exist it attach it
- sshtmux()
- {
-    # A name for the session
-    local session_name="$(whoami)_sess"
-
-    if [ ! -z $1 ]; then
-        ssh -t "$1" "tmux attach -t $session_name || tmux new -s $session_name"
-    else
-        echo "Usage: sshtmux HOSTNAME"
-        echo "You must specify a hostname"
-    fi
-} 
-
-# ex - archive extractor
-# usage: ex <file>
- ex()
- {
-   if [ -f $1 ] ; then
-     case $1 in
-       *.tar.bz2)   tar xjf $1   ;;
-       *.tar.gz)    tar xzf $1   ;;
-       *.bz2)       bunzip2 $1   ;;
-       *.rar)       unrar x $1   ;;
-       *.gz)        gunzip $1    ;;
-       *.tar)       tar xf $1    ;;
-       *.tbz2)      tar xjf $1   ;;
-       *.tgz)       tar xzf $1   ;;
-       *.zip)       unzip $1     ;;
-       *.Z)         uncompress $1;;
-       *.7z)        7z x $1      ;;
-       *)           echo "'$1' cannot be extracted via ex()" ;;
-     esac
-   else
-     echo "'$1' is not a valid file"
-   fi
+function extract {
+ if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+ else
+    for n in "$@"
+    do
+      if [ -f "$n" ] ; then
+          case "${n%,}" in
+            *.cbt|*.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
+                         tar xvf "$n"       ;;
+            *.lzma)      unlzma ./"$n"      ;;
+            *.bz2)       bunzip2 ./"$n"     ;;
+            *.cbr|*.rar)       unrar x -ad ./"$n" ;;
+            *.gz)        gunzip ./"$n"      ;;
+            *.cbz|*.epub|*.zip)       unzip ./"$n"       ;;
+            *.z)         uncompress ./"$n"  ;;
+            *.7z|*.arj|*.cab|*.cb7|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.pkg|*.rpm|*.udf|*.wim|*.xar)
+                         7z x ./"$n"        ;;
+            *.xz)        unxz ./"$n"        ;;
+            *.exe)       cabextract ./"$n"  ;;
+            *.cpio)      cpio -id < ./"$n"  ;;
+            *.cba|*.ace)      unace x ./"$n"      ;;
+            *)
+                         echo "extract: '$n' - unknown archive method"
+                         return 1
+                         ;;
+          esac
+      else
+          echo "'$n' - file does not exist"
+          return 1
+      fi
+    done
+fi
 }
 
-sshtmux()
-{
-    if [[ ! -z $1 && $2 ]]; then
-        ssh -t "$1" "tmux attach -t $2 || tmux new -s $2"
-    else
-        echo "Usage: sshtmux HOSTNAME SESSION_NAME"
-        echo "You must specify a hostname and a session name"
-    fi
+IFS=$SAVEIFS
+
+alias doas="doas --"
+alias pacman='doas pacman'
+alias mount='doas mount'
+alias umount='doas umount'
+
+up () {
+  local d=""
+  local limit="$1"
+
+  # Default to limit of 1
+  if [ -z "$limit" ] || [ "$limit" -le 0 ]; then
+    limit=1
+  fi
+
+  for ((i=1;i<=limit;i++)); do
+    d="../$d"
+  done
+
+  # perform cd. Show error if cd fails
+  if ! cd "$d"; then
+    echo "Couldn't go up $limit dirs.";
+  fi
 }
 
-tmuxattach()
-{
-    if [ ! -z $1 ]; then
-        tmux attach-session -t $1 || tmux new-session -s $1
-    else
-        echo "Usage: tmuxattach SESSION_NAME"
-        echo "You must specify a session name"
-    fi
-}
+alias vim="nvim"
+alias em="/usr/bin/emacs -nw"
+alias emacs="emacsclient -c -a 'emacs'"
+alias doomsync="~/.emacs.d/bin/doom sync"
+alias doomdoctor="~/.emacs.d/bin/doom doctor"
+alias doomupgrade="~/.emacs.d/bin/doom upgrade"
+alias doompurge="~/.emacs.d/bin/doom purge"
+
+alias ls='exa -al --color=always --group-directories-first' # my preferred listing
+alias la='exa -a --color=always --group-directories-first'  # all files and dirs
+alias ll='exa -l --color=always --group-directories-first'  # long format
+alias lt='exa -aT --color=always --group-directories-first' # tree listing
+alias l.='exa -a | egrep "^\."'
+
+# alias pacup='yes | pacman -Syu'
+alias pacsyu='doas pacman -Syu'                     # update only standard pkgs
+alias pacsyyu='doas pacman -Syyu'                   # Refresh pkglist & update standard pkgs
+alias paclog='vim /var/log/pacman.log'              # look for pacman logs
+alias yaysua='yay -Sua --noconfirm'                 # update only AUR pkgs (yay)
+alias yaysyu='yay -Syu --noconfirm'                 # update standard pkgs and AUR pkgs (yay)
+alias parsua='paru -Sua --noconfirm'                # update only AUR pkgs (paru)
+alias parsyu='paru -Syu --noconfirm'                # update standard pkgs and AUR pkgs (paru)
+alias piksua='pikaur -Sua --noconfirm'              # update only AUR pkgs (pikaur)
+alias piksyu='pikaur -Syu --noconfirm'              # update standard pkgs and AUR pkgs (pikaur)
+alias unlock='doas rm /var/lib/pacman/db.lck'       # remove pacman lock
+alias cleanup='doas pacman -Rns (pacman -Qtdq)'     # remove orphaned packages
+
+alias mirror="sudo reflector -f 30 -l 30 --number 10 --verbose --save /etc/pacman.d/mirrorlist"
+alias mirrord="sudo reflector --latest 50 --number 20 --sort delay --save /etc/pacman.d/mirrorlist"
+alias mirrors="sudo reflector --latest 50 --number 20 --sort score --save /etc/pacman.d/mirrorlist"
+alias mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pacman.d/mirrorlist"
+
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+alias cp="cp -iv"
+alias mv='mv -iv'
+alias rm='rm -iv'
+
+alias df='df -h'                          # human-readable sizes
+alias free='free -m'                      # show sizes in MB
+alias lynx='lynx -cfg=~/.lynx/lynx.cfg -lss=~/.lynx/lynx.lss -vikeys'
+alias vifm='./.config/vifm/scripts/vifmrun'
+alias ncmpcpp='ncmpcpp ncmpcpp_directory=$HOME/.config/ncmpcpp/'
+alias mocp='mocp -M "$XDG_CONFIG_HOME"/moc -O MOCDir="$XDG_CONFIG_HOME"/moc'
+
+alias psa="ps auxf"
+alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
+alias psmem='ps auxf | sort -nr -k 4'
+alias pscpu='ps auxf | sort -nr -k 3'
+
+alias jctl="journalctl -p 3 -xb"
+
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+
+alias yta-aac="youtube-dl --extract-audio --audio-format aac "
+alias yta-best="youtube-dl --extract-audio --audio-format best "
+alias yta-flac="youtube-dl --extract-audio --audio-format flac "
+alias yta-m4a="youtube-dl --extract-audio --audio-format m4a "
+alias yta-mp3="youtube-dl --extract-audio --audio-format mp3 "
+alias yta-opus="youtube-dl --extract-audio --audio-format opus "
+alias yta-vorbis="youtube-dl --extract-audio --audio-format vorbis "
+alias yta-wav="youtube-dl --extract-audio --audio-format wav "
+alias ytv-best="youtube-dl -f bestvideo+bestaudio "
+
+alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
+alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
+
+alias config="/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME"

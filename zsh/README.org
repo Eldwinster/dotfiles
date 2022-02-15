@@ -1,0 +1,559 @@
+:PROPERTIES:
+:header-args: :tangle .zshrc
+:END:
+#+TITLE: zsh config file
+#+DESCRIPTION: My zsh config.
+#+AUTHOR: Eldwin Elminster (Eldwinster)
+#+STARTUP: showstars
+
+* Table of contents :toc:
+- [[#export][EXPORT]]
+- [[#set-manpager][SET MANPAGER]]
+- [[#zsh-theme][ZSH THEME]]
+- [[#completion][COMPLETION]]
+- [[#update][UPDATE]]
+- [[#examples][EXAMPLES]]
+- [[#source][Source]]
+  - [[#oh-my-zsh][Oh my zsh]]
+  - [[#pywal][Pywal]]
+- [[#ssh-agent][SSH-AGENT]]
+- [[#editor-local-and-remote][EDITOR LOCAL AND REMOTE]]
+- [[#path][PATH]]
+- [[#change-title-of-terminals][CHANGE TITLE OF TERMINALS]]
+- [[#functions][FUNCTIONS]]
+  - [[#function-extract-for-common-file-formats][Function extract for common file formats]]
+  - [[#ssh][SSH]]
+- [[#aliases][ALIASES]]
+  - [[#root-privileges][root privileges]]
+  - [[#navigation][navigation]]
+  - [[#vim-and-emacs][vim and emacs]]
+  - [[#changing-ls-to-exa][Changing "ls" to "exa"]]
+  - [[#pacman-yay-paru-and-pikaur][pacman, yay, paru and pikaur]]
+  - [[#taskbook][TASKBOOK]]
+  - [[#colorize-grep-output-good-for-log-files][Colorize grep output (good for log files)]]
+  - [[#confirm-before-overwriting-something][confirm before overwriting something]]
+  - [[#adding-flags][adding flags]]
+  - [[#ps][ps]]
+  - [[#get-error-messages-from-journalctl][get error messages from journalctl]]
+  - [[#gpg-encryption][gpg encryption]]
+  - [[#youtube-dl][youtube-dl]]
+  - [[#switch-between-shells][switch between shells]]
+  - [[#bare-git-repo-alias-for-dotfiles][bare git repo alias for dotfiles]]
+
+* EXPORT
+
+#+begin_src bash
+export TERM="xterm-256color"                      # getting proper colors
+ export TERMINFO="/bin/zsh"
+export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|history|cd -|cd ..)"
+export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
+export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
+
+
+export TZ="Europe/Paris"
+
+# You may need to manually set your language environment
+# export LANG=C
+export LANG=en_US.utf8
+export LC_CTYPE=en_US.utf8
+export JORMUNGANDR="192.168.1.75"
+#+end_src
+* SET MANPAGER
+choose only one of these!
+"bat" as manpager
+
+Set VI mode
+Comment this line out to enable default emacs-like bindings
+#+begin_src bash
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+bindkey -v
+# if not running interactively, don't do anything
+[[ $- != *i* ]] && return
+#+end_src
+
+#+#+begin_example emacs-lisp
+### "vim" as manpager
+# export MANPAGER='/bin/bash -c "vim -MRn -c \"set buftype=nofile showtabline=0 ft=man ts=8 nomod nolist norelativenumber nonu noma\" -c \"normal L\" -c \"nmap q :qa<CR>\"</dev/tty <(col -b)"'
+
+### "nvim" as manpager
+# export MANPAGER="nvim -c 'set ft=man' -"
+#+#+end_example
+
+* ZSH THEME
+Set name of the theme to load --- if set to "random", it will
+load a random theme each time oh-my-zsh is loaded, in which case,
+to know which specific one was loaded, run: echo $RANDOM_THEME
+See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+
+#+begin_src bash
+ZSH_THEME="random"
+#+end_src
+
+Set list of themes to pick from when loading at random
+Setting this variable when ZSH_THEME=random will cause zsh to load
+a theme from this variable instead of looking in $ZSH/themes/
+If set to an empty array, this variable will have no effect.
+
+#+#+begin_example bash
+ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+#+#+end_example
+
+* COMPLETION
+The following line to use case-sensitive completion.
+#+#+begin_example bash
+CASE_SENSITIVE="true"
+#+#+end_example
+
+The following line to use hyphen-insensitive completion.
+Case-sensitive completion must be off. _ and - will be interchangeable.
+#+#+begin_example bash
+HYPHEN_INSENSITIVE="true"
+#+#+end_example
+
+The following line to display red dots whilst waiting for completion.
+#+#+begin_example bash
+COMPLETION_WAITING_DOTS="true"
+#+#+end_example
+
+* UPDATE
+The following line to disable bi-weekly auto-update checks.
+#+#+begin_example bash
+DISABLE_AUTO_UPDATE="true"
+#+#+end_example
+
+The following line to automatically update without prompting.
+#+#+begin_example bash
+DISABLE_UPDATE_PROMPT="true"
+#+#+end_example
+
+The following line to change how often to auto-update (in days).
+#+#+begin_example bash
+export UPDATE_ZSH_DAYS=13
+#+#+end_example
+
+* EXAMPLES
+The following line if pasting URLs and other text is messed up.
+#+#+begin_example bash
+DISABLE_MAGIC_FUNCTIONS="true"
+#+#+end_example
+
+The following line to disable colors in ls.
+#+#+begin_example bash
+DISABLE_LS_COLORS="true"
+#+#+end_example
+
+The following line to disable auto-setting terminal title.
+#+#+begin_example bash
+DISABLE_AUTO_TITLE="true"
+#+#+end_example
+
+The following line to enable command auto-correction.
+#+#+begin_example bash
+ENABLE_CORRECTION="true"
+#+#+end_example
+
+The following line if you want to disable marking untracked files
+under VCS as dirty. This makes repository status check for large repositories
+much, much faster.
+#+#+begin_example bash
+DISABLE_UNTRACKED_FILES_DIRTY="true"
+#+#+end_example
+
+The following line if you want to change the command execution time
+stamp shown in the history command output.
+You can set one of the optional three formats:
+"mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+or set a custom format using the strftime function format specifications,
+see 'man strftime' for details.
+#+begin_src bash
+HIST_STAMPS="dd/mm/yyyy"
+#+end_src
+
+Would you like to use another custom folder than $ZSH/custom?
+#+#+begin_example bash
+ZSH_CUSTOM=/path/to/new-custom-folder
+#+#+end_example
+
+Which plugins would you like to load?
+Standard plugins can be found in $ZSH/plugins/
+Custom plugins may be added to $ZSH_CUSTOM/plugins/
+Example format: plugins=(rails git textmate ruby lighthouse)
+Add wisely, as too many plugins slow down shell startup.
+#+begin_src bash
+plugins=(git)
+#+end_src
+
+Compilation flags
+#+begin_src bash
+export ARCHFLAGS="-arch x86_64"
+#+end_src
+* Source
+** Oh my zsh
+#+begin_src bash
+source $ZSH/oh-my-zsh.sh
+#+end_src
+
+** Pywal
+
+pywal applying the theme to the new terminals
+Import colorscheme from 'wal' asynchronously
+& Run the process in the background.
+() # Hide shell job control messages.
+
+#+begin_src bash
+(cat ~/.cache/wal/sequences &)
+#+end_src
+To add support for TTs this line can be optionally added.
+
+#+begin_src bash
+source ~/.cache/wal/colors-tty.sh
+#+end_src
+* SSH-AGENT
+keychain keeps track of ssh-agents
+
+#+begin_example bash
+[ -f $HOME/.keychain/$HOSTNAME-sh ] \
+    && . $HOME/.keychain/$HOSTNAME-sh
+#+end_example
+* EDITOR LOCAL AND REMOTE
+Preferred editor for local and remote sessions
+
+#+begin_src bash
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='mvim'
+fi
+#+end_src
+
+* PATH
+
+#+begin_src bash
+if [ -d "$HOME/.bin" ] ;
+  then PATH="$HOME/.bin:$PATH"
+fi
+
+if [ -d "$HOME/.local/bin" ] ;
+  then PATH="$HOME/.local/bin:$PATH"
+fi
+
+if [ -d "$HOME/.scripts" ] ;
+   then PATH="$HOME/.scripts"
+
+if [ -d "$HOME/.scripts" ] ;
+   then PATH="$HOME/.scripts"
+fi
+#+end_src
+
+#+begin_src bash
+export PATH="$HOME/.emacs.d/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.go/bin:$PATH"
+#+end_src
+
+* CHANGE TITLE OF TERMINALS
+
+#+begin_src bash
+case ${TERM} in
+  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+        ;;
+  screen*)
+    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+    ;;
+esac
+#+end_src
+
+* FUNCTIONS
+** Function extract for common file formats
+
+#+begin_src bash
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+
+function extract {
+ if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+ else
+    for n in "$@"
+    do
+      if [ -f "$n" ] ; then
+          case "${n%,}" in
+            ,*.cbt|*.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
+                         tar xvf "$n"       ;;
+            ,*.lzma)      unlzma ./"$n"      ;;
+            ,*.bz2)       bunzip2 ./"$n"     ;;
+            ,*.cbr|*.rar)       unrar x -ad ./"$n" ;;
+            ,*.gz)        gunzip ./"$n"      ;;
+            ,*.cbz|*.epub|*.zip)       unzip ./"$n"       ;;
+            ,*.z)         uncompress ./"$n"  ;;
+            ,*.7z|*.arj|*.cab|*.cb7|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.pkg|*.rpm|*.udf|*.wim|*.xar)
+                         7z x ./"$n"        ;;
+            ,*.xz)        unxz ./"$n"        ;;
+            ,*.exe)       cabextract ./"$n"  ;;
+            ,*.cpio)      cpio -id < ./"$n"  ;;
+            ,*.cba|*.ace)      unace x ./"$n"      ;;
+            ,*)
+                         echo "extract: '$n' - unknown archive method"
+                         return 1
+                         ;;
+          esac
+      else
+          echo "'$n' - file does not exist"
+          return 1
+      fi
+    done
+fi
+}
+
+IFS=$SAVEIFS
+#+end_src
+
+Other way to extract
+ex - archive extractor
+usage: ex <file>
+
+#+begin_example bash
+ ex()
+ {
+   if [ -f $1 ] ; then
+     case $1 in
+       *.tar.bz2)   tar xjf $1   ;;
+       *.tar.gz)    tar xzf $1   ;;
+       *.bz2)       bunzip2 $1   ;;
+       *.rar)       unrar x $1   ;;
+       *.gz)        gunzip $1    ;;
+       *.tar)       tar xf $1    ;;
+       *.tbz2)      tar xjf $1   ;;
+       *.tgz)       tar xzf $1   ;;
+       *.zip)       unzip $1     ;;
+       *.Z)         uncompress $1;;
+       *.7z)        7z x $1      ;;
+       *)           echo "'$1' cannot be extracted via ex()" ;;
+     esac
+   else
+     echo "'$1' is not a valid file"
+   fi
+}
+#+end_example
+
+** SSH
+start an ssh and if no tmux session exist create a session called ssh_tmux if a session already exist exist it attach it. NOT WORKING
+
+#+begin_example bash
+ sshtmux()
+ {
+    # A name for the session
+    local session_name="$(whoami)_sess"
+
+    if [ ! -z $1 ]; then
+        ssh -t "$1" "tmux attach -t $session_name || tmux new -s $session_name"
+    else
+        echo "Usage: sshtmux HOSTNAME"
+        echo "You must specify a hostname"
+    fi
+}
+#+end_example
+
+#+begin_example bash
+sshtmux()
+{
+    if [[ ! -z $1 && $2 ]]; then
+        ssh -t "$1" "tmux attach -t $2 || tmux new -s $2"
+    else
+        echo "Usage: sshtmux HOSTNAME SESSION_NAME"
+        echo "You must specify a hostname and a session name"
+    fi
+}
+#+end_example
+
+#+begin_example bash
+tmuxattach()
+{
+    if [ ! -z $1 ]; then
+        tmux attach-session -t $1 || tmux new-session -s $1
+    else
+        echo "Usage: tmuxattach SESSION_NAME"
+        echo "You must specify a session name"
+    fi
+}
+#+end_example
+* ALIASES
+Set personal aliases, overriding those provided by oh-my-zsh libs,
+plugins, and themes. Aliases can be placed here, though oh-my-zsh
+users are encouraged to define aliases within the ZSH_CUSTOM folder.
+For a full list of active aliases, run `alias`.
+** root privileges
+#+begin_src bash
+alias doas="doas --"
+alias pacman='doas pacman'
+alias mount='doas mount'
+alias umount='doas umount'
+#+end_src
+
+** navigation
+#+begin_src bash
+up () {
+  local d=""
+  local limit="$1"
+
+  # Default to limit of 1
+  if [ -z "$limit" ] || [ "$limit" -le 0 ]; then
+    limit=1
+  fi
+
+  for ((i=1;i<=limit;i++)); do
+    d="../$d"
+  done
+
+  # perform cd. Show error if cd fails
+  if ! cd "$d"; then
+    echo "Couldn't go up $limit dirs.";
+  fi
+}
+#+end_src
+
+** vim and emacs
+#+begin_src bash
+alias vim="nvim"
+alias em="/usr/bin/emacs -nw"
+alias emacs="emacsclient -c -a 'emacs'"
+alias doomsync="~/.emacs.d/bin/doom sync"
+alias doomdoctor="~/.emacs.d/bin/doom doctor"
+alias doomupgrade="~/.emacs.d/bin/doom upgrade"
+alias doompurge="~/.emacs.d/bin/doom purge"
+#+end_src
+
+** Changing "ls" to "exa"
+#+begin_src bash
+alias ls='exa -al --color=always --group-directories-first' # my preferred listing
+alias la='exa -a --color=always --group-directories-first'  # all files and dirs
+alias ll='exa -l --color=always --group-directories-first'  # long format
+alias lt='exa -aT --color=always --group-directories-first' # tree listing
+alias l.='exa -a | egrep "^\."'
+#+end_src
+
+** pacman, yay, paru and pikaur
+#+begin_src bash
+# alias pacup='yes | pacman -Syu'
+alias pacsyu='doas pacman -Syu'                     # update only standard pkgs
+alias pacsyyu='doas pacman -Syyu'                   # Refresh pkglist & update standard pkgs
+alias paclog='vim /var/log/pacman.log'              # look for pacman logs
+alias yaysua='yay -Sua --noconfirm'                 # update only AUR pkgs (yay)
+alias yaysyu='yay -Syu --noconfirm'                 # update standard pkgs and AUR pkgs (yay)
+alias parsua='paru -Sua --noconfirm'                # update only AUR pkgs (paru)
+alias parsyu='paru -Syu --noconfirm'                # update standard pkgs and AUR pkgs (paru)
+alias piksua='pikaur -Sua --noconfirm'              # update only AUR pkgs (pikaur)
+alias piksyu='pikaur -Syu --noconfirm'              # update standard pkgs and AUR pkgs (pikaur)
+alias unlock='doas rm /var/lib/pacman/db.lck'       # remove pacman lock
+alias cleanup='doas pacman -Rns (pacman -Qtdq)'     # remove orphaned packages
+#+end_src
+
+*** get fastest mirrors
+#+begin_src bash
+alias mirror="sudo reflector -f 30 -l 30 --number 10 --verbose --save /etc/pacman.d/mirrorlist"
+alias mirrord="sudo reflector --latest 50 --number 20 --sort delay --save /etc/pacman.d/mirrorlist"
+alias mirrors="sudo reflector --latest 50 --number 20 --sort score --save /etc/pacman.d/mirrorlist"
+alias mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pacman.d/mirrorlist"
+#+end_src
+
+** TASKBOOK
+#+begin_example bash
+alias tb='taskbook'
+alias tbcreate='tb --task'
+alias tbnote='tb --note'
+alias tbcheck='tb --check'
+alias tbbegin='tb --begin'
+alias tbstar='tb --star'
+alias tbcopy='tb --copy'
+alias tbtime='tb --timeline'
+alias tbpriority='tb --priority'
+alias tbmove='tb --move'
+alias tbdelete='tb --delete'
+alias tbclear='tb --clear'
+alias tbarchive='tb --archive'
+alias tbrestore='tb --restore'
+alias tblist='tb --list'
+alias tbfind='tb --find'
+
+alias ctb='clear && tb'
+alias cctime='clear && tbtime'
+alias ccarchive='clear && tbarchive'
+#+end_example
+** Colorize grep output (good for log files)
+#+begin_src bash
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+#+end_src
+
+** confirm before overwriting something
+#+begin_src bash
+alias cp="cp -iv"
+alias mv='mv -iv'
+alias rm='rm -iv'
+#+end_src
+
+** adding flags
+#+begin_src bash
+alias df='df -h'                          # human-readable sizes
+alias free='free -m'                      # show sizes in MB
+alias lynx='lynx -cfg=~/.lynx/lynx.cfg -lss=~/.lynx/lynx.lss -vikeys'
+alias vifm='./.config/vifm/scripts/vifmrun'
+alias ncmpcpp='ncmpcpp ncmpcpp_directory=$HOME/.config/ncmpcpp/'
+alias mocp='mocp -M "$XDG_CONFIG_HOME"/moc -O MOCDir="$XDG_CONFIG_HOME"/moc'
+#+end_src
+
+** ps
+#+begin_src bash
+alias psa="ps auxf"
+alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
+alias psmem='ps auxf | sort -nr -k 4'
+alias pscpu='ps auxf | sort -nr -k 3'
+#+end_src
+
+** get error messages from journalctl
+#+begin_src bash
+alias jctl="journalctl -p 3 -xb"
+#+end_src
+
+** gpg encryption
+verify signature for isos
+
+#+begin_src bash
+alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
+#+end_src
+
+receive the key of a developer
+
+#+begin_src bash
+alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
+#+end_src
+
+** youtube-dl
+#+begin_src bash
+alias yta-aac="youtube-dl --extract-audio --audio-format aac "
+alias yta-best="youtube-dl --extract-audio --audio-format best "
+alias yta-flac="youtube-dl --extract-audio --audio-format flac "
+alias yta-m4a="youtube-dl --extract-audio --audio-format m4a "
+alias yta-mp3="youtube-dl --extract-audio --audio-format mp3 "
+alias yta-opus="youtube-dl --extract-audio --audio-format opus "
+alias yta-vorbis="youtube-dl --extract-audio --audio-format vorbis "
+alias yta-wav="youtube-dl --extract-audio --audio-format wav "
+alias ytv-best="youtube-dl -f bestvideo+bestaudio "
+#+end_src
+
+** switch between shells
+I do not recommend switching default SHELL from bash.
+#+begin_src bash
+alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
+alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
+#+end_src
+
+** bare git repo alias for dotfiles
+#+begin_src bash
+alias config="/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME"
+#+end_src
