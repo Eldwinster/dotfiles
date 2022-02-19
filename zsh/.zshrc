@@ -1,9 +1,18 @@
-export TERM="xterm-256color"                      # getting proper colors
- export TERMINFO="/bin/zsh"
-export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|history|cd -|cd ..)"
-export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
-export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
+export ZSH="/home/yann/.oh-my-zsh"
+export PATH="$HOME/.bin:$PATH"
+export PATH="$HOME/.emacs.d/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.go/bin:$PATH"
+export PATH="$HOME/.scripts/uni:$PATH"
 
+export TERM="xterm-256color"                      # getting proper colors
+export TERMINFO="/bin/zsh"
+export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|history|cd -|cd ..)"
+# export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
+# export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
+export VISUAL="vim"
+export EDITOR="vim"
+export ZSH="$HOME/.oh-my-zsh"
 
 export TZ="Europe/Paris"
 
