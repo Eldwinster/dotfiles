@@ -212,9 +212,34 @@ If peep-dired is enabled, you will get image previews as you go up/down with 'j'
 Setting the theme to doom-one.  To try out new themes, I set a keybinding for counsel-load-theme with 'SPC h t'.
 
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-Iosvkem)
+;; (setq doom-theme 'doom-Iosvkem)
 (map! :leader
       :desc "Load new theme" "h t" #'counsel-load-theme)
+(defvar my-wal-colors nil)
+
+(defun my-refresh-wal-colors ()
+  (setq my-wal-colors
+        (with-temp-buffer
+          (insert-file-contents "~/.cache/wal/colors.json")
+          (goto-char (point-min))
+          (json-read))))
+
+(defun my-xresources-theme-color (name)
+  (let ((category
+         (if (or (string= name "background")
+                 (string= name "foreground"))
+             'special
+           'colors)))
+    (cdr
+     (assoc (intern name)
+            (assoc category my-wal-colors)))))
+
+(advice-add 'xresources-theme-color :override 'my-xresources-theme-color)
+
+(defun my-load-xresources ()
+  (my-refresh-wal-colors)
+  (load-theme 'xresources t))
+
 #+END_SRC
 
 * ELFEED
@@ -679,6 +704,16 @@ I set splits to default to opening on the right using 'prefer-horizontal-split'.
       :desc "Clone indirect buffer other window" "b c" #'clone-indirect-buffer-other-window)
 #+END_SRC
 
+* TRANSPARENCY
+#+begin_src emacs-lisp
+ (set-frame-parameter (selected-frame) 'alpha '(85 . 75))
+ (add-to-list 'default-frame-alist '(alpha . (85 . 75)))
+ ;; Set transparency of emacs
+ (defun transparency (value)
+   "Sets the transparency of the frame window. 0=transparent/100=opaque"
+   (interactive "nTransparency Value 0 - 100 opaque:")
+   (set-frame-parameter (selected-frame) 'alpha value))
+#+end_src
 * ZAP TO CHAR
 Emacs provides a 'zap-to-char' command that kills from the current point to a character.  It is bound to 'M-z' in standard GNU Emacs but since Doom Emacs uses 'SPC' as its leader key and does not have 'SPC z' binded to anything, it just makes since to use it for 'zap-to-char'.  Note that 'zap-to-char' can be used with the universal argument 'SPC u' to modify its behavior.  Examples of 'zap-to-char' usage are listed in the table below:
 
