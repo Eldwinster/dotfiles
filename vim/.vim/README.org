@@ -3,145 +3,396 @@
 :END:
 #+TITLE: My latex snippets
 #+AUTHOR: Eldwin Elminster (eldwinster)
-#+STARTUP: showeverything
+#+STARTUP: showstars
 
 * Table of contents :TOC:
-- [[#latex][latex]]
+- [[#info][INFO]]
+  - [[#dynamic-snippet][Dynamic snippet]]
+  - [[#inline-and-display-math][Inline and display math]]
+  - [[#sub--and-superscripts][Sub- and superscripts]]
+  - [[#fraction][Fraction]]
+- [[#source][SOURCE]]
+- [[#latex][LATEX]]
   - [[#tex][tex]]
   - [[#bibtex][bibtex]]
 
-* latex
+* INFO
+** Dynamic snippet
+For dynamic snippets, you can put code be­tween back­ticks `` which will be run when the snip­pet is expanded. Here, I’ve used bash to for­mat the current date: date + %F.
+
+begin_example python
+snippet today "Date"
+`date +%F`
+endsnippet
+end_example
+
+You can also use Python inside a `!p ... ` block. Have a look at the code for the box snippet:
+begin_example python
+snippet box "Box"
+`!p snip.rv = '┌' + '─' * (len(t[1]) + 2) + '┐'`
+│ $1 │
+`!p snip.rv = '└' + '─' * (len(t[1]) + 2) + '┘'`
+$0
+endsnippet
+end_example
+These Python code blocks will be replaced by the value of the variable snip.rv. Inside these blocks, you have access to the current state of the snippet, e.g. t[1] contains the first tab stop, fn the current filename, …
+** Inline and display math
+Two of my most frequently used snip­pets are mk and dm. They’re the snippets responsible for starting math mode. The first one is a snippet for inline math, the second one for displayed math.
+The snippet for inline math is ‘smart’: it knows when to insert a space after the dollar sign. When I start typing a word directly behind the closing $, it adds a space. However, when I type a non-​word character, it does not add a space, which would be preferred for example in the case of $p$-value.
+The code for this snippet is the following.
+begin_example python
+snippet mk "Math" wA
+$${1}$`!p
+if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
+    snip.rv = ' '
+else:
+    snip.rv = ''
+`$2
+endsnippet
+end_example
+** Sub- and superscripts
+Another useful snippet is one for subscripts. It changes changes a1 to a_1 and a_12 to a_{12}.
+The code for this snip­pet uses a regular expression for its trigger. It expands the snippet when you type a character followed by a digit, which encoded by [A-Za-z]\d, or a character followed by _ and two digits: [A-Za-z]_\d\d.
+
+begin_example python
+snippet '([A-Za-z])(\d)' "auto subscript" wrA
+`!p snip.rv = match.group(1)`_`!p snip.rv = match.group(2)`
+endsnippet
+
+snippet '([A-Za-z])_(\d\d)' "auto subscript2" wrA
+`!p snip.rv = match.group(1)`_{`!p snip.rv = match.group(2)`}
+endsnippet
+end_example
+When you wrap parts of a regular expression in a group using parenthesis, e.g. (\d\d), you can use them in the expansion of the snip­pet via match.group(i) in Python.
+** Fraction
+Fractions
+One of my most con­ve­nient snip­pets is one for frac­tions. This makes the fol­low­ing ex­pan­sions:
+
+begin_example
+//	→	\frac{}{}
+3/	→	\frac{3}{}
+4\pi^2/	→	\frac{4\pi^2}{}
+(1 + 2 + 3)/	→	\frac{1 + 2 + 3}{}
+(1+(2+3)/)	→	(1 + \frac{2+3}{})
+(1 + (2+3))/	→	\frac{1 + (2+3)}{}
+end_example
+https://castel.dev/3f83f1bdc3078aa16382e80a276f199f/frac.gif
+
+The code for the first one is easy:
+begin_example python
+snippet // "Fraction" iA
+\\frac{$1}{$2}$0
+endsnippet
+end_example
+
+* SOURCE
+- vimtex setup:
+  https://castel.dev
+* LATEX
 ** tex
 :PROPERTIES:
 :header-args: :tangle UltiSnips/tex.snippets
 :END:
-*** GLOBAL #
+*** Option description
+ 4.1.3 Snippet Options:                           *UltiSnips-snippet-options*
+
+The 'options' control the behavior of the snippet. Options are indicated by
+single characters. The 'options' characters for a snippet are combined into
+a word without spaces.
+
+The options currently supported are: >
+**** b   Beginning of line
+A snippet with this option is expanded only if the
+tab trigger is the first word on the line. In other words, if only
+whitespace precedes the tab trigger, expand. The default is to expand
+snippets at any position regardless of the preceding non-whitespace
+characters.
+**** i   In-word expansion
+By default a snippet is expanded only if the tab
+trigger is the first word on the line or is preceded by one or more
+whitespace characters. A snippet with this option is expanded
+regardless of the preceding character. In other words, the snippet can
+be triggered in the middle of a word.
+**** w   Word boundary
+With this option, the snippet is expanded if
+the tab trigger start matches a word boundary and the tab trigger end
+matches a word boundary. In other words the tab trigger must be
+preceded and followed by non-word characters. Word characters are
+defined by the 'iskeyword' setting. Use this option, for example, to
+permit expansion where the tab trigger follows punctuation without
+expanding suffixes of larger words.
+**** r   Regular expression
+With this option, the tab trigger is expected to
+be a python regular expression. The snippet is expanded if the recently
+typed characters match the regular expression. Note: The regular
+expression MUST be quoted (or surrounded with another character) like a
+multi-word tab trigger (see above) whether it has spaces or not. A
+resulting match is passed to any python code blocks in the snippet
+definition as the local variable "match".
+**** t   Do not expand tabs
+If a snippet definition includes leading tab
+characters, by default UltiSnips expands the tab characters honoring
+the Vim 'shiftwidth', 'softtabstop', 'expandtab' and 'tabstop'
+indentation settings. (For example, if 'expandtab' is set, the tab is
+replaced with spaces.) If this option is set, UltiSnips will ignore the
+Vim settings and insert the tab characters as is. This option is useful
+for snippets involved with tab delimited formats.
+**** s   Remove whitespace
+Remove whitespace immediately before the cursor at the end of a line
+before jumping to the next tabstop.  This is useful if there is a
+tabstop with optional text at the end of a line.
+**** m   Trim all whitespaces
+Trim all whitespaces from right side of snippet lines. Useful when
+snippet contains empty lines which should remain empty after expanding.
+Without this option empty lines in snippets definition will have
+indentation too.
+**** e   Custom context snippet
+With this option expansion of snippet can be
+controlled not only by previous characters in line, but by any given
+python expression. This option can be specified along with other
+options, like 'b'. See |UltiSnips-custom-context-snippets| for more info.
+**** A   auto-trigger
+Snippet will be triggered automatically, when condition matches.
+See |UltiSnips-autotrigger| for more info.
+**** End of line
+The end line is the 'endsnippet' keyword on a line by itself. >
+begin_example python
+endsnippet
+end_example
+
+When parsing snippet files, UltiSnips chops the trailing newline character
+from the 'endsnippet' end line.
+*** Global
 
 #+begin_src python
 global !p
-
-def create_table(snip):
-	rows = snip.buffer[snip.line].split('x')[0]
-	cols = snip.buffer[snip.line].split('x')[1]
-	int_val = lambda string: int(''.join(s for s in string if s.isdigit()))
-	rows = int_val(rows)
-	cols = int_val(cols)
-	offset = cols + 1
-	old_spacing = snip.buffer[snip.line][:snip.buffer[snip.line].rfind('\t') + 1]
-	snip.buffer[snip.line] = ''
-	final_str = old_spacing + "\\begin{tabular}{|" + "|".join(['$' + str(i + 1) for i in range(cols)]) + "|}\n"
-	for i in range(rows):
-		final_str += old_spacing + '\t'
-		final_str += " & ".join(['$' + str(i * cols + j + offset) for j in range(cols)])
-		final_str += " \\\\\\\n"
-	final_str += old_spacing + "\\end{tabular}\n$0"
-	snip.expand_anon(final_str)
-
-def add_row(snip):
-	row_len = int(''.join(s for s in snip.buffer[snip.line] if s.isdigit()))
-	old_spacing = snip.buffer[snip.line][:snip.buffer[snip.line].rfind('\t') + 1]
-	snip.buffer[snip.line] = ''
-	final_str = old_spacing
-	final_str += " & ".join(['$' + str(j + 1) for j in range(row_len)])
-	final_str += " \\\\\\"
-	snip.expand_anon(final_str)
+def math():
+	return vim.eval('vimtex#syntax#in_mathzone()') == '1'
+def comment():
+	return vim.eval('vimtex#syntax#in_comment()') == '1'
+def env(name):
+	[x,y] = vim.eval("vimtex#env#is_inside('" + name + "')")
+	return x != '0' and y != '0'
 endglobal
 #+end_src
-
-*** ENVIRONMENT #
+*** Math block (sympy and math)
 
 #+begin_src python
-snippet beg "begin{} / end{}" bi
-\begin{$1}
-	${0:${VISUAL}}
-\end{$1}
+# START_SNIPPET
+# SNIPPET_GROUP Environment
+snippet sympy "sympyblock " w
+sympy $1 sympy$0
 endsnippet
 
-snippet cnt "Center" bi
-\begin{center}
-	${0:${VISUAL}}
-\end{center}
+priority 10000
+snippet 'sympy(.*)sympy' "sympy" wr
+`!p
+from sympy import *
+x, y, z, t = symbols('x y z t')
+k, m, n = symbols('k m n', integer=True)
+f, g, h = symbols('f g h', cls=Function)
+init_printing()
+snip.rv = eval('latex(' + match.group(1).replace('\\', '').replace('^', '**').replace('{', '(').replace('}', ')') + ')')
+`
 endsnippet
 
-snippet desc "Description" bi
+priority 1000
+snippet math "mathematicablock" w
+math $1 math$0
+endsnippet
+
+priority 10000
+snippet 'math(.*)math' "math" wr
+`!p
+import subprocess
+code = match.group(1)
+code = 'ToString[' + code + ', Tex Form]'
+snip.rv = subprocess.check_output(['wolfram script', '-code', code])
+`
+endsnippet
+#+end_src
+
+*** Environment
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+snippet template "Basic template" b
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[french]{babel}
+\usepackage{amsmath, amssymb}
+
+
+% figure support
+\usepackage{import}
+\usepackage{xifthen}
+\pdfminorversion=7
+\usepackage{pdfpages}
+\usepackage{transparent}
+\newcommand{\incfig}[1]{%
+	\def\svgwidth{\columnwidth}
+	\import{./figures/}{#1.pdf_tex}
+}
+
+\pdfsuppresswarningpagegroup=1
+
+\begin{document}
+	$0
+\end{document}
+endsnippet
+
+snippet beamer "Basic beamer"
+
+\documentclass{beamer}
+
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usetheme{${1:Madrid}}
+
+\title[${2:Short Title}]{${3:Full Presentation Title}}
+
+\author{Yann-Arby Bebba}
+\institute[UPJV]{Université Picard Jules Verne \\
+\medskip
+\textit{yann-arby.bebba@etud.u-picardie.fr}}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Table des matières}
+\tableofcontents
+\end{frame}
+
+\section{${4:First Section}}
+
+\subsection{${5:Subsection Example}}
+
+\begin{frame}
+\frametitle{${6:Frame title}}
+
+\end{frame}
+$0
+\end{document}
+
+endsnippet
+
+snippet beg "begin{} / end{}" bA
+\\begin{$1}$2
+	$0
+\\end{$1}
+endsnippet
+
+snippet enum "Enumerate" bA
+\begin{enumerate}
+	\item $0
+\end{enumerate}
+endsnippet
+
+snippet item "Itemize" bA
+\begin{itemize}
+	\item $0
+\end{itemize}
+endsnippet
+
+snippet desc "Description" b
 \begin{description}
-	\item[${1:${VISUAL}}] $0
+	\item[$1] $0
 \end{description}
 endsnippet
 
-snippet lemme "Lemma" bi
-\begin{lemme}
-	${0:${VISUAL}}
-\end{lemme}
+snippet itd "item description" bA
+\item[$1] $0
 endsnippet
 
-snippet prop "Proposition" bi
-\begin{prop}[$1]
-	${0:${VISUAL}}
-\end{prop}
+snippet pac "Package" b
+\usepackage[${1:options}]{${2:package}}$0
 endsnippet
 
-snippet th "Theorem" bi
-\begin{theoreme}[$1]
-	${0:${VISUAL}}
-\end{theoreme}
+snippet ali "Align" bA
+\begin{align*}
+	${1:${VISUAL}}
+.\end{align*}
 endsnippet
 
-snippet post "postulate" bi
-\begin{postulat}[$1]
-	${0:${VISUAL}}
-\end{postulat}
+snippet eqr "equation ref" wA
+\begin{align}
+	${1:\tag{$2}
+	}\label{eq:$4}
+	${5:${VISUAL}}
+.\end{align}
 endsnippet
 
-snippet demo "Proof" bi
-\begin{demonstration}[$1]
-	${0:${VISUAL}}
-\end{demonstration}
+snippet rf "ref" wA
+\\ref{$1} $0
 endsnippet
 
-snippet def "Definition" bi
-\begin{definition}[$1]
-	${0:${VISUAL}}
-\end{definition}
+snippet label "label" wA
+\\label{$1}
+$0
 endsnippet
 
-snippet nte "Note" bi
-\begin{note}[$1]
-	${0:${VISUAL}}
-\end{note}
+snippet refeq "eqref" wA
+\\eqref{${1:eq}:${2:a}} $0
 endsnippet
 
-snippet prob "Problem" bi
-\begin{problem}[$1]
-	${0:${VISUAL}}
-\end{probleme}
+context "math()"
+snippet case "cases" wA
+\begin{cases}
+	$1
+\end{cases}
 endsnippet
 
-snippet corollaire "Corollary" bi
-\begin{corollaire}[$1]
-	${0:${VISUAL}}
-\end{corollaire}
+snippet chap "chapitre" bA
+\chapter{$1}
+$0
 endsnippet
 
-snippet example "Example" bi
-\begin{example}[$1]
-	${0:${VISUAL}}
-\end{example}
+snippet sc "section" bA
+\section{$1}
+$0
 endsnippet
 
-snippet notion "Notation" bi
-\begin{notation}[$1]
-	$0${VISUAL}
-\end{notation}
+snippet sb "subsection" bA
+\subsection{$1}
+$0
 endsnippet
 
-snippet conc "Conclusion" bi
-\begin{conclusion}[$1]
-	$0${VISUAL}
-\end{conclusion}
+priority 100
+snippet sbsb "subsubsection" bA
+\subsubsection{$1}
+$0
+endsnippet
+#+end_src
+
+*** Math env
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+snippet table "Table environment" b
+\begin{table}[${1:htpb}]
+	\centering
+	\caption{${2:caption}}
+	\label{tab:${3:label}}
+	\begin{tabular}{${5:c}}
+	$0${5/((?<=.)c|l|r)|./(?1: & )/g}
+	\end{tabular}
+\end{table}
 endsnippet
 
-snippet fig "Figure environment" bi
+snippet fig "Figure environment" b
 \begin{figure}[${1:htpb}]
 	\centering
 	${2:\includegraphics[width=0.8\textwidth]{$3}}
@@ -150,151 +401,191 @@ snippet fig "Figure environment" bi
 \end{figure}
 endsnippet
 
-snippet enum "Enumerate" bi
-\begin{enumerate}
-	\item ${0:${VISUAL}}
-\end{enumerate}
-endsnippet
-
-snippet item "Itemize" bi
-\begin{itemize}
-	\item ${0:${VISUAL}}
-\end{itemize}
-endsnippet
-
-snippet case "cases" bi
-\begin{cases}
-	${0:${VISUAL}}
-\end{cases}
-endsnippet
-
-snippet abs "abstract environment" b
-\begin{abstract}
-	${0:${VISUAL}}
-.\end{abstract}
-endsnippet
-
-snippet tab "tabular / array environment" b
-	\begin{${1:t}${1/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}{${2:c}}
-	$0${2/(?<=.)(c|l|r)|./(?1: & )/g}
-	\end{$1${1/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}
-endsnippet
-
-snippet table "Table environment" b
-\begin{table}[${1:htpb}]
+snippet plot "Plot" w
+\begin{figure}[$1]
 	\centering
-	\caption{${2:caption}}
-	\label{tab:${3:label}}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xmin= ${2:-10}, xmax= ${3:10},
+			ymin= ${4:-10}, ymax = ${5:10},
+			axis lines = middle,
+		]
+			\addplot[domain=$2:$3, samples=${6:100}]{$7};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{$8}
+	\label{${9:$8}}
+\end{figure}
+endsnippet
 
-	\begin{${4:t}${4/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}{${5:c}}
-		$0${5/(?<=.)(c|l|r)|./(?1: & )/g}
-	\end{$4${4/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}
-\end{table}
+# snippet nn "Tikz node" w
+# \node[$5] (${1/[^0-9a-zA-Z]//g}${2}) ${3:at (${4:0,0}) }{$${1}$};
+# $0
+# endsnippet
+
+snippet mk "Math" wA
+$${1}$`!p
+if t[2] and t[2][0] not in [',', '.', '?', '-', ';', ')', ' ']:
+	snip.rv = ' '
+else:
+	snip.rv = ''
+`$2
+endsnippet
+
+snippet km "Math" wA
+$${1}$`!p
+if t[2] and t[2][0] not in [',', '.', '?', '-', ';', ')', ' ']:
+	snip.rv = ' '
+else:
+	snip.rv = ''
+`$2
+endsnippet
+
+snippet dm "Math" wA
+\[
+${1:${VISUAL}}
+${2:.}\] $0
+endsnippet
+
+snippet md "Math" wA
+\[
+${1:${VISUAL}}
+${2:.}\] $0
 endsnippet
 #+end_src
-
-*** MATH #
+*** Format
 
 #+begin_src python
-snippet cc "subset" w
-\subset
+# SNIPPET_GROUP Environment
+snippet np "new page" b
+\\newpage
 endsnippet
 
-snippet inn "in " w
-\in
+context "math()"
+snippet sp "espace" wiA
+ \ $0
 endsnippet
 
-snippet Nn "cap" w
-\cap
+snippet footnote "note de bas de page" iA
+\footnote{$1}
+endsnippet
+#+end_src
+*** Logique
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+context "math()"
+snippet EE "geq" iA
+\exists
 endsnippet
 
-snippet UU "cup" w
-\cup
+context "math()"
+snippet AA "forall" iA
+\forall
 endsnippet
 
-snippet uuu "bigcup" w
-\bigcup_{${1:i \in ${2: I}}} $0
+context "math()"
+snippet tq "tel que" iA
+\ /\
 endsnippet
 
-snippet nnn "bigcap" w
-\bigcap_{${1:i \in ${2: I}}} $0
+snippet => "implies" Ai
+\implies
 endsnippet
 
-snippet HH "H" w
-\mathbb{H}
+snippet =< "implied by" Ai
+\impliedby
 endsnippet
 
-snippet DD "D" w
-\mathbb{D}
+priority 200
+context "math()"
+snippet iff "iff" Ai
+\iff
 endsnippet
 
-snippet dm "Display Math" w
-\[
-	${1:${VISUAL}}
-.\]$0
+priority 200
+snippet sssi "si, et seulement si" iA
+si, et seulement si,
 endsnippet
 
-snippet frac "Fraction" Aw
-\frac{$1}{$2}$0
+priority 200
+snippet caad "c'est-à-dire" iA
+c'est-à-dire
 endsnippet
 
-snippet compl "Complement" i
-^{c}
+priority 200
+snippet Caad "C'est-à-dire" iA
+C'est-à-dire
 endsnippet
 
-snippet ss "Super Script" i
-^{$1}$0
+snippet == "equals" iA
+&= $1 \\\\
 endsnippet
 
-snippet __ "subscript" Aw
-_{$1}$0
+snippet && "align" iA
+&$1 $2 \\\\
 endsnippet
 
-snippet srt "Square Root" wi
-\sqrt{${1:${VISUAL}}}$0
+snippet != "equals" iA
+\neq
+endsnippet
+#+end_src
+*** Fraction
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+context "math()"
+snippet // "Fraction" iA
+\\frac{$1}{$2}$0
 endsnippet
 
-snippet srto "... Root" wi
-\sqrt[$1]{${2:${VISUAL}}}$0
+snippet / "Fraction" i
+\\frac{${VISUAL}}{$1}$0
 endsnippet
 
-snippet bf "Bold" wi
-\bf{${1:${VISUAL}}}$0
+context "math()"
+snippet '((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/' "symbol frac" wrA
+\\frac{`!p snip.rv = match.group(1)`}{$1}$0
 endsnippet
 
-snippet it "Italic" wi
-\it{${1:${VISUAL}}}$0
+priority 1000
+context "math()"
+snippet '^.*\)/' "() frac" wrA
+`!p
+stripped = match.string[:-1]
+depth = 0
+i = len(stripped) - 1
+while True:
+	if stripped[i] == ')': depth += 1
+	if stripped[i] == '(': depth -= 1
+	if depth == 0: break;
+	i-=1
+snip.rv = stripped[0:i] + "\\frac{" + stripped[i+1:-1] + "}"
+`{$1}$0
 endsnippet
 
-snippet un "Underline" wi
-\un{${1:${VISUAL}}}$0
+#+end_src
+*** Parentheses
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+context "math()"
+snippet pr "parenthese" i
+($1)$0
 endsnippet
 
-snippet rm "Text" wi
-\rm{${1:${VISUAL}}}$0
+context "math()"
+snippet abs "valeur absolu et module" iA
+|$1|$0
 endsnippet
 
-snippet itm "Item" wi
-\item ${0:${VISUAL}}
+context "math()"
+snippet norm "norm" iA
+\|$1\|$0
 endsnippet
 
-snippet ceil "Ceil" w
-\left\lceil $1 \right\rceil $0
-endsnippet
-
-snippet floor "Floor" w
-\left\lfloor $1 \right\rfloor$0
-endsnippet
-
-snippet pmat "Pmat" w
-\begin{pmatrix} $1 \end{pmatrix} $0
-endsnippet
-
-snippet bmat "Bmat" w
-\begin{bmatrix} $1 \end{bmatrix} $0
-endsnippet
-
-snippet () "Left( right)" w
+context "math()"
+snippet () "left( right)" iA
 \left( ${1:${VISUAL}} \right) $0
 endsnippet
 
@@ -322,24 +613,103 @@ snippet lr[ "left[ right]" i
 \left[ ${1:${VISUAL}} \right] $0
 endsnippet
 
-snippet lra "leftangle rightangle" wi
+snippet lra "leftangle rightangle" iA
 \left<${1:${VISUAL}} \right>$0
 endsnippet
 
-snippet conj "conjugate" w
-\overline{$1}$0
+context "math()"
+snippet ceil "ceil" iA
+\left\lceil $1 \right\rceil $0
 endsnippet
 
-snippet sum "sum" w
-\sum_{n=${1:1}}^{${2:\infty}} ${3:a_n z^n}
+context "math()"
+snippet floor "floor" iA
+\left\lfloor $1 \right\rfloor $0
 endsnippet
+#+end_src
+*** Matrix
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+snippet pmat "pmat" iA
+\begin{pmatrix} $1 \end{pmatrix} $0
+endsnippet
+
+snippet bmat "bmat" iA
+\begin{bmatrix} $1 \end{bmatrix} $0
+endsnippet
+context "math()"
+
+snippet cvec "column vector" iA
+\begin{pmatrix} ${1:x}_${2:1}\\\\ \vdots\\\\ $1_${2:n} \end{pmatrix}
+endsnippet
+
+snippet ovec "column vector with operation" iA
+\begin{pmatrix} ${1:x}_1 ${2:+} ${3:y}_1\\\\ \vdots\\\\ $1_${4:n} $2 $3_${6:n} \end{pmatrix}
+endsnippet
+
+priority 10
+context "math()"
+snippet vc "vec" iA
+\vec{$1}
+endsnippet
+#+end_src
+*** Sum, product, limit
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+snippet sum "sum" w
+\sum_{${1:n} \ge ${2:0}} $3e
+endsnippet
+
+snippet somme "somme" w
+\sum_{${1:i}=${2:0}}^{${3:+\infty}} $4
+endsnippet
+
+# snippet serie "serie" w
+# \sum_{${1:n} \ge ${2:0}} $3
+# endsnippet
 
 snippet taylor "taylor" w
 \sum_{${1:k}=${2:0}}^{${3:\infty}} ${4:c_$1} (x-a)^$1 $0
 endsnippet
 
 snippet lim "limit" w
-\lim_{${1:n} \to ${2:\infty}}
+\lim_{${1:n} \to ${2:+\infty}}
+endsnippet
+
+context "math()"
+snippet continue "continuité" w
+\forall ${1:\epsilon} > 0,\ \exits ${2:\eta} > 0\  /\ $3 |${4:x}-${5:x_0}|<$2 \implies
+|f($4)-f($5)|<$1
+endsnippet
+
+# snippet continueuni "continuité uniforme" w
+# \forall ${1:y \in V},\ \forall ${2:\epsilon} > 0,\ \exists ${3:\eta} > 0\  /\  ${4:|x-x_0|<\eta} \implies
+# ${4:|f(x)-f(x_0)|<\epsilon}
+# endsnippet
+
+context "math()"
+snippet limfonction "limite d'une fonction" w
+\forall ${1:\epsilon}>0,\ \exists ${2:\eta}>0\ /\ |${3:x}-${4:x_0}| \implies
+|f($3)-l|<$1
+endsnippet
+
+context "math()"
+snippet limsuite "limite d'une suite" w
+\forall ${1:\epsilon}>0,\ \exists ${2:N} \in \N \ /\ \forall n \ge N \implies
+|u_n-l|<$1
+endsnippet
+
+context "math()"
+snippet cauchy "suite de cauchy" w
+\forall ${1:\epsilon}>0,\ \exists ${2:N} \in \N \ /\ \forall ${3:p} \ge ${4:q} \ge N \implies
+|${5:u}_$3-$5_$4|<$1
+endsnippet
+
+context "math()"
+snippet lipsch "lipschitzienne" w
+\forall ${1:x},${2:y} \in ${3:E},\ \exists ${4:k}>0\ /\  |f($1}-f($2)|<$4|$1-$2|
 endsnippet
 
 snippet limsup "limsup" w
@@ -350,209 +720,690 @@ snippet prod "product" w
 \prod_{${1:n=${2:1}}}^{${3:\infty}} ${4:${VISUAL}} $0
 endsnippet
 
-snippet part "d/dx" w
-\frac{\partial ${1:V}}{\partial ${2:x}} $0
+priority 100
+snippet ooo "\infty" iA
+\infty
 endsnippet
 
-snippet ooo "\infty" w
-\infty
+priority 200
+snippet pmooo "\pm \infty" iA
+\pm \infty
+endsnippet
+#+end_src
+*** Puissance
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+context "math()"
+snippet sq "\sqrt{}" iA
+\sqrt{${1:${VISUAL}}} $0
+endsnippet
+
+context "math()"
+snippet sr "^2" iA
+^2
+endsnippet
+
+context "math()"
+snippet cb "^3" iA
+^3
+endsnippet
+
+context "math()"
+snippet td "to the ... power" iA
+^{$1}$0
+endsnippet
+
+context "math()"
+snippet rd "to the ... power" iA
+^{($1)}$0
+endsnippet
+
+context "math()"
+snippet tr "transposé" wi
+\\prescript{${1:t}}{}{$2}
+endsnippet
+#+end_src
+
+#+begin_src python
+#+end_src
+
+*** Indice
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+context "math()"
+snippet '([A-Za-z])(\d)' "auto subscript" wrA
+`!p snip.rv = match.group(1)`_`!p snip.rv = match.group(2)`
+endsnippet
+
+context "math()"
+snippet '([A-Za-z])_(\d\d)' "auto subscript2" wrA
+`!p snip.rv = match.group(1)`_{`!p snip.rv = match.group(2)`}
+endsnippet
+
+snippet __ "subscript" iA
+_{$1}$0
+endsnippet
+
+priority 100
+context "math()"
+snippet st "(un)" iwA
+(${1:u}_${2:n})$0
+endsnippet
+
+priority 200
+context "math()"
+snippet sst "(un)" iA
+(${1:u}_{${2:\phi}(${3:n})})
 endsnippet
 
 snippet rij "mrij" i
 (${1:x}_${2:n})_{${3:$2}\\in${4:\\N}}$0
 endsnippet
 
-snippet => "Implies" w
-\implies
+context "math()"
+snippet xnn "xn" iA
+x_{n}
 endsnippet
 
-snippet =< "Implied by" w
-\impliedby
+context "math()"
+snippet unn "un" iA
+u_{n}
 endsnippet
 
-snippet iff "iff" w
-\iff
+context "math()"
+snippet vnn "vn" iA
+v_{n}
 endsnippet
 
-snippet == "Equals" w
-&= $1 \\\\
+context "math()"
+snippet wnn "wn" iA
+w_{n}
 endsnippet
 
-snippet != "Not Equal" w
-\neq
+context "math()"
+snippet ynn "yn" iA
+y_{n}
 endsnippet
 
-snippet <= "leq" Aw
+context "math()"
+snippet xii "xi" iA
+x_{i}
+endsnippet
+
+context "math()"
+snippet yii "yi" iA
+y_{i}
+endsnippet
+
+context "math()"
+snippet xjj "xj" iA
+x_{j}
+endsnippet
+
+context "math()"
+snippet yjj "yj" iA
+y_{j}
+endsnippet
+
+context "math()"
+snippet xp1 "x" iA
+x_{n+1}
+endsnippet
+
+context "math()"
+snippet up1 "x" iA
+u_{n+1}
+endsnippet
+
+context "math()"
+snippet xmm "x" iA
+x_{m}
+endsnippet
+#+end_src
+*** Ordre
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+snippet <= "leq" iA
 \le
 endsnippet
 
-snippet >= "geq" Aw
+snippet >= "geq" iA
 \ge
 endsnippet
 
-snippet nn "Tikz node" w
-\node[$5] (${1/[^0-9a-zA-Z]//g}${2}) ${3:at (${4:0,0}) }{$${1}$};
-$0
+snippet >> ">>" iA
+\gg
 endsnippet
 
-snippet lll "l" Aw
-\ell
+snippet << "<<" iA
+\ll
+endsnippet
+#+end_src
+*** Intervalle
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+priority 100
+context "math()"
+snippet ff "fermé" iw
+[${1:a},${2:b}]$0
 endsnippet
 
-snippet xx "cross" Aw
-\times
+context "math()"
+snippet fd "fermé à droite" iA
+]${1:a},${2:b}]$0
 endsnippet
 
-snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp)' "ln" rw
+context "math()"
+snippet fg "fermé à gauche" iA
+[${1:a},${2:b}[$0
+endsnippet
+
+context "math()"
+snippet op "ouvert" iA
+]${1:a},${2:b}[$0
+endsnippet
+#+end_src
+*** Set
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+snippet R0+ "R0+" iA
+\\R_+^*
+endsnippet
+
+snippet R0- "R0-" iA
+\\R_-^*
+endsnippet
+
+context "math()"
+snippet mbb "mathbb" iA
+\mathbb{$1}$0
+endsnippet
+
+context "math()"
+snippet mcal "mathcal" iA
+\mathcal{$1}$0
+endsnippet
+
+context "math()"
+snippet mfra "mathfrak" iA
+\mathfrak{$1}$0
+endsnippet
+
+snippet OO "emptyset" iA
+\O
+endsnippet
+
+snippet RR "real" iA
+\R
+endsnippet
+
+snippet CC "complexe" iA
+\C
+endsnippet
+
+snippet QQ "Q" iA
+\Q
+endsnippet
+
+snippet ZZ "Z" iA
+\Z
+endsnippet
+
+snippet letw "soit omega" iA
+Soit $\Omega \subset \C$ un ouvert.
+endsnippet
+
+snippet HH "H" iA
+\mathbb{H}
+endsnippet
+
+snippet DD "D" iA
+\mathbb{D}
+endsnippet
+
+snippet KK "k" iA
+\K
+endsnippet
+
+context "math()"
+snippet quo "ensemble quotient" wA
+${1:\Z}/${2:n\Z}$0
+endsnippet
+
+context "math()"
+snippet PP "ensemble des parties" iA
+\\mathcal{P}(${1:X})
+endsnippet
+#+end_src
+
+#+begin_src python
+#+end_src
+
+*** Set symbol
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+context "math()"
+snippet compl "complementaire" iA
+\complement_{${1:E}}${2:A}
+endsnippet
+
+context "math()"
+snippet tc "complementaire" iA
+^{c}
+endsnippet
+
+context "math()"
+snippet \\\ "setminus" iA
+\setminus
+endsnippet
+
+snippet ~~ "~" iA
+\sim
+endsnippet
+
+context "math()"
+snippet rr "relation" wA
+$1 ${2:\mathfrak{R}} $3
+endsnippet
+
+context "math()"
+snippet set "set" wA
+\\{$1\\} $0
+endsnippet
+
+snippet || "mid" iA
+ \mid
+endsnippet
+
+context "math()"
+snippet cc "subset" Ai
+\subset
+endsnippet
+
+snippet notin "not in " iA
+\not\in
+endsnippet
+
+context "math()"
+snippet inn "in " iA
+\in
+endsnippet
+
+snippet NN "n" iA
+\N
+endsnippet
+
+snippet Nn "cap" iA
+\cap
+endsnippet
+
+snippet UU "cup" iA
+\cup
+endsnippet
+
+snippet uuu "bigcup" iA
+\bigcup_{${1:i \in ${2: I}}}^{${3:\infty}} $0
+endsnippet
+
+snippet nnn "bigcap" iA
+\bigcap_{${1:i \in ${2: I}}}^{${3:\infty}} $0
+endsnippet
+
+context "math()"
+snippet Car "Card" iA
+\\card($1)
+endsnippet
+#+end_src
+*** Function
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+priority 100
+context "math()"
+snippet '(?<!\\)(sin|cos|tan|arccot|cot|csc|ln|log|exp|star|perp)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
-snippet <! "normal" Aw
+priority 200
+context "math()"
+snippet '(?<!\\)(arcsin|arccos|arctan|arccot|arccsc|arcsec|int)' "ln" rwA
+\\`!p snip.rv = match.group(1)`
+endsnippet
+
+context "math()"
+snippet '(?<!\\)(alpha|beta|gamma|delta|zeta|eta|theta|iota|kappa|mu|omicron|pi|rho|sigma|tau|phi|chi|psi|omega)' "greek letter" rwA
+\\`!p snip.rv = match.group(1)`
+endsnippet
+
+context "math()"
+snippet '(?<!\\)(aleph)' "hebrew letter" rwA
+\\`!p snip.rv = match.group(1)`
+endsnippet
+
+context "math()"
+snippet upd "Updelta" iA
+\Updelta
+endsnippet
+
+context "math()"
+snippet eps "epsilon" iA
+\epsilon
+endsnippet
+
+context "math()"
+snippet lb "lambda" iA
+\lambda
+endsnippet
+
+context "math()"
+snippet ups "upsilon" iA
+\upsilon
+endsnippet
+
+context "math()"
+snippet ksi "ksi" iA
+\xi
+endsnippet
+
+context "math()"
+snippet nu "nu" iA
+\nu
+endsnippet
+
+context "math()"
+snippet Omega "Omega" iA
+\Omega
+endsnippet
+
+context "math()"
+snippet rc "function" w
+${1:f}^{-1}(${2:y})
+endsnippet
+
+priority 100
+context "math()"
+snippet fx "function" iA
+${1:f}(${2:x})$0
+endsnippet
+
+priority 200
+context "math()"
+snippet sfun "small function" iA
+${1:f}\\ :\\ ${2:E} \to ${3:F}
+endsnippet
+
+priority 200
+context "math()"
+snippet mfun "medium function" iA
+${1:f}\\ :\\ ${2:E} \to ${3:F},\\ ${4:x} \mapsto $1($4) = $0
+endsnippet
+
+# add small and mid function
+priority 200
+snippet bigfun "Big function" iA
+\begin{align*}
+	$1: $2 &\longrightarrow $3 \\\\
+	$4 &\longmapsto $1($4) = $0
+\end{align*}
+endsnippet
+#+end_src
+*** Letter
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+snippet lll "l" iA
+\ell
+endsnippet
+
+context "math()"
+snippet nabl "nabla" iA
+\nabla
+endsnippet
+
+context "math()"
+snippet xx "cross" iA
+\times
+endsnippet
+
+context "math()"
+snippet rond "composition" iA
+\circ
+endsnippet
+
+priority 100
+snippet ** "cdot" iA
+\cdot
+endsnippet
+
+priority 300
+context "math()"
+snippet dint "integral" wA
+\int_{${1:-\infty}}^{${2:\infty}} ${3:${VISUAL}} $0
+endsnippet
+
+priority 100
+context "math()"
+snippet -> "to" iA
+\to
+endsnippet
+
+priority 200
+context "math()"
+snippet decroit "decroit" iA
+\searrow
+endsnippet
+
+priority 100
+context "math()"
+snippet croit "croit" iA
+\nearrow
+endsnippet
+
+priority 200
+context "math()"
+snippet <-> "leftrightarrow" iA
+\leftrightarrow
+endsnippet
+
+context "math()"
+snippet !> "mapsto" iA
+\mapsto
+endsnippet
+
+context "math()"
+snippet invs "inverse" iA
+^{-1}
+endsnippet
+
+snippet <! "normal" iA
 \triangleleft
 endsnippet
 
-snippet "(\d|\w)+invs" "inverse" Awr
-`!p snip.rv = match.group(1)`^{-1}
+snippet <> "hokje" iA
+\diamond
 endsnippet
 
-snippet !> "mapsto" Aw
-\mapsto
+context "math()"
+snippet '(?<!i)sts' "text subscript" irA
+_\text{$1} $0
+endsnippet
+
+priority 10
+context "math()"
+snippet "bar" "bar" riA
+\overline{$1}$0
+endsnippet
+
+priority 10
+context "math()"
+snippet "bas" "bar du bas" riA
+\underline{$1}$0
+endsnippet
+
+priority 100
+context "math()"
+snippet "([a-zA-Z])bar" "bar" riA
+\overline{`!p snip.rv=match.group(1)`}
+endsnippet
+
+priority 100
+context "math()"
+snippet "([a-zA-Z])bas" "bar du bas" riA
+\underline{`!p snip.rv=match.group(1)`}
+endsnippet
+
+priority 10
+context "math()"
+snippet "hat" "hat" riA
+\hat{$1}$0
+endsnippet
+
+priority 100
+context "math()"
+snippet "([a-zA-Z])hat" "hat" riA
+\hat{`!p snip.rv=match.group(1)`}
+endsnippet
+
+context "math()"
+snippet conj "conjugate" iA
+\overline{$1}$0
+endsnippet
+#+end_src
+*** Misc
+
+#+begin_src python
+# SNIPPET_GROUP Environment
+priority 100
+snippet ... "ldots" iA
+\ldots
+endsnippet
+
+context "math()"
+snippet tt "text" iA
+\text{${1:${VISUAL}}}$0
+endsnippet
+
+snippet tbf "text" iA
+\textbf{${1:${VISUAL}}}$0
+endsnippet
+
+snippet SI "SI" iA
+\SI{$1}{$2}
+endsnippet
+
+snippet ub "underbrace" i
+\\underbrace{${VISUAL}}_{$1}$0
+endsnippet
+
+snippet ob "overbrace" i
+\\overbrace{${VISUAL}}_{$1}$0
+endsnippet
+
+snippet os "overset" i
+\\overset{$1}{${VISUAL}}
+endsnippet
+
+snippet us "underset" i
+\\underset{$1}{${VISUAL}}
+endsnippet
+
+context "math()"
+snippet max "max" iA
+\max\limits_{${1:x \in [a,b]}} $2
+endsnippet
+
+context "math()"
+snippet min "inf" iA
+\min\limits_{${1:x \in [a,b]}} $2
+endsnippet
+
+context "math()"
+snippet sup "inf" iA
+\sup\limits_{${1:x \in [a,b]}} $2
+endsnippet
+
+context "math()"
+snippet inf "inf" iA
+\inf\limits_{${1:x \in [a,b]}} $2
+endsnippet
+
+context "math()"
+snippet pgcd "pgcd" iA
+\pgcd(${1:a},${2:b})
+endsnippet
+
+context "math()"
+snippet ppcm "ppcm" iA
+\ppcm(${1:a},${2:b})
+endsnippet
+
+# context "math()"
+# snippet "quo" "ensemble quotient" iA
+# ${1:\Z}_{/${2:n\Z}}
+# endsnippet
+
+context "math()"
+snippet Cnp "binome de Newton" iA
+C_{${1:n}}^{${2:p}}$0
+endsnippet
+
+context "math()"
+snippet binomeP "formule du binome de Newton avec parenthèse" iA
+\sum_{${1:i}=${2:0}}^{${3:n}} C_$3^$1 ($4)^$1 ($5)^{$3-$1}
+endsnippet
+
+context "math()"
+snippet binomeS "formule du binome de Newton sans parenthèse" iA
+\sum_{${1:i}=${2:0}}^{${3:n}} C_$3^$1 $4^$1 $5^{$3-$1}
+endsnippet
+
+context "math()"
+snippet fact "factoriel" iA
+$1!
+endsnippet
+
+context "math()"
+snippet Re "partie reel" w
+\\Re(${1:z})
+endsnippet
+
+context "math()"
+snippet Im "partie imaginaire" w
+\\Im(${1:z})
+endsnippet
+
+context "math()"
+snippet det "determinant" iA
+\\det($1)
+endsnippet
+
+context "math()"
+snippet trace "trace matrice" iA
+\\trace($1)
 endsnippet
 #+end_src
 
-*** TABLES #
+*** Abbreviation
+*** Derivees
 
 #+begin_src python
-pre_expand "create_table(snip)"
-snippet "gentbl(\d+)x(\d+)" "Generate table of *width* by *height*" r
+# SNIPPET_GROUP Environment
+context "math()"
+snippet Df "Differentielle" iA
+D${1:f}(${2:x})$0
 endsnippet
 
-pre_expand "add_row(snip)"
-snippet "tr(\d+)" "Add table row of dimension ..." r
+snippet part "d/dx" w
+\frac{\partial ${1:v}}{\partial ${2:x}}$0
 endsnippet
-#+end_src
-
-*** POSTFIX #
-
-#+begin_src python
-snippet pac "Package" b
-\usepackage`!p snip.rv='[' if t[1] else ""`${1:options}`!p snip.rv = ']' if t[1] else ""`{${2:package}}$0
-endsnippet
-
-snippet bar "bar" wi
-\bar{${1:${VISUAL}}}$0
-endsnippet
-
-snippet "\<(.*?)\|" "bra" Awri
-\bra{`!p snip.rv = match.group(1).replace('q', f'\psi').replace('f', f'\phi')`}
-endsnippet
-
-snippet "\|(.*?)\>" "ket" Awri
-\ket{`!p snip.rv = match.group(1).replace('q', f'\psi').replace('f', f'\phi')`}
-endsnippet
-
-snippet "(.*)\\bra{(.*?)}([^\|]*?)\>" "braket" Awri
-`!p snip.rv = match.group(1)`\braket{`!p snip.rv = match.group(2)`}{`!p snip.rv = match.group(3).replace('q', f'\psi').replace('f', f'\phi')`}
-endsnippet
-#+end_src
-
-*** PRE-AMBLE #
-
-#+begin_src python
-snippet pac "Package" b
-\usepackage[${1:options}]{${2:package}}$0
-endsnippet
-
-snippet docls "Document Class" bA
-\documentclass{$1}$0
-endsnippet
-
-snippet tmplt "Template"
-\documentclass{article}
-
-\usepackage{import}
-\usepackage{pdfpages}
-\usepackage{transparent}
-\usepackage{xcolor}
-$1
-
-\newcommand{\incfig}[2][1]{%
-		\def\svgwidth{#1\columnwidth}
-		\import{./figures/}{#2.pdf_tex}
-}
-$2
-\pdfsuppresswarningpagegroup=1
-
-\begin{document}
-		$0
-\end{document}
-endsnippet
-#+end_src
-
-*** OTHER #
-
-#+begin_src python
-snippet acl "Acroynm expanded" bi
-\acl{${1:acronym}}
-endsnippet
-
-snippet ac "Acroynm normal" bi
-\ac{${1:acronym}}
-endsnippet
-
-snippet ni "Non-indented paragraph" bi
-\noindent
-endsnippet
-#+end_src
-
-*** SECTIONS #
-
-#+begin_src python
-snippet chap "Chapter" wi
-\chapter{$1${VISUAL}}
-endsnippet
-
-snippet sec "Section" wi
-\section{$1${VISUAL}}
-endsnippet
-
-snippet sec* "Section*" wi
-\section*{$1${VISUAL}}
-endsnippet
-
-snippet sub "Subsection" wi
-\subsection{$1${VISUAL}}
-endsnippet
-
-snippet sub* "Subsection*" wi
-\subsection*{$1${VISUAL}}
-endsnippet
-
-snippet subsub "Subsection" wi
-\subsubsection{$1${VISUAL}}
-endsnippet
-
-snippet subsub* "Subsubsection" wi
-\subsubsection*{$1${VISUAL}}
-endsnippet
-
-snippet par "Paragraph" wi
-\paragraph{$1${VISUAL}}
-endsnippet
-
-snippet par* "Paragraph*" wi
-\paragraph*{$1${VISUAL}}
-endsnippet
-
-snippet subpar "Sub Paragraph" wi
-\subparagraph{$1${VISUAL}}
-endsnippet
-
-snippet subpar* "Sub Paragraph*" wi
-\subparagraph*{$1${VISUAL}}
-endsnippet
-
-# vim:ft=snippets:
+# END_SNIPPET
+# vim:ft=snippets
 #+end_src
 
 ** bibtex
@@ -613,4 +1464,5 @@ snippet inb "In Book reference" b
 }
 $0
 endsnippet
+# vim:ft=snippets
 #+end_src
