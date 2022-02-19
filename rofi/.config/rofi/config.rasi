@@ -1,1 +1,2 @@
-@theme "~/.local/share/rofi/themes/purple.rasi"
+/*-*- mode: css; -*-*/
+@theme "~/.config/rofi/colors-rofi.rasi"

@@ -47,6 +47,7 @@ random() {
     wal -n -i $wallPath
     feh --bg-scale "$(< "$walpath")"
     tmux source ~/.tmux.conf
+    emacsclient -e '(my-load-xresources)'
 }
 
 presetgif() {
