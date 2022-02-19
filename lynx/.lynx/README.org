@@ -4,31 +4,64 @@
 
 * TABLE OF CONTENTS :TOC:
 - [[#lynx-cfg][LYNX CFG]]
-  - [[#introduction][Introduction]]
-  - [[#auxiliary-facilities][Auxiliary Facilities]]
-  - [[#interaction][Interaction]]
-  - [[#internal-behavior][Internal Behavior]]
-  - [[#session-support][Session support]]
-  - [[#character-sets][Character sets]]
-  - [[#timeouts][Timeouts]]
-  - [[#appearance][Appearance]]
-  - [[#html-parsing][HTML parsing]]
-  - [[#cgi-scripts][CGI scripts]]
-  - [[#cookies][Cookies]]
-  - [[#news-groups][News groups]]
-  - [[#bibliographic-protocol][Bibliographic protocol]]
-  - [[#mail-related][Mail related]]
-  - [[#keyboard-input][Keyboard input]]
-  - [[#external-programs][External Programs]]
-  - [[#proxy][Proxy]]
-  - [[#dumpcrawl][Dump/crawl]]
+  - [[#source-code][Source code]]
+  - [[#man][Man]]
 - [[#lynx-lss][LYNX LSS]]
+  - [[#source-code-1][Source code]]
+  - [[#man-1][Man]]
+- [[#source][Source]]
 
 * LYNX CFG
 :PROPERTIES:
-:header-args: :tangle .lynx.cfg
+:header-args: :tangle lynx.cfg
 :END:
-** Introduction
+** Source code
+#+begin_src conf
+STARTFILE:https://rwx.gg
+HELPFILE:https://lynx.invisible-island.net/lynx_help/lynx_help_main.html
+DEFAULT_INDEX_FILE:https://duckduckgo.com/lite
+CHARACTER_SET:iso-8859-1
+LOCALE_CHARSET:TRUE
+PREPEND_CHARSET_TO_SOURCE:FALSE
+PREFERRED_LANGUAGE:en
+NO_PAUSE:TRUE
+SHOW_CURSOR:TRUE
+TRUSTED_EXEC:none
+ALWAYS_TRUSTED_EXEC:none
+SET_COOKIES:FALSE
+ACCEPT_ALL_COOKIES:FALSE
+PERSISTENT_COOKIES:FALSE
+VI_KEYS_ALWAYS_ON:TRUE
+DEFAULT_BOOKMARK_FILE:.lynx_bookmarks.html
+DEFAULT_USER_MODE:ADVANCED
+NO_DOT_FILES:FALSE
+NO_FROM_HEADER:TRUE
+NO_REFERER_HEADER:FALSE
+NO_FILE_REFERER:TRUE
+REFERER_WITH_QUERY:DROP
+QUIT_DEFAULT_YES:TRUE
+MINIMAL_COMMENTS:TRUE
+SCAN_FOR_BURIED_NEWS_REFS:FALSE
+XLOADIMAGE_COMMAND:xdg-open %s &
+KEYMAP:q:ABORT			# Quit without verification
+KEYMAP:0x20:NEXT_PAGE		# Move down to next page
+KEYMAP:0:HOME			# Go to top of current document
+KEYMAP:G:END			# Go to bottom of current document
+KEYMAP:u:ECGOTO		# Edit the current document's URL and go to it
+KEYMAP:/:WHEREIS		# Find a string within the current document
+KEYMAP:n:NEXT			# Find next occurrence of string within document
+KEYMAP:e:EDIT			# Edit current document or form's textarea (call: ^Ve)
+KEYMAP:i:INFO			# Show info about current document
+KEYMAP:d:DOWNLOAD		# Download current link
+COLOR:6:brightred:black
+NESTED_TABLES: false
+EXTERNAL:http:open %s &:TRUE
+TEXTFIELDS_NEED_ACTIVATION:TRUE
+SSL_CERT_FILE:/etc/ssl/certs/ca-certificates.crt
+SYSLOG_REQUESTED_URLS:FALSE
+#+end_src
+** Man
+*** Introduction
 $LynxId: lynx.cfg,v 1.302 2018/07/08 15:22:44 tom Exp $
 lynx.cfg file.
 The default placement for this file is /usr/local/lib/lynx.cfg (Unix)
@@ -70,10 +103,10 @@ is available at https://lynx.invisible-island.net/release/breakout/lynx_help/cat
 
 The conversion is done via the scripts/cfg2html.pl script.
 Several directives beginning with '.' are used for this purpose.
-** Auxiliary Facilities
+*** Auxiliary Facilities
 These settings control the auxiliary navigating facilities of lynx, e.g.,
 jumpfiles, bookmarks, default URLs.
-*** Include
+**** Include
 Starting with Lynx 2.8.1, the lynx.cfg file has a crude "include"
 facility.  This means that you can take advantage of the global lynx.cfg
 while also supplying your own tweaks.
@@ -95,13 +128,13 @@ config-file.
 
 You can also suppress all but specific settings that will be read from
 included files.  This allows sysadmins to provide users the ability to
-customize lynx with options that normally do not affect security, such as
+
 COLOR, VIEWER, KEYMAP.
 
 The syntax is
 :  INCLUDE:filename for <space-separated-list-of-allowed-settings>
 
-**** sample
+***** sample
 : INCLUDE:~/lynx.cfg for COLOR VIEWER KEYMAP
 only one space character should surround the word 'for'.  On Unix systems ':'
 is also accepted as separator.  In that case, the example can be written as
@@ -118,7 +151,7 @@ settings allowed for the included file and settings allowed by nested INCLUDE
 commands.  In short, there is no security hole introduced by including a
 user-defined configuration file if the original list of allowed settings is
 secure.
-*** Startfile
+**** Startfile
 STARTFILE is the default starting URL if none is specified
   on the command line or via a WWW_HOME environment variable;
   Lynx will refuse to start without a starting URL of some kind.
@@ -126,68 +159,65 @@ STARTFILE can be remote, e.g. http://www.w3.org/default.html ,
                or local, e.g. file://localhost/PATH_TO/FILENAME ,
           where PATH_TO is replaced with the complete path to FILENAME
           using Unix shell syntax and including the device on VMS.
-#
+
 Normally we expect you will connect to a remote site, e.g., the Lynx starting
 site:
-STARTFILE:https://rwx.gg
-#
+: STARTFILE:https://rwx.gg
+
 As an alternative, you may want to use a local URL.  A good choice for this is
 the user's home directory:
-.ex
-#STARTFILE:file://localhost/~/
-#
+: STARTFILE:file://localhost/~/
+
 Your choice of STARTFILE should reflect your site's needs, and be a URL that
 you can connect to reliably.  Otherwise users will become confused and think
 that they cannot run Lynx.
-*** Helpfile
+**** Helpfile
 HELPFILE must be defined as a URL and must have a
 complete path if local:
-file://localhost/PATH_TO/lynx_help/lynx_help_main.html
+: file://localhost/PATH_TO/lynx_help/lynx_help_main.html
   Replace PATH_TO with the path to the lynx_help subdirectory
   for this distribution (use SHELL syntax including the device
   on VMS systems).
 The default HELPFILE is:
-.url https://lynx.invisible-island.net/lynx_help/lynx_help_main.html
+: .url https://lynx.invisible-island.net/lynx_help/lynx_help_main.html
   This should be changed to the local path.
 This definition will be overridden if the "LYNX_HELPFILE" environment
 variable has been set.
-#
-HELPFILE:https://lynx.invisible-island.net/lynx_help/lynx_help_main.html
-.ex
-#HELPFILE:file://localhost/PATH_TO/lynx_help/lynx_help_main.html
-*** Default index file
+
+: HELPFILE:file://localhost/PATH_TO/lynx_help/lynx_help_main.html
+**** Default index file
 DEFAULT_INDEX_FILE is the default file retrieved when the
 user presses the 'I' key when viewing any document.
 An index to your CWIS can be placed here or a document containing
 pointers to lots of interesting places on the web.
-#
-DEFAULT_INDEX_FILE:https://duckduckgo.com/lite
-*** Jumpfile
+
+: DEFAULT_INDEX_FILE:https://duckduckgo.com/lite
+**** Jumpfile
 JUMPFILE is the local file checked for short-cut names for URLs when
 the user presses the 'j' (JUMP) key.  The file contains an HTML
 definition list (DL).  The definition titles (DT) are used as
 short-cut name; the definition data (DD) are URLs.
-#
+
 There is an example jumps file in the samples subdirectory.
-#
+
 After pressing 'j', the user will be prompted to enter a short-cut
 name for an URL, which Lynx will then follow in a similar manner to
 'g'oto; alternatively, s/he can enter '?' to view the full JUMPFILE
 list of short-cuts with associated URLs.
-#
+
 If the URL contains one or more "%s" markers, Lynx will prompt the user
 for text to fill in for each marker.  If no text is given, the jump is
 cancelled.
-#
+
 If not defined here or in userdefs.h, the JUMP command will invoke the
 NO_JUMPFILE statusline message (see LYMessages_en.h ).
-#
+
 To allow '?' to work, include in the JUMPFILE
 a short-cut to the JUMPFILE itself, e.g.
 <dt>?<dd><a href="file://localhost/path/jumps.html">This Shortcut List</a>
-#
+
 On VMS, use Unix SHELL syntax (including a lead slash) to define it.
-#
+
 Alternate jumps files can be defined and mapped to keys here.  If the
 keys have already been mapped, then those mappings will be replaced,
 but you should leave at least one key mapped to the default jumps
@@ -195,19 +225,19 @@ file.  You optionally may include a statusline prompt string for the
 mapping.  You must map upper and lowercase keys separately (beware of
 mappings to keys which the user can further remap via the 'o'ptions
 menu).  The format is:
-#
-#	JUMPFILE:path:key[:prompt]
-#
+
+:	JUMPFILE:path:key[:prompt]
+
 where path should begin with a '/' (i.e., not include file://localhost).
 Any white space following a prompt string will be trimmed, and a single
 space will be added by Lynx.
-#
+
 In the following line, include the actual full local path to JUMPFILE,
 but do not include 'file://localhost' in the line.
-#JUMPFILE:/FULL_LOCAL_PATH/jumps.html
-.ex
-#JUMPFILE:/Lynx_Dir/ips.html:i:IP or Interest group (? for list):
-*** Jumpbuffer
+: JUMPFILE:/FULL_LOCAL_PATH/jumps.html
+
+: JUMPFILE:/Lynx_Dir/ips.html:i:IP or Interest group (? for list):
+**** Jumpbuffer
 Set JUMPBUFFER to TRUE if you want to have the previous jump target,
 if any, offered for reuse or editing when using the 'J'ump command.
 The default is defined in userdefs.h.  If left FALSE, the circular
@@ -219,9 +249,9 @@ defined, any random URLs used instead of shortcuts will be stored in the
 goto URL buffer, not in the shortcuts buffer(s), and the single character
 ':' can be used as a target to invoke the goto URL buffer (as if 'g'oto
 followed by Up-Arrow had been entered).
-#
-#JUMPBUFFER:FALSE
-*** default bookmark file
+
+: JUMPBUFFER:FALSE
+**** default bookmark file
 DEFAULT_BOOKMARK_FILE is the filename used for storing personal bookmarks.
 It will be prepended by the user's home directory.
 NOTE that a file ending in .html or other suffix mapped to text/html
@@ -237,9 +267,9 @@ The user can re-define the default bookmark file, as well as a set
 of sub-bookmark files if multiple bookmark file support is enabled
 (see below), via the 'o'ptions menu, and can save those definitions
 in the .lynxrc file.
-#
-DEFAULT_BOOKMARK_FILE:.lynx_bookmarks.html
-*** multi bookmark support
+
+: DEFAULT_BOOKMARK_FILE:.lynx_bookmarks.html
+**** multi bookmark support
 If MULTI_BOOKMARK_SUPPORT is set TRUE, and BLOCK_MULTI_BOOKMARKS (see
 below) is FALSE, and sub-bookmarks exist, all bookmark operations will
 first prompt the user to select an active sub-bookmark file or the
@@ -258,26 +288,26 @@ default) bookmark file has been defined (define additional ones via the
 'o'ptions menu).  The startup default, however set, can be overridden on
 the command line via the -restrictions=multibook or the -anonymous or
 -validate switches.
-#
-#MULTI_BOOKMARK_SUPPORT:FALSE
-*** block multi bookmarks
+
+: MULTI_BOOKMARK_SUPPORT:FALSE
+**** block multi bookmarks
 If BLOCK_MULTI_BOOKMARKS is set TRUE, multiple bookmark support will
 be forced off, and cannot to toggled on via the 'o'ptions menu.  The
 compilation setting is normally FALSE, and can be overridden here.
 It can also be set via the -restrictions=multibook or the -anonymous
 or -validate command line switches.
-#
-#BLOCK_MULTI_BOOKMARKS:FALSE
-** Interaction
-*** Go to buffer
+
+: BLOCK_MULTI_BOOKMARKS:FALSE
+*** Interaction
+**** Go to buffer
 Set GOTOBUFFER to TRUE if you want to have the previous goto URL,
 if any, offered for reuse or editing when using the 'g'oto command.
 The default is defined in userdefs.h.  If left FALSE, the circular
 buffer of previously entered goto URLs can still be invoked via the
 Up-Arrow or Down-Arrow keys after entering the 'g'oto command.
-#
-#GOTOBUFFER:FALSE
-*** Jump prompt
+
+: GOTOBUFFER:FALSE
+**** Jump prompt
 JUMP_PROMPT is the default statusline prompt for selecting a jumps file
 shortcut.  (see below).
 You can change the prompt here from that defined in userdefs.h.  Any
@@ -286,9 +316,9 @@ following the last non-white character.  You must set the default prompt
 before setting the default jumps file (below).  If a default jumps file
 was set via userdefs.h, and you change the prompt here, you must set the
 default jumps file again (below) for the change to be implemented.
-#
-#JUMP_PROMPT:Jump to (use '?' for list):
-*** URL domain pre/suffixes
+
+: JUMP_PROMPT:Jump to (use '?' for list):
+**** URL domain pre/suffixes
 URL_DOMAIN_PREFIXES and URL_DOMAIN_SUFFIXES are strings which will be
 prepended (together with a scheme://) and appended to the first element
 of command line or 'g'oto arguments which are not complete URLs and
@@ -309,34 +339,34 @@ http://www.nyu.edu without testing www.nyu.com).  Lynx will try to
 guess the scheme based on the first field of the expanded host name,
 and use "http://" as the default (e.g., gopher.wfbr.edu or gopher.wfbr.
 will be made gopher://gopher.wfbr.edu).
-#
-#URL_DOMAIN_PREFIXES:www.
-#URL_DOMAIN_SUFFIXES:.com,.edu,.net,.org
-*** Forms options
+
+: URL_DOMAIN_PREFIXES:www.
+: URL_DOMAIN_SUFFIXES:.com,.edu,.net,.org
+**** Forms options
 Toggle whether the Options Menu is key-based or form-based;
 the key-based version is available only if specified at compile time.
-#FORMS_OPTIONS:TRUE
-*** Partial
+: FORMS_OPTIONS:TRUE
+**** Partial
 Display partial pages while downloading
-#PARTIAL:TRUE
-*** Partial threshold
+: PARTIAL:TRUE
+**** Partial threshold
 Set the threshold of lines Lynx must render before it
 redraws the screen in PARTIAL mode.  Anything < 0 implies
 use of the screen size.
-#PARTIAL_THRES:-1
-*** Show kb rate
+: PARTIAL_THRES:-1
+**** Show kb rate
 While getting large files, Lynx shows the approximate rate of transfer.
 Set this to change the units shown.  "Kilobytes" denotes 1024 bytes:
-#	NONE to disable the display of transfer rate altogether.
-#	TRUE or KB for Kilobytes/second.
-#	FALSE or BYTES for bytes/second.
-#	KB,ETA to show Kilobytes/second with estimated completion time.
-#	BYTES,ETA to show BYTES/second with estimated completion time.
-#	KB2,ETA to show Kilobytes/second with estimated completion time using 2-digits.
-#	BYTES2,ETA to show BYTES/second with estimated completion time using 2-digits.
+- 	NONE to disable the display of transfer rate altogether.
+- 	TRUE or KB for Kilobytes/second.
+- 	FALSE or BYTES for bytes/second.
+- 	KB,ETA to show Kilobytes/second with estimated completion time.
+- 	BYTES,ETA to show BYTES/second with estimated completion time.
+- 	KB2,ETA to show Kilobytes/second with estimated completion time using 2-digits.
+- 	BYTES2,ETA to show BYTES/second with estimated completion time using 2-digits.
 Note that the "ETA" values are available if USE_READPROGRESS was defined.
-#SHOW_KB_RATE:TRUE
-*** Show kb name
+: SHOW_KB_RATE:TRUE
+**** Show kb name
 Set the abbreviation for Kilobytes (1024).
 Quoting from
 .url http://www.romulus2.com/articles/guides/misc/bitsbytes.shtml
@@ -347,11 +377,11 @@ prefixes for binary multiples made up of only the first two letters of the
 metric prefixes and adding the first two letters of the word "binary".  Thus,
 for instance, instead of Kilobyte (KB) or Gigabyte (GB), the new terms would
 be kibibyte (KiB) or gibibyte (GiB).
-#
+
 If you prefer using the conventional (and more common) "KB", modify this
 setting.
-#SHOW_KB_NAME:KiB
-*** scrollbar
+: SHOW_KB_NAME:KiB
+**** scrollbar
 These settings control interaction of the user with lynx.
 
 If SCROLLBAR is set TRUE, Lynx will show scrollbar on windows.  With mouse
@@ -359,43 +389,41 @@ enabled, the scrollbar strip outside the bar is clickable, and scrolls the
 window by pages.  The appearance of the scrollbar can be changed from
 LYNX_LSS file:  define attributes scroll.bar, scroll.back (for the bar, and
 for the strip along which the scrollbar moves).
-#SCROLLBAR:FALSE
-*** scrollbar arrow
+: SCROLLBAR:FALSE
+**** scrollbar arrow
 If SCROLLBAR_ARROW is set TRUE, Lynx's scrollbar will have arrows at the
 ends.  With mouse enabled, the arrows are clickable, and scroll the window by
 2 lines.  The appearance of the scrollbar arrows can be changed from LYNX_LSS
 file:  define attributes scroll.arrow, scroll.noarrow (for enabled-arrows,
 and disabled arrows).  An arrow is "disabled" if the bar is at this end of
 the strip.
-#SCROLLBAR_ARROW:TRUE
-*** use mouse
+: SCROLLBAR_ARROW:TRUE
+**** use mouse
 If Lynx is configured with ncurses, PDcurses or slang & USE_MOUSE is TRUE,
 users can perform commands by left-clicking certain parts of the screen:
-  on a link = `g'oto + ACTIVATE (i.e., move highlight & follow the link);
-  on the top/bottom lines = PREV/NEXT_PAGE (i.e., go up/down 1 page);
-  on the top/bottom left corners = PREV/NEXT_DOC (i.e., go to the previous
-  document / undo goto previous document);
-  on the top/bottom right corners = HISTORY/VLINKS (i.e., call up the history
-  page or visited links page if on history page).
+- on a link = `g'oto + ACTIVATE (i.e., move highlight & follow the link);
+- on the top/bottom lines = PREV/NEXT_PAGE (i.e., go up/down 1 page);
+- on the top/bottom left corners = PREV/NEXT_DOC (i.e., go to the previous document / undo goto previous document);
+- on the top/bottom right corners = HISTORY/VLINKS (i.e., call up the history page or visited links page if on history page).
 NB if the mouse is defined in this way, it will not be available
 for copy/paste operations using the clipboard of a desktop manager:
 for flexibility instead, use the command-line switch  -use_mouse .
-#
+
 ncurses and slang have built-in support for the xterm mouse protocol.  In
 addition, ncurses can be linked with the gpm mouse library, to automatically
 provide support for this interface in applications such as Lynx.  (Please
 read the ncurses faq to work around broken gpm configurations packaged by
 some distributors).  PDCurses implements mouse support for win32 console
 windows, as does slang.
-#USE_MOUSE:FALSE
-*** default user mode
-DEFAULT_USER_MODE sets the default user mode for Lynx users.
-NOVICE shows a three line help message at the bottom of the screen.
-INTERMEDIATE shows normal amount of help (one line).
-ADVANCED help is replaced by the URL of the current link.
-#
-DEFAULT_USER_MODE:ADVANCED
-*** no dot files
+: USE_MOUSE:FALSE
+**** default user mode
+- DEFAULT_USER_MODE sets the default user mode for Lynx users.
+- NOVICE shows a three line help message at the bottom of the screen.
+- INTERMEDIATE shows normal amount of help (one line).
+- ADVANCED help is replaced by the URL of the current link.
+
+: DEFAULT_USER_MODE:ADVANCED
+**** no dot files
 If NO_DOT_FILES is TRUE (normal default via userdefs.h), the user will not
 be allowed to specify files beginning with a dot in reply to output filename
 prompts, and files beginning with a dot (e.g., file://localhost/path/.lynxrc)
@@ -403,16 +431,16 @@ will not be included in the directory browser's listings.  If set FALSE, you
 can force it to be treated as TRUE via -restrictions=dotfiles.  If set FALSE
 and not forced TRUE, the user can regulate it via the 'o'ptions menu (and
 may save the preference in the RC file).
-#
-NO_DOT_FILES:FALSE
-*** quit default yes
+
+: NO_DOT_FILES:FALSE
+**** quit default yes
 If QUIT_DEFAULT_YES is TRUE then when the QUIT command is entered, any
 response other than n or N will confirm.  It should be FALSE if you
 prefer the more conservative action of requiring an explicit Y or y to
 confirm.  The default defined here will override that in userdefs.h.
-#
-QUIT_DEFAULT_YES:TRUE
-*** textfields need activation
+
+: QUIT_DEFAULT_YES:TRUE
+**** textfields need activation
 If TEXTFIELDS_NEED_ACTIVATION is set to TRUE, and lynx was compiled with
 TEXTFIELDS_MAY_NEED_ACTIVATION defined, then text input form fields need
 to be activated (by pressing the Enter key or similar) before the user
@@ -423,54 +451,54 @@ special meaning in the line editor - ' ', 'b', INS, DEL, etc), and don't
 want to 'get stuck' in form fields.  Instead of setting the option here,
 explicit activation can also be requested with the -tna command line
 option.
-#
-TEXTFIELDS_NEED_ACTIVATION:TRUE
-*** leftarrow in textfield prompt
+
+: TEXTFIELDS_NEED_ACTIVATION:TRUE
+**** leftarrow in textfield prompt
 LEFTARROW_IN_TEXTFIELD_PROMPT
 This option controls what happens when a Left Arrow key is pressed while
 in the first position of an active text input field.  By default, Lynx
 asks for confirmation ("Do you want to go back to the previous document?")
 only if the contents of the fields have been changed since entering it.
 If set to TRUE, the confirmation prompt is always issued.
-#
-#LEFTARROW_IN_TEXTFIELD_PROMPT:FALSE
-*** force ssl prompt
+
+: LEFTARROW_IN_TEXTFIELD_PROMPT:FALSE
+**** force ssl prompt
 If FORCE_SSL_PROMPT is set to "yes", then questionable conditions, such as
 self-signed certificates will be ignored.  If set to "no", these will be
 reported, but not attempted.  The default "prompt" permits the user to make
 this choice on a case-by-case basis.
-#
-#FORCE_SSL_PROMPT:PROMPT
-*** force cookie prompt
+
+: FORCE_SSL_PROMPT:PROMPT
+**** force cookie prompt
 If FORCE_COOKIE_PROMPT is set to "yes", then questionable conditions, such as
 cookies with invalid syntax will be ignored.  If set to "no", these will be
 reported, but not attempted.  The default "prompt" permits the user to make
 this choice on a case-by-case basis.
-#
-#FORCE_COOKIE_PROMPT:PROMPT
-*** ssl cert file
+
+: FORCE_COOKIE_PROMPT:PROMPT
+**** ssl cert file
 Set SSL_CERT_FILE to the file that contains all valid CA certificates lynx
 should accept, in case the $SSL_CERT_FILE environment variable is not set,
 e.g.,
-#
-SSL_CERT_FILE:/etc/ssl/certs/ca-certificates.crt
-#SSL_CERT_FILE:NULL
-*** ssl client cert file
+
+: SSL_CERT_FILE:/etc/ssl/certs/ca-certificates.crt
+: SSL_CERT_FILE:NULL
+**** ssl client cert file
 Set SSL_CLIENT_CERT_FILE to the file that contains a client certificate
 (in PEM format) in case the $SSL_CLIENT_CERT_FILE environment variable is
 not set, e.g.,
-#
-#SSL_CLIENT_CERT_FILE:/home/qux/certs/cert.crt
-#SSL_CLIENT_CERT_FILE:NULL
-*** ssl client key file
+
+: SSL_CLIENT_CERT_FILE:/home/qux/certs/cert.crt
+: SSL_CLIENT_CERT_FILE:NULL
+**** ssl client key file
 Set SSL_CLIENT_KEY_FILE to the file that contains a client certificate
 key (in PEM format), in case the $SSL_CLIENT_KEY_FILE environment variable
 is not set, e.g.,
-#
-#SSL_CLIENT_KEY_FILE:/home/qux/certs/cert.key
-#SSL_CLIENT_KEY_FILE:NULL
-** Internal Behavior
-*** Save space
+
+: SSL_CLIENT_KEY_FILE:/home/qux/certs/cert.key
+: SSL_CLIENT_KEY_FILE:NULL
+*** Internal Behavior
+**** Save space
 If SAVE_SPACE is defined, it will be used as a path prefix for the
 suggested filename in "Save to Disk" operations from the 'p'rint or
 'd'ownload menus.  On VMS, you can use either VMS (e.g., "SYS$LOGIN:")
@@ -480,9 +508,9 @@ must use Unix syntax.  If the symbol is not defined, or is zero-length
 current default directory will be suggested.
 This definition will be overridden if a "LYNX_SAVE_SPACE" environment
 variable has been set on Unix, or logical has been defined on VMS.
-#
-#SAVE_SPACE:~/foo/
-*** Reuse tmp files
+
+: SAVE_SPACE:~/foo/
+**** Reuse tmp files
 Lynx uses temporary files for (among other purposes) the content of
 various user interface pages.  REUSE_TEMPFILES changes the behavior
 for some of these temp files, among them pages shown for HISTORY,
@@ -499,27 +527,26 @@ of e.g. the VLINKS page cached in memory (but still only the most recently
 generated one is kept as a file), resulting in sometimes less surprising
 behaviour when returning to such a page via HISTORY or PREV_DOC functions
 (most users will not encounter and notice this difference).
-#
-#REUSE_TEMPFILES:FALSE
-*** Lynx host name
+
+: REUSE_TEMPFILES:FALSE
+**** Lynx host name
 If LYNX_HOST_NAME is defined here or in userdefs.h, it will be
 treated as an alias for the local host name in checks for URLs on
 the local host (e.g., when the -localhost switch is set), and this
 host name, "localhost", and HTHostName (the fully qualified domain
 name of the system on which Lynx is running) will all be passed as
 local.  A different definition here will override that in userdefs.h.
-#
-#LYNX_HOST_NAME:www.cc.ukans.edu
-*** Localhost alias
+
+: LYNX_HOST_NAME:www.cc.ukans.edu
+**** Localhost alias
 Any LOCALHOST_ALIAS definitions also will be accepted as local when
 the -localhost switch is set.  These need not actually be local, i.e.,
 in contrast to LYNX_HOST_NAME, you can define them to trusted hosts at
 other Internet sites.
-#
-.ex 2
-#LOCALHOST_ALIAS:gopher.server.domain
-#LOCALHOST_ALIAS:news.server.domain
-*** Local domain
+
+: LOCALHOST_ALIAS:gopher.server.domain
+: LOCALHOST_ALIAS:news.server.domain
+**** Local domain
 LOCAL_DOMAIN is used for a tail match with the ut_host element of
 the utmp or utmpx structure on systems with utmp capabilities, to
 determine if a user is local to your campus or organization when
@@ -527,61 +554,61 @@ handling -restrictions=inside_foo or outside_foo settings for ftp,
 news, telnet/tn3270 and rlogin URLs.  An "inside" user is assumed
 if your system does not have utmp capabilities.  CHANGE THIS here
 if it was not changed in userdefs.h at compilation time.
-#
-#LOCAL_DOMAIN:ukans.edu
-*** default cache size and virtual memory size
+
+: LOCAL_DOMAIN:ukans.edu
+**** default cache size and virtual memory size
 The DEFAULT_CACHE_SIZE specifies the number of WWW documents to be
 cached in memory at one time.
-#
+
 This so-called cache size (actually, number) is defined in userdefs.h and
 may be modified here and/or with the command line argument -cache=NUMBER
 The minimum allowed value is 2, for the current document and at least one
 to fetch, and there is no absolute maximum number of cached documents.
 On Unix, and VMS not compiled with VAXC, whenever the number is exceeded
 the least recently displayed document will be removed from memory.
-#
+
 On VMS compiled with VAXC, the DEFAULT_VIRTUAL_MEMORY_SIZE specifies the
 amount (bytes) of virtual memory that can be allocated and not yet be freed
 before previous documents are removed from memory.  If the values for both
 the DEFAULT_CACHE_SIZE and DEFAULT_VIRTUAL_MEMORY_SIZE are exceeded, then
 the least recently displayed documents will be freed until one or the other
 value is no longer exceeded.  The default value is defined in userdefs.h.
-#
+
 The Unix and VMS (but not VAXC) implementations use the C library malloc's
 and calloc's for memory allocation, but procedures for taking the actual
 amount of cache into account still need to be developed.  They use only
 the DEFAULT_CACHE_SIZE value, and that specifies the absolute maximum
 number of documents to cache (rather than the maximum number only if
 DEFAULT_VIRTUAL_MEMORY_SIZE has been exceeded, as with VAXC/VAX).
-#
-#DEFAULT_CACHE_SIZE:10
-#DEFAULT_VIRTUAL_MEMORY_SIZE:512000
-*** source cache
+
+: DEFAULT_CACHE_SIZE:10
+: DEFAULT_VIRTUAL_MEMORY_SIZE:512000
+**** source cache
 SOURCE_CACHE sets the source caching behavior for Lynx:
-#
-FILE causes Lynx to keep a temporary file for each cached document
+
+- FILE causes Lynx to keep a temporary file for each cached document
   containing the HTML source of the document, which it uses to regenerate
   the document when certain settings are changed (for instance,
   historical vs. minimal vs. valid comment parsing) instead of reloading
   the source from the network.
-#
-MEMORY is like FILE, except the document source is kept in memory.  You
+
+- MEMORY is like FILE, except the document source is kept in memory.  You
   may wish to adjust DEFAULT_CACHE_SIZE and DEFAULT_VIRTUAL_MEMORY_SIZE
   accordingly.
-#
-NONE is the default; the document source is not cached, and is reloaded
+
+- NONE is the default; the document source is not cached, and is reloaded
   from the network when needed.
-#
-#SOURCE_CACHE:NONE
-*** source cache for aborted
+
+: SOURCE_CACHE:NONE
+**** source cache for aborted
 This setting controls what will happen with cached source for the document
 being fetched from the net if fetching was aborted (either user pressed
 'z' or network went down). If set to KEEP, the source fetched so far will
 be preserved (and used as cache), if set to DROP lynx will drop the
 source cache for that document (i.e. only completely downloaded documents
 will be cached in that case).
-#SOURCE_CACHE_FOR_ABORTED:DROP
-*** always resubmit posts
+: SOURCE_CACHE_FOR_ABORTED:DROP
+**** always resubmit posts
 If ALWAYS_RESUBMIT_POSTS is set TRUE, Lynx always will resubmit forms
 with method POST, dumping any cache from a previous submission of the
 form, including when the document returned by that form is sought with
@@ -590,27 +617,27 @@ forms with method POST when a submit button or a submitting text input
 is activated, but normally retrieves the previously returned document
 if it had links which you activated, and then go back with the PREV_DOC
 command or via the history list.
-#
+
 The default defined here or in userdefs.h can be toggled via
 the -resubmit_forms command line switch.
-#
-#ALWAYS_RESUBMIT_POSTS:FALSE
-*** trim input fields
+
+: ALWAYS_RESUBMIT_POSTS:FALSE
+**** trim input fields
 If TRIM_INPUT_FIELDS is set TRUE, Lynx will trim trailing whitespace (e.g.,
 space, tab, carriage return, line feed and form feed) from the text entered
 into form text and textarea fields.  Older versions of Lynx do this trimming
 unconditionally, but other browsers do not, which would yield different
 behavior for CGI scripts.
-#TRIM_INPUT_FIELDS:FALSE
-*** mail system error logging
+: TRIM_INPUT_FIELDS:FALSE
+**** mail system error logging
  MAIL_SYSTEM_ERROR_LOGGING will send a message to the owner of
  the information, or ALERTMAIL if there is no owner, every time
  that a document cannot be accessed!
-#
+
  NOTE:  This can generate A LOT of mail, be warned.
-#
-#MAIL_SYSTEM_ERROR_LOGGING:FALSE
-*** checkmail
+
+: MAIL_SYSTEM_ERROR_LOGGING:FALSE
+**** checkmail
 If CHECKMAIL is set to TRUE, the user will be informed (via a statusline
 message) about the existence of any unread mail at startup of Lynx, and
 will get statusline messages if subsequent new mail arrives.  If a jumps
@@ -618,7 +645,7 @@ file with a lynxprog URL for invoking mail is available, or your html
 pages include an mail launch file URL, the user thereby can access mail
 and read the messages.  The checks and statusline reports will not be
 performed if Lynx has been invoked with the -restrictions=mail switch.
-#
+
 VMS USERS !!!
 =============
 New mail is normally broadcast as it arrives, via "unsolicited screen
@@ -626,18 +653,18 @@ broadcasts", which can be "wiped" from the Lynx display via the Ctrl-W
 command.  You may prefer to disable the broadcasts and use CHECKMAIL
 instead (e.g., in a public account which will be used by people who
 are ignorant about VMS).
-#
-#CHECKMAIL:FALSE
-*** no from header
+
+: CHECKMAIL:FALSE
+**** no from header
 If NO_FROM_HEADER is set FALSE, From headers will be sent in transmissions
 to http or https servers if the personal_mail_address has been defined via
 the 'o'ptions menu.  The compilation default is TRUE (no From header is
 sent) and the default can be changed here.  The default can be toggled at
 run time via the -from switch.  Note that transmissions of From headers
 have become widely considered to create an invasion of privacy risk.
-#
-NO_FROM_HEADER:TRUE
-*** no referer header
+
+: NO_FROM_HEADER:TRUE
+**** no referer header
 If NO_REFERER_HEADER is TRUE, Referer headers never will be sent in
 transmissions to servers.  Lynx normally sends the URL of the document
 from which the link was derived, but not for startfile URLs, 'g'oto
@@ -645,18 +672,18 @@ URLs, 'j'ump shortcuts, bookmark file links, history list links, or
 URLs that include the content from form submissions with method GET.
 If left FALSE here, it can be set TRUE at run time via the -noreferer
 switch.
-#
-NO_REFERER_HEADER:FALSE
-*** no file referer
+
+: NO_REFERER_HEADER:FALSE
+**** no file referer
 If NO_FILE_REFERER is TRUE, Referer headers never will be sent in
 transmissions to servers for links or actions derived from documents
 or forms with file URLs.  This ensures that paths associated with
 the local file system are never indicated to servers, even if
 NO_REFERER_HEADER is FALSE.  If set to FALSE here, it can still be
 set TRUE at run time via the -nofilereferer switch.
-#
-NO_FILE_REFERER:TRUE
-*** referer with query
+
+: NO_FILE_REFERER:TRUE
+**** referer with query
 REFERER_WITH_QUERY controls what happens when the URL in a Referer
 header to be sent would contain a query part in the form of a '?'
 character followed by one or more attribute=value pairs.  Query parts
@@ -666,7 +693,7 @@ through a site, an thus should not be put in a Referer header (which may
 get sent to an unrelated third-party site).  On the other hand, some
 sites (improperly) rely on browsers sending Referer headers, even when
 the user is coming from a page whose URL has a query part.
-#
+
 If REFERER_WITH_QUERY is SEND, full Referer headers will be sent
 including the query part (unless sending of Referer is disabled in
 general, see NO_REFERER_HEADER above).  If REFERER_WITH_QUERY is
@@ -676,9 +703,9 @@ those sites that check only whether the user arrived at a page from an
 "outside" link.  If REFERER_WITH_QUERY is set to DROP (or anything else
 unrecognized), the default, no Referer header is sent at all in this
 situation.
-#
-REFERER_WITH_QUERY:DROP
-*** auto uncache dirlists
+
+: REFERER_WITH_QUERY:DROP
+**** auto uncache dirlists
 AUTO_UNCACHE_DIRLISTS determines when local file directory listings are
 automatically regenerated (by re-reading the actual directory from disk).
 Set the value to 0 to avoid automatic regeneration in most cases.  This is
@@ -693,9 +720,9 @@ file with the ACTIVATE key.  This option is only honored in DIRED mode (i.e.
 when lynx is compiled with DIRED_SUPPORT and it is not disabled with a
 -restriction).  Local directories displayed without DIRED normally act as if
 AUTO_UNCACHE_DIRLISTS:0 was in effect.
-#
-#AUTO_UNCACHE_DIRLISTS:2
-*** nonrestarting sigwinch
+
+: AUTO_UNCACHE_DIRLISTS:2
+**** nonrestarting sigwinch
 Some systems only:
 #===================
 Lynx tries to detect window size changes with a signal handler for
@@ -712,21 +739,21 @@ variable DISPLAY defined *at program start*, and equivalent to FALSE
 otherwise.  The non-restarting behavior can also be changed to TRUE
 or FALSE with the -nonrestarting_sigwinch switch, which overrides the
 value in this file.
-#
+
 Note that Lynx never re-parses document text purely as a result of a
 window size change, so text lines may appear truncated after narrowing
 the window, until the document is reloaded with ^R or a similar key
 or until a different text is loaded.
-#
+
 The default is FALSE since there is a possibility that non-restarting
 interrupts may be mis-interpreted as fatal input errors in some
 configurations (leading to an abrupt program exit), and since this
 option is useful mostly only for users running Lynx under xterm or a
 similar X terminal emulator.  On systems where the preconditions don't
 apply this option is ignored.
-#
-#NONRESTARTING_SIGWINCH:FALSE
-*** no forcer core dump
+
+: NONRESTARTING_SIGWINCH:FALSE
+**** no forcer core dump
 Unix ONLY:
 #===========
 If NO_FORCED_CORE_DUMP is set to TRUE, Lynx will not force
@@ -738,29 +765,27 @@ the -core command line switch.
 Note that this setting cannot be used to prevent core dumps
 with certainty.  If this is important, means provided by the
 operating system or kernel should be used.
-#
-#NO_FORCED_CORE_DUMP:FALSE
-*** rule, rulefile
+
+: NO_FORCED_CORE_DUMP:FALSE
+**** rule, rulefile
 CERN-style rules, EXPERIMENTAL  -  URL-specific rules
-#
+
 A CERN-style rules file can be given with RULESFILE.  Use the system's
 native format for filenames, on Unix '~' is also recognized.  If a filename
 is given, the file must exist.
-#
+
 Single CERN-style rules can be specified with RULES.
-#
+
 Both options can be repeated, rules accumulate in the order
 given, they will be applied in first-to-last order.  See cernrules.txt
 in the samples subdirectory for further explanation.
-#
-Examples:
-.ex 5
-#	RULESFILE:/etc/lynx/cernrules
-#	RULE:Fail	gopher:*		     reject by scheme
-#	RULE:Pass	finger://*@localhost/	     allow this,
-#	RULE:Fail	finger:*		     but not others
-#	RULE:Redirect	http://old.server/*	http://new.server/*
-*** FTP passive
+
+: 	RULESFILE:/etc/lynx/cernrules
+: 	RULE:Fail	gopher:*		     reject by scheme
+: 	RULE:Pass	finger://*@localhost/	     allow this,
+: 	RULE:Fail	finger:*		     but not others
+: 	RULE:Redirect	http://old.server/*	http://new.server/*
+**** FTP passive
 These settings control internal lynx behavior - the way it interacts with the
 operating system and Internet.  Modifying these settings will not change
 the rendition of documents that you browse with lynx, but can change various
@@ -768,8 +793,8 @@ delays and resource utilization.
 
 Set FTP_PASSIVE to TRUE if you want to use passive mode ftp transfers.
 You might have to do this if you're behind a restrictive firewall.
-#FTP_PASSIVE:TRUE
-*** enable LYNXRC
+: FTP_PASSIVE:TRUE
+**** enable LYNXRC
 The forms-based O'ptions menu shows a (!) marker beside items which are not
 saved to ~/.lynxrc -- the reason for disabling some of these items is that
 they are likely to cause confusion if they are read from the .lynxrc file for
@@ -780,95 +805,96 @@ is chosen where possible to correspond with lynx.cfg).  Use "OFF" to disable
 writing a setting, "ON" to enable it.  Settings are read from .lynxrc after
 the corresponding data from lynx.cfg, so they override lynx.cfg, which is
 probably what users expect.
-#
+
 Note that a few settings (Cookies and Show images) are comprised of more than
 one lynx.cfg setting.
-.nf
-#ENABLE_LYNXRC:ACCEPT_ALL_COOKIES:ON
-#ENABLE_LYNXRC:ASSUME_CHARSET:OFF
-#ENABLE_LYNXRC:AUTO_SESSION:OFF
-#ENABLE_LYNXRC:BOOKMARK_FILE:ON
-#ENABLE_LYNXRC:CASE_SENSITIVE_SEARCHING:ON
-#ENABLE_LYNXRC:CHARACTER_SET:ON
-#ENABLE_LYNXRC:COLLAPSE_BR_TAGS:ON
-#ENABLE_LYNXRC:COOKIE_ACCEPT_DOMAINS:ON
-#ENABLE_LYNXRC:COOKIE_FILE:ON
-#ENABLE_LYNXRC:COOKIE_LOOSE_INVALID_DOMAINS:ON
-#ENABLE_LYNXRC:COOKIE_QUERY_INVALID_DOMAINS:ON
-#ENABLE_LYNXRC:COOKIE_REJECT_DOMAINS:ON
-#ENABLE_LYNXRC:COOKIE_STRICT_INVALID_DOMAIN:ON
-#ENABLE_LYNXRC:DIR_LIST_STYLE:ON
-#ENABLE_LYNXRC:DISPLAY:OFF
-#ENABLE_LYNXRC:EMACS_KEYS:ON
-#ENABLE_LYNXRC:FILE_EDITOR:ON
-#ENABLE_LYNXRC:FILE_SORTING_METHOD:ON
-#ENABLE_LYNXRC:FORCE_COOKIE_PROMPT:OFF
-#ENABLE_LYNXRC:FORCE_SSL_PROMPT:OFF
-#ENABLE_LYNXRC:FTP_PASSIVE:OFF
-#ENABLE_LYNXRC:HTML5_CHARSETS:OFF
-#ENABLE_LYNXRC:HTTP_PROTOCOL:1.0
-#ENABLE_LYNXRC:KBLAYOUT:ON
-#ENABLE_LYNXRC:KEYPAD_MODE:ON
-#ENABLE_LYNXRC:LINEEDIT_MODE:ON
-#ENABLE_LYNXRC:LOCALE_CHARSET:ON
-#ENABLE_LYNXRC:MAKE_LINKS_FOR_ALL_IMAGES:OFF
-#ENABLE_LYNXRC:MAKE_PSEUDO_ALTS_FOR_INLINES:OFF
-#ENABLE_LYNXRC:MULTI_BOOKMARK:ON
-#ENABLE_LYNXRC:NO_PAUSE:OFF
-#ENABLE_LYNXRC:PERSONAL_MAIL_ADDRESS:ON
-#ENABLE_LYNXRC:PREFERRED_CHARSET:ON
-#ENABLE_LYNXRC:PREFERRED_ENCODING:OFF
-#ENABLE_LYNXRC:PREFERRED_LANGUAGE:ON
-#ENABLE_LYNXRC:PREFERRED_MEDIA_TYPES:OFF
-#ENABLE_LYNXRC:RAW_MODE:OFF
-#ENABLE_LYNXRC:RUN_ALL_EXECUTION_LINKS:ON
-#ENABLE_LYNXRC:RUN_EXECUTION_LINKS_LOCAL:ON
-#ENABLE_LYNXRC:SCROLLBAR:OFF
-#ENABLE_LYNXRC:SELECT_POPUPS:ON
-#ENABLE_LYNXRC:SEND_USERAGENT:OFF
-#ENABLE_LYNXRC:SESSION_FILE:OFF
-#ENABLE_LYNXRC:SET_COOKIES:OFF
-#ENABLE_LYNXRC:SHOW_COLOR:ON
-#ENABLE_LYNXRC:SHOW_CURSOR:ON
-#ENABLE_LYNXRC:SHOW_DOTFILES:ON
-#ENABLE_LYNXRC:SHOW_KB_RATE:OFF
-#ENABLE_LYNXRC:SUB_BOOKMARKS:ON
-#ENABLE_LYNXRC:TAGSOUP:OFF
-#ENABLE_LYNXRC:UNDERLINE_LINKS:OFF
-#ENABLE_LYNXRC:USER_MODE:ON
-#ENABLE_LYNXRC:USERAGENT:OFF
-#ENABLE_LYNXRC:VERBOSE_IMAGES:ON
-#ENABLE_LYNXRC:VI_KEYS:ON
-#ENABLE_LYNXRC:VISITED_LINKS:ON
-.fi
-*** broken FTP retr
+
+#+begin_example
+ENABLE_LYNXRC:ACCEPT_ALL_COOKIES:ON
+ENABLE_LYNXRC:ASSUME_CHARSET:OFF
+ENABLE_LYNXRC:AUTO_SESSION:OFF
+ENABLE_LYNXRC:BOOKMARK_FILE:ON
+ENABLE_LYNXRC:CASE_SENSITIVE_SEARCHING:ON
+ENABLE_LYNXRC:CHARACTER_SET:ON
+ENABLE_LYNXRC:COLLAPSE_BR_TAGS:ON
+ENABLE_LYNXRC:COOKIE_ACCEPT_DOMAINS:ON
+ENABLE_LYNXRC:COOKIE_FILE:ON
+ENABLE_LYNXRC:COOKIE_LOOSE_INVALID_DOMAINS:ON
+ENABLE_LYNXRC:COOKIE_QUERY_INVALID_DOMAINS:ON
+ENABLE_LYNXRC:COOKIE_REJECT_DOMAINS:ON
+ENABLE_LYNXRC:COOKIE_STRICT_INVALID_DOMAIN:ON
+ENABLE_LYNXRC:DIR_LIST_STYLE:ON
+ENABLE_LYNXRC:DISPLAY:OFF
+ENABLE_LYNXRC:EMACS_KEYS:ON
+ENABLE_LYNXRC:FILE_EDITOR:ON
+ENABLE_LYNXRC:FILE_SORTING_METHOD:ON
+ENABLE_LYNXRC:FORCE_COOKIE_PROMPT:OFF
+ENABLE_LYNXRC:FORCE_SSL_PROMPT:OFF
+ENABLE_LYNXRC:FTP_PASSIVE:OFF
+ENABLE_LYNXRC:HTML5_CHARSETS:OFF
+ENABLE_LYNXRC:HTTP_PROTOCOL:1.0
+ENABLE_LYNXRC:KBLAYOUT:ON
+ENABLE_LYNXRC:KEYPAD_MODE:ON
+ENABLE_LYNXRC:LINEEDIT_MODE:ON
+ENABLE_LYNXRC:LOCALE_CHARSET:ON
+ENABLE_LYNXRC:MAKE_LINKS_FOR_ALL_IMAGES:OFF
+ENABLE_LYNXRC:MAKE_PSEUDO_ALTS_FOR_INLINES:OFF
+ENABLE_LYNXRC:MULTI_BOOKMARK:ON
+ENABLE_LYNXRC:NO_PAUSE:OFF
+ENABLE_LYNXRC:PERSONAL_MAIL_ADDRESS:ON
+ENABLE_LYNXRC:PREFERRED_CHARSET:ON
+ENABLE_LYNXRC:PREFERRED_ENCODING:OFF
+ENABLE_LYNXRC:PREFERRED_LANGUAGE:ON
+ENABLE_LYNXRC:PREFERRED_MEDIA_TYPES:OFF
+ENABLE_LYNXRC:RAW_MODE:OFF
+ENABLE_LYNXRC:RUN_ALL_EXECUTION_LINKS:ON
+ENABLE_LYNXRC:RUN_EXECUTION_LINKS_LOCAL:ON
+ENABLE_LYNXRC:SCROLLBAR:OFF
+ENABLE_LYNXRC:SELECT_POPUPS:ON
+ENABLE_LYNXRC:SEND_USERAGENT:OFF
+ENABLE_LYNXRC:SESSION_FILE:OFF
+ENABLE_LYNXRC:SET_COOKIES:OFF
+ENABLE_LYNXRC:SHOW_COLOR:ON
+ENABLE_LYNXRC:SHOW_CURSOR:ON
+ENABLE_LYNXRC:SHOW_DOTFILES:ON
+ENABLE_LYNXRC:SHOW_KB_RATE:OFF
+ENABLE_LYNXRC:SUB_BOOKMARKS:ON
+ENABLE_LYNXRC:TAGSOUP:OFF
+ENABLE_LYNXRC:UNDERLINE_LINKS:OFF
+ENABLE_LYNXRC:USER_MODE:ON
+ENABLE_LYNXRC:USERAGENT:OFF
+ENABLE_LYNXRC:VERBOSE_IMAGES:ON
+ENABLE_LYNXRC:VI_KEYS:ON
+ENABLE_LYNXRC:VISITED_LINKS:ON
+#+end_example
+**** broken FTP retr
 Some ftp servers are known to have a broken implementation of RETR.  If asked
 to retrieve a directory, they get confused and fails subsequent commands such
 as CWD and LIST.  Workaround: reconnect after a failed RETR, which is slow.
-#
+
 Each BROKEN_FTP_RETR gives a string match for the reported FTP server version
-#BROKEN_FTP_RETR:ProFTPD 1.2.5
-#BROKEN_FTP_RETR:spftp/
-*** broken FTP epsv
+: BROKEN_FTP_RETR:ProFTPD 1.2.5
+: BROKEN_FTP_RETR:spftp/
+**** broken FTP epsv
 Some ftp servers are known to have a broken implementation of EPSV.  The
 server will hang for a long time when we attempt to connect after issuing
 this command.   Workaround: do not use EPSV, just use PASV.
-#
+
 Each BROKEN_FTP_EPSV gives a string match for the reported FTP server version
-#BROKEN_FTP_EPSV:(Version wu-2.6.2-12)
-*** status buffer size
+: BROKEN_FTP_EPSV:(Version wu-2.6.2-12)
+**** status buffer size
 STATUS_BUFFER_SIZE controls the size of the buffer used for the LYNXMESSAGES
 special url.
-#
+
 The default size is 40.
-#STATUS_BUFFER_SIZE:40
-*** max uri size
+: STATUS_BUFFER_SIZE:40
+**** max uri size
 MAX_URI_SIZE controls the size of the buffer used for parsing URIs, e.g., the
 HREF value in an anchor.
-#
+
 The default size is 8192.
-#MAX_URI_SIZE:8192
-*** track internal links
+: MAX_URI_SIZE:8192
+**** track internal links
 With `internal links' (links within a document to a location within the same
 document) enabled, Lynx will distinguish between, for example, `<A
 HREF="foo#frag">' and `<A HREF="#frag">' within a document whose URL is
@@ -879,24 +905,25 @@ URL-references as suggested by RFC 2396, and to prevent mistaken
 resubmissions of form content with the POST method.  An alternate opinion
 asserts that the feature could actually result in inappropriate resubmission
 of form content.
-#TRACK_INTERNAL_LINKS:FALSE
-*** HTTP protocol
+: TRACK_INTERNAL_LINKS:FALSE
+**** HTTP protocol
 Normally Lynx negotiates HTTP/1.0, because it does not support chunked
 transfer (a requirement for all HTTP/1.1 clients), although it supports
 several other features of HTTP/1.1.  You may encounter a server which does
 not support HTTP/1.0 which can be used by switching to the later protocol.
-#HTTP_PROTOCOL:1.0
-*** guess scheme
+: HTTP_PROTOCOL:1.0
+**** guess scheme
 When true, Lynx may fill in a missing "scheme" for URIs which you provide.
 This is different from URL_DOMAIN_PREFIXES and URL_DOMAIN_SUFFIXES.
-#
+
 If no "scheme" (such as "http:", "ftp:") is given in a URI, Lynx first checks
 if there is a corresponding local file which can be accessed directly.
 Failing that, Lynx may inspect the URI to see if it begins with a prefix
 which implies a scheme.
-#
+
 Lynx uses these schemes for the corresponding prefixes:
-#
+
+#+begin_example
 cso:
  "cso."
  "ns."
@@ -913,50 +940,51 @@ nntp:
   "nntp."
 wais:
  "wais."
+#+end_example
 #
 The default value FALSE disables this guess, telling Lynx to just assume that
 "http:" was intended.
-#GUESS_SCHEME:FALSE
-** Session support
-*** Auto session
+: GUESS_SCHEME:FALSE
+*** Session support
+**** Auto session
 If AUTO_SESSION is TRUE lynx will save/restore useful information about
 your browsing history when closing/starting current lynx session if
 no command-line session switches override this setting.
 This setting is useful only if SESSION_FILE is defined here or in the user's
 .lynxrc file.
-#
-#AUTO_SESSION:FALSE
-*** Session file
+
+: AUTO_SESSION:FALSE
+**** Session file
 SESSION_FILE defines the file name where lynx will store user sessions.
 This setting is used only when AUTO_SESSION is true.
 Note: the default setting will store/resume each session in a different
 folder under same file name (if that is allowed by operating system)
 when lynx is invoked from different directories.
 (The current working directory may be changed inside lynx)
-#
+
 If you want to use the same session file wherever you invoke Lynx,
 enter the full path below, eg '/home/<username>/.lynx_session'.
-#
+
 If you do not want this feature, leave the setting commented.
 Users can still customize SESSION_FILE and AUTO_SESSION via
 their .lynxrc file.
-#
-#SESSION_FILE:lynx_session
-*** Session limit
+
+: SESSION_FILE:lynx_session
+**** Session limit
 SESSION_LIMIT defines maximum number of:  searched strings, goto URLs,
 visited links and history entries which will be saved in session file.  The
 minimum allowed is 1, the maximum is 10000.
-#
+
 For instance, if SESSION_LIMIT is 250, a per-session limit of 250 entries of
 searched strings, goto URLs, visited links and history entries will be saved
 in the session file.
-#
+
 There is no fixed limit on the number of entries which can be restored;
 It is limited only by available memory.
-#
-#SESSION_LIMIT:250
-** Character sets
-*** Character set
+
+: SESSION_LIMIT:250
+*** Character sets
+**** Character set
 CHARACTER_SET defines the display character set, i.e., assumed to be
 installed on the user's terminal.  It determines which characters or strings
 will be used to represent 8-bit character entities within HTML.  New
@@ -973,15 +1001,15 @@ language or group of languages besides MIME name).  Not all 'human-readable'
 names correspond to exactly one valid MIME charset (example is "Chinese");
 in that case an appropriate valid (and more specific) MIME name should be
 used where required.  Well-known synonyms are also processed in the code.
-#
+
 Raw (CJK) mode
-#
+
 Lynx normally translates characters from a document's charset to display
 charset, using ASSUME_CHARSET value (see below) if the document's charset
 is not specified explicitly.  Raw (CJK) mode is OFF for this case.
 When the document charset is specified explicitly, that charset
 overrides any assumption like ASSUME_CHARSET or raw (CJK) mode.
-#
+
 For the Asian (CJK) display character sets, the corresponding charset is
 assumed in documents, i.e., raw (CJK) mode is ON by default.  In raw CJK
 mode, 8-bit characters are not reverse translated in relation to the entity
@@ -989,30 +1017,28 @@ conversion arrays, i.e., they are assumed to be appropriate for the display
 character set.  The mode should be toggled OFF when an Asian (CJK) display
 character set is selected but the document is not CJK and its charset not
 specified explicitly.
-#
+
 Raw (CJK) mode may be toggled by user via '@' (LYK_RAW_TOGGLE) key,
 the -raw command line switch or from the 'o'ptions menu.
-#
+
 Raw (CJK) mode effectively changes the charset assumption about unlabeled
 documents.  You can toggle raw mode ON if you believe the document has a
 charset which does correspond to your Display Character Set.  On the other
 hand, if you set ASSUME_CHARSET the same as Display Character Set you get raw
 mode ON by default (but you get assume_charset=iso-8859-1 if you try raw mode
 OFF after it).
-#
+
 Note that "raw" does not mean that every byte will be passed to the screen.
 HTML character entities may get expanded and translated, inappropriate
 control characters filtered out, etc.  There is a "Transparent" pseudo
 character set for more "rawness".
-#
+
 Since Lynx now supports a wide range of platforms it may be useful to note
 the cpXXX codepages used by IBM PC compatible computers, and windows-xxxx
 used by native MS-Windows apps.  We also note that cpXXX pages rarely are
 found on Internet, but are mostly for local needs on DOS.
-**** recognized character sets
-Recognized character sets include:
-#
-.nf
+***** recognized character sets include
+#+begin_example
    string for 'O'ptions Menu          MIME name
    ===========================        =========
    7 bit approximations (US-ASCII)    us-ascii
@@ -1062,42 +1088,42 @@ Recognized character sets include:
    RFC 1345 w/o Intro                 mnemonic+ascii+0
    RFC 1345 Mnemonic                  mnemonic
    Transparent                        x-transparent
-.fi
-#
+#+end_example
+
 The value should be the MIME name of a character set recognized by
 Lynx (case insensitive).
 Find RFC 1345 at
 .url http://tools.ietf.org/html/rfc1345
-#
-CHARACTER_SET:iso-8859-1
-*** Locale charset
+
+: CHARACTER_SET:iso-8859-1
+**** Locale charset
 LOCALE_CHARSET overrides CHARACTER_SET if true, using the current locale to
 lookup a MIME name that corresponds, and use that as the display charset.
-#
+
 It also modifies the default value for ASSUME_CHARSET; it does not override
 that setting.
-#
+
 Note that while nl_langinfo(CODESET) itself is standardized, the return
 values and their relationship to the locale value is not.  GNU libiconv
 happens to give useful values, but other implementations are not guaranteed
 to do this.
-#LOCALE_CHARSET:FALSE
-LOCALE_CHARSET:TRUE
-*** HTML5 charsets
+: LOCALE_CHARSET:FALSE
+: LOCALE_CHARSET:TRUE
+**** HTML5 charsets
 HTML5_CHARSETS is an alternative to ASSUME_CHARSET and ASSUME_LOCAL_CHARSET.
 Those assume by default that the character set of an HTML document is (as is
 standard in HTML4) ISO-8859-1, in the absence of locale information.
-#
+
 HTML5 introduces a "compatibility" (sic) feature which assumes that the
 default is Windows 1252.  In the same way, it equates ISO-8859-4 and Windows
 1254.  Finally, it also makes recommendations which selectively reinterpret
 the locale encoding.
-#
+
 This option currently implements only the equating of ISO-8859-1 and Windows
 1252.
-#
-#HTML5_CHARSETS:FALSE
-*** Assume charset
+
+: HTML5_CHARSETS:FALSE
+**** Assume charset
 ASSUME_CHARSET changes the handling of documents which do not
 explicitly specify a charset.  Normally Lynx assumes that 8-bit
 characters in those documents are encoded according to iso-8859-1
@@ -1108,49 +1134,48 @@ See above on how this interacts with "raw mode" and the Display
 Character Set.
 ASSUME_CHARSET can also be changed via the 'o'ptions menu but will
 not be saved as permanent value in user's .lynxrc file to avoid more chaos.
-#
-#ASSUME_CHARSET:iso-8859-1
-*** Assumed doc charset choice / Display charset choice
+
+: ASSUME_CHARSET:iso-8859-1
+**** Assumed doc charset choice / Display charset choice
 It is possible to reduce the number of charset choices in the 'O'ptions menu
 for "display charset" and "assumed document charset" fields via
 DISPLAY_CHARSET_CHOICE and ASSUMED_DOC_CHARSET_CHOICE settings correspondingly.
 Each of these settings can be used several times to define the set of possible
 choices for corresponding field. The syntax for the values is
-#
-#	string | prefix* | *
-#
+
+: 	string | prefix* | *
+
 where
-#
-#	'string' is either the MIME name of charset or it's full name (listed
-#		either in the left or in the right column of table of
-#		recognized charsets), case-insensitive - e.g.  'Koi8-R' or
-#		'Cyrillic (KOI8-R)' (both without quotes),
-#
-#	'prefix' is any string, and such value will select all charsets having
-#		the name with prefix matching given (case insensitive), i.e.,
-#		for the charsets listed in the table of recognized charsets,
-#
-.ex
-ASSUMED_DOC_CHARSET_CHOICE:cyrillic*
-#		will be equal to specifying
-.ex 4
-ASSUMED_DOC_CHARSET_CHOICE:cp866
-ASSUMED_DOC_CHARSET_CHOICE:windows-1251
-ASSUMED_DOC_CHARSET_CHOICE:koi8-r
-ASSUMED_DOC_CHARSET_CHOICE:iso-8859-5
-#		or lines with full names of charsets.
-#
-#	literal string '*' (without quotes) will enable all charset choices
-#		in corresponding field.  This is useful for overriding site
-#		defaults in private pieces of lynx.cfg included via INCLUDE
-#		directive.
-#
+
+	'string' is either the MIME name of charset or it's full name (listed
+		either in the left or in the right column of table of
+		recognized charsets), case-insensitive - e.g.  'Koi8-R' or
+		'Cyrillic (KOI8-R)' (both without quotes),
+
+	'prefix' is any string, and such value will select all charsets having
+		the name with prefix matching given (case insensitive), i.e.,
+		for the charsets listed in the table of recognized charsets,
+
+:ASSUMED_DOC_CHARSET_CHOICE:cyrillic*
+		will be equal to specifying
+
+: ASSUMED_DOC_CHARSET_CHOICE:cp866
+: ASSUMED_DOC_CHARSET_CHOICE:windows-1251
+: ASSUMED_DOC_CHARSET_CHOICE:koi8-r
+: ASSUMED_DOC_CHARSET_CHOICE:iso-8859-5
+		or lines with full names of charsets.
+
+	literal string '*' (without quotes) will enable all charset choices
+		in corresponding field.  This is useful for overriding site
+		defaults in private pieces of lynx.cfg included via INCLUDE
+		directive.
+
 Default values for both settings are '*', but any occurrence of settings
 with values that denote any charsets will make only listed choices available
 for corresponding field.
-#ASSUMED_DOC_CHARSET_CHOICE:*
-#DISPLAY_CHARSET_CHOICE:*
-*** Assume local charset
+: ASSUMED_DOC_CHARSET_CHOICE:*
+: DISPLAY_CHARSET_CHOICE:*
+**** Assume local charset
 ASSUME_LOCAL_CHARSET is like ASSUME_CHARSET but only applies to local
 files.  If no setting is given here or by an -assume_local_charset
 command line option, the value for ASSUME_CHARSET or -assume_charset
@@ -1159,9 +1184,9 @@ This option will ignore "raw mode" toggling when local files are viewed
 (it is "stronger" than "assume_charset" or the effective change
 of the charset assumption caused by changing "raw mode"),
 so only use when necessary.
-#
-#ASSUME_LOCAL_CHARSET:iso-8859-1
-*** Prepend charset to source
+
+: ASSUME_LOCAL_CHARSET:iso-8859-1
+**** Prepend charset to source
 PREPEND_CHARSET_TO_SOURCE:TRUE tells Lynx to prepend a META CHARSET line
 to text/html source files when they are retrieved for 'd'ownloading
 or passed to 'p'rint functions, so HTTP headers will not be lost.
@@ -1173,9 +1198,9 @@ It is generally desirable to have charset information for every local
 html file, but META CHARSET string potentially could cause
 compatibility problems with other browsers, see also PREPEND_BASE_TO_SOURCE.
 Note that the prepending is not done for -source dumps.
-#
-PREPEND_CHARSET_TO_SOURCE:FALSE
-*** NCR in bookmarks
+
+: PREPEND_CHARSET_TO_SOURCE:FALSE
+**** NCR in bookmarks
 NCR_IN_BOOKMARKS:TRUE allows you to save 8-bit characters in bookmark titles
 in the unicode format (NCR).  This may be useful if you need to switch
 display charsets frequently.  This is the case when you use Lynx on different
@@ -1185,25 +1210,25 @@ Another aspect is compatibility:  NCR is part of I18N and HTML4.0
 specifications supported starting with Lynx 2.7.2, Netscape 4.0 and MSIE 4.0.
 Older browser versions will fail so keep NCR_IN_BOOKMARKS:FALSE if you
 plan to use them.
-#
-#NCR_IN_BOOKMARKS:FALSE
-*** Force 8bit toupper
+
+: NCR_IN_BOOKMARKS:FALSE
+**** Force 8bit toupper
 FORCE_8BIT_TOUPPER overrides locale settings and uses internal 8-bit
 case-conversion mechanism for case-insensitive searches in non-ASCII display
 character sets.  It is FALSE by default and should not be changed unless
 you encounter problems with case-insensitive searches.
-#
-#FORCE_8BIT_TOUPPER:FALSE
-*** Outgoing mail charset
+
+: FORCE_8BIT_TOUPPER:FALSE
+**** Outgoing mail charset
 While Lynx supports different platforms and display character sets
 we need to limit the charset in outgoing mail to reduce
 trouble for remote recipients who may not recognize our charset.
 You may try US-ASCII as the safest value (7 bit), any other MIME name,
 or leave this field blank (default) to use the display character set.
 Charset translations currently are implemented for mail "subjects= " only.
-#
-#OUTGOING_MAIL_CHARSET:
-*** Assume unrec charset
+
+: OUTGOING_MAIL_CHARSET:
+**** Assume unrec charset
 If Lynx encounters a charset parameter it doesn't recognize, it will
 replace the value given by ASSUME_UNREC_CHARSET (or a corresponding
 -assume_unrec_charset command line option) for it.  This can be used
@@ -1211,18 +1236,18 @@ to deal with charsets unknown to Lynx, if they are "sufficiently
 similar" to one that Lynx does know about, by forcing the same
 treatment.  There is no default, and you probably should leave this
 undefined unless necessary.
-#
-#ASSUME_UNREC_CHARSET:iso-8859-1
-*** Preferred language
+
+: ASSUME_UNREC_CHARSET:iso-8859-1
+**** Preferred language
 PREFERRED_LANGUAGE is the language in MIME notation (e.g., "en",
 "fr") which will be indicated by Lynx in its Accept-Language headers
 as the preferred language.  If available, the document will be
 transmitted in that language.  Users can override this setting via
 the 'o'ptions menu and save that preference in their RC file.
 This may be a comma-separated list of languages in decreasing preference.
-#
-PREFERRED_LANGUAGE:en
-*** Preferred charset
+
+: PREFERRED_LANGUAGE:en
+**** Preferred charset
 PREFERRED_CHARSET specifies the character set in MIME notation (e.g.,
 "ISO-8859-2", "ISO-8859-5") which Lynx will indicate you prefer in
 requests to http servers using an Accept-Charsets header.  Users can
@@ -1237,49 +1262,49 @@ according to the Accept-Charset header, then the server SHOULD send
 an error response with the 406 (not acceptable) status code, though
 the sending of an unacceptable response is also allowed.  See RFC 2068
 .url http://tools.ietf.org/html/rfc2068
-#
-#PREFERRED_CHARSET:
-*** Charset directory
+
+: PREFERRED_CHARSET:
+**** Charset directory
 CHARSETS_DIRECTORY specifies the directory with the fonts (glyph data)
 used by Lynx to switch the display-font to a font best suited for the
 given document.  The font should be in a format understood by the
 platforms TTY-display-font-switching API.  Currently supported on OS/2 only.
-#
+
 Lynx expects the glyphs for the charset CHARSET with character cell
 size HHHxWWW to be stored in a file HHHxWWW/CHARSET.fnt inside the directory
 specified by CHARSETS_DIRECTORY.  E.g., the font for koi8-r sized 14x9
 should be in the file 14x9/koi8-r.fnt.
-#
-#CHARSETS_DIRECTORY:
-*** Charset switch rules
+
+: CHARSETS_DIRECTORY:
+**** Charset switch rules
 CHARSET_SWITCH_RULES hints lynx on how to choose the best display font given
 the document encoding.  This string is a sequence of chunks, each chunk
 having the following form:
-#
+
 IN_CHARSET1 IN_CHARSET2 ... IN_CHARSET5 :OUT_CHARSET
-#
+
 For readability, one may insert arbitrary additional punctuation (anything
 but : is ignored).  E.g., if lynx is able to switch only to display charsets
 cp866, cp850, cp852, and cp862, then the following setting may be useful
 (split for readability):
-#
-CHARSET_SWITCH_RULES: koi8-r ISO-8859-5 windows-1251 cp866u KOI8-U :cp866,
-#	iso-8859-1 windows-1252 ISO-8859-15 :cp850,
-#	ISO-8859-2 windows-1250 :cp852,
-#	ISO-8859-8 windows-1255 :cp862
-#
-#CHARSET_SWITCH_RULES:
-*** message language
+
+: CHARSET_SWITCH_RULES: koi8-r ISO-8859-5 windows-1251 cp866u KOI8-U :cp866,
+- 	iso-8859-1 windows-1252 ISO-8859-15 :cp850,
+- 	ISO-8859-2 windows-1250 :cp852,
+- 	ISO-8859-8 windows-1255 :cp862
+
+: CHARSET_SWITCH_RULES:
+**** message language
 MESSAGE_LANGUAGE can be set to set the LANG environment variable explicitly.
 This is mainly useful in non-Unix environments, e.g., Windows, since normally
 LC_ALL is set, overriding LANG (as well as the more apt LC_MESSAGES variable).
-#MESSAGE_LANGUAGE:
-*** conv jisx0201kana
+: MESSAGE_LANGUAGE:
+**** conv jisx0201kana
 If CONV_JISX0201KANA is set, Lynx will convert JIS X0201 Kana to JIS X0208
 Kana, i.e., convert half-width kana to full-width.
-#CONV_JISX0201KANA:TRUE
-** Timeouts
-*** infosecs, messagesecs, alertsecs and no pause
+: CONV_JISX0201KANA:TRUE
+*** Timeouts
+**** infosecs, messagesecs, alertsecs and no pause
 The following definitions set the number of seconds for
 pauses following statusline messages that would otherwise be
 replaced immediately, and are more important than the unpaused
@@ -1292,35 +1317,35 @@ report a serious problem and should be paused long enough to read
 whenever they appear (typically unexpectedly).  The default values
 are defined in userdefs.h, and can be modified here should longer
 pauses be desired for braille-based access to Lynx.
-#
+
 SVr4-curses implementations support time delays in milliseconds,
 hence the value may be given shorter, e.g., 0.5
-#
+
 Use the NO_PAUSE option (like the command-line -nopause) to override
 all of the delay times.
-#
-#INFOSECS:1
-#MESSAGESECS:2
-#ALERTSECS:3
-NO_PAUSE:TRUE
-*** Debugsecs
+
+: INFOSECS:1
+: MESSAGESECS:2
+: ALERTSECS:3
+: NO_PAUSE:TRUE
+**** Debugsecs
 Set DEBUGSECS to a nonzero value to slow down progress messages
 (see "-delay" option).
-#DEBUGSECS:0
-*** Replaysecs
+: DEBUGSECS:0
+**** Replaysecs
 Set REPLAYSECS to a nonzero value to allow for slow replaying of
 command scripts (see "-cmd_script" option).
-#REPLAYSECS:0
-*** connect timeout
+: REPLAYSECS:0
+**** connect timeout
 Specifies (in seconds) connect timeout. Default value is rather huge.
-#CONNECT_TIMEOUT:18000
-*** read timeout
+: CONNECT_TIMEOUT:18000
+**** read timeout
 Specifies (in seconds) read-timeout. Default value is rather huge.
-#READ_TIMEOUT:18000
-** Appearance
+: READ_TIMEOUT:18000
+*** Appearance
 These settings control the appearance of Lynx's screen and the way
 Lynx renders some tags.
-*** Use select popups
+**** Use select popups
 If USE_SELECT_POPUPS is set FALSE, Lynx will present a vertical list of
 radio buttons for the OPTIONs in SELECT blocks which lack the MULTIPLE
 attribute, instead of using a popup menu.  Note that if the MULTIPLE
@@ -1329,9 +1354,9 @@ vertical list of checkboxes for the OPTIONs.
 The default defined here or in userdefs.h can be changed via the 'o'ptions
 menu and saved in the RC file, and always can be toggled via the -popup
 command line switch.
-#
-#USE_SELECT_POPUPS:TRUE
-*** Show cursor
+
+: USE_SELECT_POPUPS:TRUE
+**** Show cursor
 SHOW_CURSOR controls whether or not the cursor is hidden or appears
 over the current link in documents or the current option in popups.
 Showing the cursor is handy if you are a sighted user with a poor
@@ -1342,77 +1367,77 @@ LINKS_ARE_NUMBERED.
 The default defined here or in userdefs.h can be changed via the
 'o'ptions menu and saved in the RC file, and always can be toggled
 via the -show_cursor command line switch.
-#
-SHOW_CURSOR:TRUE
+
+: SHOW_CURSOR:TRUE
 Underline links
 UNDERLINE_LINKS controls whether links are underlined by default, or shown
 in bold.  Normally this default is set from the configure script.
-#
-#UNDERLINE_LINKS:FALSE
-*** bold headers
+
+: UNDERLINE_LINKS:FALSE
+**** bold headers
 If BOLD_HEADERS is set to TRUE the HT_BOLD default style will be acted
 On Unix, compilation with -DUNDERLINE_LINKS also will apply to the
 HT_BOLD style for headers when BOLD_HEADERS is TRUE.
-#
-#BOLD_HEADERS:FALSE
+
+: BOLD_HEADERS:FALSE
 
 default is FALSE.  On Unix, compilation with -DUNDERLINE_LINKS also
-#
-*** bold name anchors
+
+**** bold name anchors
 If BOLD_NAME_ANCHORS is set to TRUE the content of anchors without
 an HREF attribute, (i.e., anchors with a NAME or ID attribute) will
 have the HT_BOLD default style.  The compilation default is FALSE.
 On Unix, compilation with -DUNDERLINE_LINKS also will apply to the
 HT_BOLD style for NAME (ID) anchors when BOLD_NAME_ANCHORS is TRUE.
-#
-#BOLD_NAME_ANCHORS:FALSE
-*** verbose images
+
+: BOLD_NAME_ANCHORS:FALSE
+**** verbose images
 VERBOSE_IMAGES controls whether Lynx replaces [LINK], [INLINE] and [IMAGE]
 (for images without ALT) with filenames of these images.
 This can be useful in determining what images are important
 and which are mere decorations, e.g. button.gif, line.gif,
 provided the author uses meaningful names.
-#
+
 The definition here will override the setting in userdefs.h.
-#
-#VERBOSE_IMAGES:TRUE
-*** make links for all images
+
+: VERBOSE_IMAGES:TRUE
+**** make links for all images
 If MAKE_LINKS_FOR_ALL_IMAGES is TRUE, all images will be given links
 which can be ACTIVATEd.  For inlines, the ALT or pseudo-ALT ("[INLINE]")
 strings will be links for the resolved SRC rather than just text.
 For ISMAP or other graphic links, ALT or pseudo-ALT ("[ISMAP]" or "[LINK]")
 will have '-' and a link labeled "[IMAGE]" for the resolved SRC appended.
 See also VERBOSE_IMAGES flag.
-#
+
 The definition here will override that in userdefs.h
 and can be toggled via an "-image_links" command-line switch.
 The user can also use the LYK_IMAGE_TOGGLE key (default `*')
 or `Show Images' in the Form-based Options Menu.
-#
-#MAKE_LINKS_FOR_ALL_IMAGES:FALSE
-*** make pseudo alts for inlines
+
+: MAKE_LINKS_FOR_ALL_IMAGES:FALSE
+**** make pseudo alts for inlines
 If MAKE_PSEUDO_ALTS_FOR_INLINES is FALSE, inline images which don't specify
 an ALT string will not have "[INLINE]" inserted as a pseudo-ALT,
 i.e. they'll be treated as having ALT="".
 Otherwise (if TRUE), pseudo-ALTs will be created for inlines,
 so that they can be used as links to the SRCs.
 See also VERBOSE_IMAGES flag.
-#
+
 The definition here will override that in userdefs.h
 and can be toggled via a "-pseudo_inlines" command-line switch.
 The user can also use the LYK_INLINE_TOGGLE key (default `[')
 or `Show Images' in the Form-based Options Menu.
-#
-#MAKE_PSEUDO_ALTS_FOR_INLINES:TRUE
-*** substitute underscores
+
+: MAKE_PSEUDO_ALTS_FOR_INLINES:TRUE
+**** substitute underscores
 If SUBSTITUTE_UNDERSCORES is TRUE, the _underline_ format will be used
 for emphasis tags in dumps.
-#
+
 The default defined here will override that in userdefs.h, and the user
 can toggle the default via a "-underscore" command line switch.
-#
-#SUBSTITUTE_UNDERSCORES:FALSE
-*** enable scrollback
+
+: SUBSTITUTE_UNDERSCORES:FALSE
+**** enable scrollback
 If ENABLE_SCROLLBACK is TRUE, Lynx will clear the entire screen before
 displaying each new screenful of text.  Though less efficient for normal
 use, this allows programs that maintain a buffer of previously-displayed
@@ -1425,12 +1450,12 @@ will have been stored on the local PC and will therefore be displayed
 instantaneously, instead of needing to be retransmitted by Lynx at the
 speed of the comm connection (but Lynx will not know about the change,
 so you must restore the last screen before resuming with Lynx commands).
-#
+
 The default compilation or configuration setting can be toggled via an
 "-enable_scrollback" command line switch.
-#
-#ENABLE_SCROLLBACK:FALSE
-*** scan for buried news refs
+
+: ENABLE_SCROLLBACK:FALSE
+**** scan for buried news refs
 If SCAN_FOR_BURIED_NEWS_REFS is set to TRUE, Lynx will scan the bodies
 of news articles for buried article and URL references and convert them
 to links.  The compilation default is TRUE, but some email addresses
@@ -1438,13 +1463,13 @@ enclosed in angle brackets ("<user@address>") might be converted to false
 news links, and uuencoded messages might be corrupted.  The conversion is
 not done when the display is toggled to source or when 'd'ownloading, so
 uuencoded articles can be saved intact regardless of these settings.
-#
+
 The default setting can be toggled via a "-buried_news" command line
 switch.
-#
-#SCAN_FOR_BURIED_NEWS_REFS:TRUE
-SCAN_FOR_BURIED_NEWS_REFS:FALSE
-*** prepend base to source
+
+: SCAN_FOR_BURIED_NEWS_REFS:TRUE
+: SCAN_FOR_BURIED_NEWS_REFS:FALSE
+**** prepend base to source
 If PREPEND_BASE_TO_SOURCE is set to FALSE, Lynx will not prepend a
 Request URL comment and BASE element to text/html source files when
 they are retrieved for 'd'ownloading or passed to 'p'rint functions.
@@ -1452,62 +1477,56 @@ The compilation default is TRUE.  Note that this prepending is not
 done for -source dumps, unless the -base switch also was included on
 the command line, and the latter switch overrides the setting of the
 PREPEND_BASE_TO_SOURCE configuration variable.
-#
-#PREPEND_BASE_TO_SOURCE:TRUE
-*** list format
+
+: PREPEND_BASE_TO_SOURCE:TRUE
+**** list format
 LIST_FORMAT defines the display for local files when Lynx has been
 compiled with LONG_LIST defined in the Makefile.  The default is set
 in userdefs.h, normally to "ls -l" format, and can be changed here
 by uncommenting the indicated lines, or adding a definition with a
 modified parameter list.
-#
+
 This feature is not available for VMS.
-#
+
 The percent items in the list are interpreted as follows:
-.nf
-#
-#	%p	Unix-style permission bits
-#	%l	link count
-#	%o	owner of file
-#	%g	group of file
-#	%d	date of last modification
-#	%a	anchor pointing to file or directory
-#	%A	as above but don't show symbolic links
-#	%t	type of file (description derived from MIME type)
-#	%T	MIME type as known by Lynx (from mime.types or default)
-#	%k	size of file in Kilobytes
-#	%K	as above but omit size for directories
-#	%s	size of file in bytes
-#
-.fi
+
+#+begin_example
+	%p	Unix-style permission bits
+	%l	link count
+	%o	owner of file
+	%g	group of file
+	%d	date of last modification
+	%a	anchor pointing to file or directory
+	%A	as above but don't show symbolic links
+	%t	type of file (description derived from MIME type)
+	%T	MIME type as known by Lynx (from mime.types or default)
+	%k	size of file in Kilobytes
+	%K	as above but omit size for directories
+	%s	size of file in bytes
+#+end_example
+
 Anything between the percent and the letter is passed on to sprintf.
 A double percent yields a literal percent on output.  Other characters
 are passed through literally.
-#
+
 If you want only the filename:
-#
-.ex
-#LIST_FORMAT:    %a
-#
+: LIST_FORMAT:    %a
+
 If you want a brief output:
-#
-.ex
-#LIST_FORMAT:   %4K %-12.12d %a
-#
+: LIST_FORMAT:   %4K %-12.12d %a
+
 If you want the Unix "ls -l" format:
-#
-.ex
-#LIST_FORMAT:    %p %4l %-8.8o %-8.8g %7s %-12.12d %a
-*** color
+: LIST_FORMAT:    %p %4l %-8.8o %-8.8g %7s %-12.12d %a
+**** color
 COLORS are only available if compiled with SVr4 curses or slang.  This is
 the old color configuration.  The COLOR_STYLE configuration is compiled-in
 and can simulate this if the ".lss" filename is empty.
-#
+
 The line must be of the form:
-#
-COLOR:Integer:Foreground:Background
-.nf
-#
+
+: COLOR:Integer:Foreground:Background
+
+#+begin_example
 The Integer value is interpreted as follows:
   0 - normal                      - normal text
   1 - bold                        - hyperlinks, see also BOLD_* options above
@@ -1517,59 +1536,59 @@ The Integer value is interpreted as follows:
   5 - bold + underline            - hyperlinks within text emphasis
   6 - reverse + underline         - currently selected hyperlink
   7 - reverse + underline + bold  - WHEREIS search hits
-#
+
 Each Foreground and Background value must be one of:
   black         red            green         brown
   blue          magenta        cyan          lightgray
   gray          brightred      brightgreen   yellow
   brightblue    brightmagenta  brightcyan    white
-.fi
+#+end_example
 or (if you have configured using -enable-default-colors with ncurses or
 slang), "default" may be used for foreground and background.
-#
+
 Note that in most cases a white background is really "lightgray", since
 terminals generally do not implement bright backgrounds.
-#
+
 Uncomment and change any of the compilation defaults.
-#
-#COLOR:0:black:white
-#COLOR:1:blue:white
-#COLOR:2:yellow:blue
-#COLOR:3:green:white
-#COLOR:4:magenta:white
-#COLOR:5:blue:white
-#COLOR:6:red:white
-COLOR:6:brightred:black
-#COLOR:7:magenta:cyan
-*** color style
+
+: COLOR:0:black:white
+: COLOR:1:blue:white
+: COLOR:2:yellow:blue
+: COLOR:3:green:white
+: COLOR:4:magenta:white
+: COLOR:5:blue:white
+: COLOR:6:red:white
+: COLOR:6:brightred:black
+: COLOR:7:magenta:cyan
+**** color style
 Also known as "lss" (lynx style-sheet), the color-style file assigns color
 combination to tags and combinations of tags.  Normally a non-empty value
 is compiled into lynx, and the user can override that using the -lss
 command-line option.  The configure script allows one to compile in an
 empty string.  If lynx finds no value for this setting, it simulates the
 non-color-style assignments using the COLOR settings.
-#
+
 If neither the command-line "-lss" or this COLOR_STYLE setting are given,
 lynx tries the environment variables "LYNX_LSS" and "lynx_lss".  If neither
 is set, lynx uses the first compiled-in value (which as noted, may be empty).
-#
+
 At startup, lynx remembers the name of the color-style file which was used,
 and together with each file specified, provides those as choices in the
 O)ptions menu.
-#
-#COLOR_STYLE: lynx.lss
-#COLOR_STYLE: blue-background.lss
-#COLOR_STYLE: bright-blue.lss
-#COLOR_STYLE: midnight.lss
-#COLOR_STYLE: mild-colors.lss
-#COLOR_STYLE: opaque.lss
-*** nested tables
+
+: COLOR_STYLE: lynx.lss
+: COLOR_STYLE: blue-background.lss
+: COLOR_STYLE: bright-blue.lss
+: COLOR_STYLE: midnight.lss
+: COLOR_STYLE: mild-colors.lss
+: COLOR_STYLE: opaque.lss
+**** nested tables
 This is an experimental feature for improving table layout.
 It is enabled by default when the COLOR_STYLE configuration is used,
 and false otherwise.
-#
-NESTED_TABLES: false
-*** assumed color
+
+: NESTED_TABLES: false
+**** assumed color
 If built with a library that recognizes default colors (usually ncurses or
 slang), and if the corresponding option is compiled into lynx, lynx
 initializes it to assume the corresponding foreground and background colors.
@@ -1578,7 +1597,7 @@ to.  For instance, you might have an xterm running with black text on a white
 background, and want lynx to display colored text on the white background,
 but leave the possibility of using the same configuration to draw colored
 text on a different xterm, this time using its background set to black.
-#
+
 If built with conventional SVr3/SVr4 curses, tells lynx to use color pair 0
 when the given colors match this setting.  That gives a similar effect,
 though not as flexible.  You will get the best results by setting the
@@ -1587,26 +1606,26 @@ that you have setup with lynx, and then alter the ASSUMED_COLOR setting to
 match that.  If you do not alter the ASSUMED_COLOR setting, curses assumes
 color pair 0's background is black, which implies that its foreground (text)
 is white.
-#
+
 The first value given is the foreground, the second is the background.
-#ASSUMED_COLOR:default:default
-*** default colors
+: ASSUMED_COLOR:default:default
+**** default colors
 If built with a library that recognizes default colors (usually ncurses or
 slang), and if the corresponding option is compiled into lynx, lynx
 initializes it to assume the corresponding foreground and background colors.
 Default colors are those that the terminal (emulator) itself is initialized
 to.
-#
+
 Use this feature to disable the default-colors feature at runtime.
 This is useful for constructing scripts which use the non-color-style
 scheme, e.g., the oldlynx script.
-#
+
 This should precede ASSUMED_COLOR settings.
-#DEFAULT_COLORS:true
-*** prettysrc
+: DEFAULT_COLORS:true
+**** prettysrc
 Enable pretty source view
-#PRETTYSRC:FALSE
-*** prettysrc spec
+: PRETTYSRC:FALSE
+**** prettysrc spec
 Pretty source view settings. These settings are in effect when -prettysrc
 is specified.
 The following lexical elements (lexemes) are recognized:
@@ -1615,7 +1634,7 @@ comment, tag, attribute, attribute value, generalized angle brackets (
 bad tag, bad attribute, sgml special.
  The following group of option tells which styles will surround each
 lexeme. The syntax of option in this group is:
-#PRETTYSRC_SPEC:<LEXEMENAME>:<TAGSPEC>:<TAGSPEC>
+: PRETTYSRC_SPEC:<LEXEMENAME>:<TAGSPEC>:<TAGSPEC>
 The first <TAGSPEC> specifies what tags will precede lexemes of that class
 in the internal html markup. The second - what will be placed (internally)
 after it.
@@ -1623,9 +1642,10 @@ TAGSPEC has the following syntax:
 <TAGSPEC>:= [ (<TAGOPEN> | <TAGCLOSE>) <SPACE>+ ]*
 <TAGOPEN>:= tagname[.classname]
 <TAGCLOSE>:= !tagname
-#
+
 The following table gives correspondence between lexeme and lexeme name
-.nf
+
+#+begin_example
 Lexeme                   LEXEMENAME  FURTHER EXPLANATION
 =========================================================
 comment                  COMM
@@ -1646,72 +1666,73 @@ bad attribute            BADATTR     The name of the attribute unknown to lynx
                                      markup of  ATTRIB)
 sgml special             SGMLSPECIAL doctype, sgmlelt, sgmlele,
                                      sgmlattlist, marked section, identifier
-.fi
-#
+#+end_example
+
 Notes:
-#
+
 1) The markup for HTML_ENTIRE will be emitted only once - it will surround
    entire file source.
-#
+
 2) The tagnames specified by TAGSPEC should be valid html tag names.
-#
+
 3) If the tag/class combination given by TAGOPEN is not assigned a color
    style in lss file (for lynx compiled with lss support), that tag/class
    combination will be emitted anyway during internal html markup. Such
    combinations will be also reported to the trace log.
-#
+
 4) Lexeme 'tag' means tag name only
-#
+
 5) Angle brackets of html specials won't be surrounded by markup for ABRACKET
-#
-.ex
-PRETTYSRC_SPEC:COMM:B I:!I !B
-          HTML comments will be surrounded by <b><i> and </i></b> in the
-          internal html markup
-.ex
-PRETTYSRC_SPEC:ATTRVAL: span.attrval : !span
-          Values of the attributes will be surrounded by the
-          <SPAN class=attrval> </SPAN>
-.ex
-PRETTYSRC_SPEC:HREF::
-          No special html markup will surround hyperlink destinations (
-          this means that only default color style for hrefs will be applied
-          to them)
-#
+
+: PRETTYSRC_SPEC:COMM:B I:!I !B
+:           HTML comments will be surrounded by <b><i> and </i></b> in the
+:           internal html markup
+
+: PRETTYSRC_SPEC:ATTRVAL: span.attrval : !span
+:           Values of the attributes will be surrounded by the
+:           <SPAN class=attrval> </SPAN>
+
+: PRETTYSRC_SPEC:HREF::
+:           No special html markup will surround hyperlink destinations (
+:           this means that only default color style for hrefs will be applied
+:           to them)
+
 For lynx compiled with lss support, the following settings are the default:
-#PRETTYSRC_SPEC:COMM:span.htmlsrc_comment:!span
-#PRETTYSRC_SPEC:TAG:span.htmlsrc_tag:!span
-#PRETTYSRC_SPEC:ATTRIB:span.htmlsrc_attrib:!span
-#PRETTYSRC_SPEC:ATTRVAL:span.htmlsrc_attrval:!span
-#PRETTYSRC_SPEC:ABRACKET:span.htmlsrc_abracket:!span
-#PRETTYSRC_SPEC:ENTITY:span.htmlsrc_entity:!span
-#PRETTYSRC_SPEC:HREF:span.htmlsrc_href:!span
-#PRETTYSRC_SPEC:ENTIRE:span.htmlsrc_entire:!span
-#PRETTYSRC_SPEC:BADSEQ:span.htmlsrc_badseq:!span
-#PRETTYSRC_SPEC:BADTAG:span.htmlsrc_badtag:!span
-#PRETTYSRC_SPEC:BADATTR:span.htmlsrc_badattr:!span
-#PRETTYSRC_SPEC:SGMLSPECIAL:span.htmlsrc_sgmlspecial:!span
-the styles corresponding to them are present in sample .lss file.
-For lynx compiled without lss support, the following settings are the default:
-#PRETTYSRC_SPEC:COMM:b:!b
-#PRETTYSRC_SPEC:TAG:b:!b
-#PRETTYSRC_SPEC:ATTRIB:b:!b
-#PRETTYSRC_SPEC:ATTRVAL::
-#PRETTYSRC_SPEC:ABRACKET:b:!b
-#PRETTYSRC_SPEC:ENTITY:b:!b
-#PRETTYSRC_SPEC:HREF::
-#PRETTYSRC_SPEC:ENTIRE::
-#PRETTYSRC_SPEC:BADSEQ:b:!b
-#PRETTYSRC_SPEC:BADTAG::
-#PRETTYSRC_SPEC:BADATTR::
-#PRETTYSRC_SPEC:SGMLSPECIAL:b:!b
-*** HTMLSRC attname/tagname xform
+#+begin_example
+PRETTYSRC_SPEC:COMM:span.htmlsrc_comment:!span
+PRETTYSRC_SPEC:TAG:span.htmlsrc_tag:!span
+PRETTYSRC_SPEC:ATTRIB:span.htmlsrc_attrib:!span
+PRETTYSRC_SPEC:ATTRVAL:span.htmlsrc_attrval:!span
+PRETTYSRC_SPEC:ABRACKET:span.htmlsrc_abracket:!span
+PRETTYSRC_SPEC:ENTITY:span.htmlsrc_entity:!span
+PRETTYSRC_SPEC:HREF:span.htmlsrc_href:!span
+PRETTYSRC_SPEC:ENTIRE:span.htmlsrc_entire:!span
+PRETTYSRC_SPEC:BADSEQ:span.htmlsrc_badseq:!span
+PRETTYSRC_SPEC:BADTAG:span.htmlsrc_badtag:!span
+PRETTYSRC_SPEC:BADATTR:span.htmlsrc_badattr:!span
+PRETTYSRC_SPEC:SGMLSPECIAL:span.htmlsrc_sgmlspecial:!span
+he styles corresponding to them are present in sample .lss file.
+or lynx compiled without lss support, the following settings are the default:
+PRETTYSRC_SPEC:COMM:b:!b
+PRETTYSRC_SPEC:TAG:b:!b
+PRETTYSRC_SPEC:ATTRIB:b:!b
+PRETTYSRC_SPEC:ATTRVAL::
+PRETTYSRC_SPEC:ABRACKET:b:!b
+PRETTYSRC_SPEC:ENTITY:b:!b
+PRETTYSRC_SPEC:HREF::
+PRETTYSRC_SPEC:ENTIRE::
+PRETTYSRC_SPEC:BADSEQ:b:!b
+PRETTYSRC_SPEC:BADTAG::
+PRETTYSRC_SPEC:BADATTR::
+PRETTYSRC_SPEC:SGMLSPECIAL:b:!b
+#+end_example
+**** HTMLSRC attname/tagname xform
 Options HTMLSRC_TAGNAME_XFORM and HTMLSRC_ATTRNAME_XFORM control the way the
 names of tags and names of attributes are transformed correspondingly.
 Possible values: 0 - lowercase, 1 - leave as is, 2 - uppercase.
-#HTMLSRC_TAGNAME_XFORM:2
-#HTMLSRC_ATTRNAME_XFORM:2
-*** prettysrc view no anchor numbering
+: HTMLSRC_TAGNAME_XFORM:2
+: HTMLSRC_ATTRNAME_XFORM:2
+**** prettysrc view no anchor numbering
 PRETTYSRC_VIEW_NO_ANCHOR_NUMBERING - pretty source view setting
 If "keypad mode" in 'O'ptions screen is "Links are numbered" or
 "Links and form fields are numbered", and PRETTYSRC_VIEW_NO_ANCHOR_NUMBERING is
@@ -1719,17 +1740,17 @@ TRUE, then links won't be numbered in psrc view and will be numbered
 otherwise. Set this setting to TRUE if you prefer numbered links, but wish
 to get valid HTML source when printing or mailing when in psrc view.
 Default is FALSE.
-#PRETTYSRC_VIEW_NO_ANCHOR_NUMBERING:FALSE
-*** justify
+: PRETTYSRC_VIEW_NO_ANCHOR_NUMBERING:FALSE
+**** justify
 JUSTIFY - Appearance
 This option mirrors command-line option with same name.  Default is TRUE.  If
 true, most of text (except headers and like this) will be justified.  This
 has no influence on CJK text rendering.
-#
+
 This option is only available if Lynx was compiled with USE_JUSTIFY_ELTS.
-#
-#JUSTIFY:FALSE
-*** justify max void percent
+
+: JUSTIFY:FALSE
+**** justify max void percent
 JUSTIFY_MAX_VOID_PERCENT - Appearance
 This option controls the maximum allowed value for ratio (in percents) of
 'the number of spaces to spread across the line to justify it' to
@@ -1737,39 +1758,39 @@ This option controls the maximum allowed value for ratio (in percents) of
 When that ratio exceeds the value specified, that particular line won't be
 justified. I.e. the value 28 for this setting will mean maximum value for
 that ratio is 0.28.
-#
-#JUSTIFY_MAX_VOID_PERCENT:35
-*** screen size
+
+: JUSTIFY_MAX_VOID_PERCENT:35
+**** screen size
 For win32, allow the console window to be resized to the given values.  This
 requires PDCurses 2.5.  The values given are width,height.
-#SCREEN_SIZE:80,24
-*** no margins
+: SCREEN_SIZE:80,24
+**** no margins
 Disable left/right margins in the default style sheet.
 This is the same as the command-line "-nomargins" option.
-#NO_MARGINS:FALSE
-*** no title
+: NO_MARGINS:FALSE
+**** no title
 Disable title and blank line from top of page.
 This is the same as the command-line "-notitle" option.
-#NO_TITLE:FALSE
-*** FTP format
+: NO_TITLE:FALSE
+**** FTP format
 FTP_FORMAT defines the display for remote files.
 It uses the same "%" codes as LIST_FORMAT.
-#FTP_FORMAT:%d  %-16.16t %a  %K
-*** unique URLs
+: FTP_FORMAT:%d  %-16.16t %a  %K
+**** unique URLs
 UNIQUE_URLS can be set to tell Lynx to check for duplicate link numbers in
 the page and corresponding lists, and reusing the original link number.
 This can be set via command-line "-unique-urls".
-#UNIQUE_URLS:FALSE
-*** short URL
+: UNIQUE_URLS:FALSE
+**** short URL
 If true, show very long URLs in the status line with "..." to represent the
 portion which cannot be displayed.  The beginning and end of the URL are
 displayed, rather than suppressing the end.
-#SHORT_URL:FALSE
-** HTML parsing
+: SHORT_URL:FALSE
+*** HTML parsing
 These settings control the way Lynx parses invalid HTML
 and how it may resolve such issues.
 
-*** no ismap if usemap
+**** no ismap if usemap
 If NO_ISMAP_IF_USEMAP is set TRUE, Lynx will not include a link to the
 server-side image map if both a server-side and client-side map for the
 same image is indicated in the HTML markup.  The compilation default is
@@ -1780,12 +1801,12 @@ the content of the associated MAP element).  If the "[ISMAP]" link is
 activated, Lynx will send a 0,0 coordinate pair to the server, which
 Lynx-friendly sites can map to a for-text-client document, homologous
 to what is intended for the content of a FIG element.
-#
+
 The compilation default, or default defined here, can be toggled via
 the "-ismap" command line switch.
-#
-#NO_ISMAP_IF_USEMAP:FALSE
-*** seek frag map in cur
+
+: NO_ISMAP_IF_USEMAP:FALSE
+**** seek frag map in cur
 If SEEK_FRAG_MAP_IN_CUR is set FALSE, then USEMAP attribute values
 (in IMG or OBJECT tags) consisting of only a fragment (USEMAP="#foo")
 will be resolved with respect to the current document's base, which
@@ -1796,9 +1817,9 @@ above the point in the HTML stream where the USEMAP attribute was
 detected).  Lynx's present "single pass" rendering engine precludes
 checking below before making the decision on how to resolve a USEMAP
 reference consisting solely of a fragment.
-#
-#SEEK_FRAG_MAP_IN_CUR:TRUE
-*** seek frag area in cur
+
+: SEEK_FRAG_MAP_IN_CUR:TRUE
+**** seek frag area in cur
 If SEEK_FRAG_AREA_IN_CUR is set FALSE, then HREF attribute values
 in AREA tags consisting of only a fragment (HREF="#foo") will be
 resolved with respect to the current document's base, which might
@@ -1806,37 +1827,37 @@ not be the same as the current document's URL.  The compilation
 default is to use the current document's URL, as is done for the
 HREF attribute values of Anchors and LINKs that consist solely of
 a fragment.
-#
-#SEEK_FRAG_AREA_IN_CUR:TRUE
-*** collapse br tags
+
+: SEEK_FRAG_AREA_IN_CUR:TRUE
+**** collapse br tags
 If COLLAPSE_BR_TAGS is set FALSE, Lynx will not collapse serial BR tags.
 If set TRUE, two or more concurrent BRs will be collapsed into a single
 line break.  Note that the valid way to insert extra blank lines in HTML
 is via a PRE block with only newlines in the block.
-#
-#COLLAPSE_BR_TAGS:TRUE
-*** trim blank lines
+
+: COLLAPSE_BR_TAGS:TRUE
+**** trim blank lines
 If TRIM_BLANK_LINES is set FALSE, Lynx will not trim trailing blank lines
 from the document.  Also, Lynx will not collapse BR-tags onto the previous
 line when it happens to be empty.
-#TRIM_BLANK_LINES:TRUE
-*** tagsoup
+: TRIM_BLANK_LINES:TRUE
+**** tagsoup
 If TAGSOUP is set, Lynx uses the "Tag Soup DTD" rather than "SortaSGML".
 The two approaches differ by the style of error detection and recovery.
 Tag Soup DTD allows for improperly nested tags; SortaSGML is stricter.
-#TAGSOUP:FALSE
-*** historical comments
+: TAGSOUP:FALSE
+**** historical comments
 If HISTORICAL_COMMENTS is TRUE, Lynx will revert to the "Historical"
 behavior of treating any '>' as a terminator for comments, instead of
 seeking a valid '-->' terminator (note that white space can be present
 between the '--' and '>' in valid terminators).  The compilation default
 is FALSE.
-#
+
 The compilation default, or default defined here, can be toggled via a
 "-historical" command line switch, and via the LYK_HISTORICAL command key.
-#
-#HISTORICAL_COMMENTS:FALSE
-*** minimal comments
+
+: HISTORICAL_COMMENTS:FALSE
+**** minimal comments
 If MINIMAL_COMMENTS is TRUE, Lynx will not use Valid comment parsing
 of '--' pairs as serial comments within an overall comment element,
 and instead will seek only a '-->' terminator for the overall comment
@@ -1845,43 +1866,43 @@ will help Lynx cope with the use of dashes as "decorations", which
 consequently has become common in so-called "Enhanced for Netscape"
 pages.  Note that setting Historical comments on will override the
 Minimal or Valid setting.
-#
+
 The compilation default for MINIMAL_COMMENTS is FALSE, but we'll
 set it TRUE here, until Netscape gets its comment parsing right,
 and "decorative" dashes cease to be so common.
-#
+
 The compilation default, or default defined here, can be toggled via a
 "-minimal" command line switch, and via the LYK_MINIMAL command key.
-#
-MINIMAL_COMMENTS:TRUE
-*** soft dquotes
+
+: MINIMAL_COMMENTS:TRUE
+**** soft dquotes
 If SOFT_DQUOTES is TRUE, Lynx will emulate the invalid behavior of
 treating '>' as a co-terminator of a double-quoted attribute value
 and the tag which contains it, as was done in old versions of Netscape
 and Mosaic.  The compilation default is FALSE.
-#
+
 The compilation default, or default defined here, can be toggled via
 a "-soft_dquotes" command line switch.
-#
-#SOFT_DQUOTES:FALSE
-*** strip dotdot URLs
+
+: SOFT_DQUOTES:FALSE
+**** strip dotdot URLs
 If STRIP_DOTDOT_URLS is TRUE, Lynx emulates the invalid behavior of many
 browsers to strip a leading "../" segment from relative URLs in HTML
 documents with a http or https base URL, if this would otherwise lead to
 an absolute URLs with those characters still in it.  Such URLs are normally
 erroneous and not what is intended by page authors.  Lynx will issue
 a warning message when this occurs.
-#
+
 If STRIP_DOTDOT_URLS is FALSE, Lynx will use those URLs for requests
 without taking any special actions or issuing Warnings, in most cases
 this will result in an error response from the server.
-#
+
 Note that Lynx never tries to fix similar URLs for protocols other than
 http and https, since they are less common and may actually be valid in
 some cases.
-#
-#STRIP_DOTDOT_URLS:TRUE
-*** force empty hrefless a
+
+: STRIP_DOTDOT_URLS:TRUE
+**** force empty hrefless a
 FORCE_EMPTY_HREFLESS_A - HTML parsing
 This option mirrors command-line option with the same name.  Default is
 FALSE.  If true, then any 'A' element without HREF will be closed
@@ -1890,9 +1911,9 @@ translator that doesn't emit balanced A elements.  If lynx was compiled with
 color styles, setting this option to TRUE will make lynx screen much more
 reasonable (otherwise all text will probably have color corresponding to the
 A element).
-#
-#FORCE_EMPTY_HREFLESS_A:FALSE
-*** hidden link marker
+
+: FORCE_EMPTY_HREFLESS_A:FALSE
+**** hidden link marker
 HIDDEN_LINK_MARKER - HTML parsing
 This option defines the string that will be used as title of hidden link (a
 link that otherwise will have no label associated with it).  Using an empty
@@ -1901,72 +1922,72 @@ will be handled according to other settings (mostly the parameter of
 -hiddenlinks command-line switch).  If the value is non-empty string, hidden
 link becomes non-hidden so it won't be handled as hidden link, e.g., listed
 among hidden links on 'l'isting page.
-#
-#HIDDEN_LINK_MARKER:
-*** XHTML parsing
+
+: HIDDEN_LINK_MARKER:
+**** XHTML parsing
 XHTML_PARSING - HTML parsing
 When true, tells lynx that it can ignore certain tags which have no content
 in an XHTML 1.0 document.  For example
-#	<p />
-#	<a />
+: 	<p />
+: 	<a />
 When the option is false, lynx will not treat the tag as an ending.
-#XHTML_PARSING:FALSE
-*** dont wrap pre
+: XHTML_PARSING:FALSE
+**** dont wrap pre
 Inhibit wrapping of text when  -dump'ing  and  -crawl'ing,  mark
 wrapped lines of <pre> in interactive session.
-#DONT_WRAP_PRE:FALSE
-*** force HTML
+: DONT_WRAP_PRE:FALSE
+**** force HTML
 When true, this forces the first document specified on the command-line
 to be interpreted as HTML.
-#FORCE_HTML:FALSE
-*** hidden links
+: FORCE_HTML:FALSE
+**** hidden links
 Control the display of hidden links, using one of the following names:
-#
-MERGE
+
+- MERGE
  hidden links show up as bracketed numbers  and  are  numbered
  together with other links in the sequence of their occurrence
  in the document.
-#
-LISTONLY
+
+- LISTONLY
  hidden links are shown only on  L)ist  screens  and  listings
  generated  by  -dump  or  from  the  P)rint  menu, but appear
  separately at the end of those lists.  This  is  the  default
  behavior.
-#
-IGNORE
+
+- IGNORE
  hidden links do not appear even in listings.
-#
-#HIDDENLINKS:LISTONLY
-** CGI scripts
+
+: HIDDENLINKS:LISTONLY
+*** CGI scripts
 These settings control Lynx's ability to execute various types of scripts.
-*** local execution links always_on/on_but_not_remote
+**** local execution links always_on/on_but_not_remote
 Local execution links and scripts are by default completely disabled,
 unless a change is made to the userdefs.h file to enable them or
 the configure script is used with the corresponding options
 (-enable-exec-links and -enable-exec-scripts).
 See the Lynx source code distribution and the userdefs.h
 file for more detail on enabling execution links and scripts.
-#
+
 If you have enabled execution links or scripts the following
 two variables control Lynx's action when an execution link
 or script is encountered.
-#
+
 If LOCAL_EXECUTION_LINKS_ALWAYS_ON is set to TRUE any execution
 link or script will be executed no matter where it came from.
 This is EXTREMELY dangerous.  Since Lynx can access files from
 anywhere in the world, you may encounter links or scripts that
 will cause damage or compromise the security of your system.
-#
+
 If LOCAL_EXECUTION_LINKS_ON_BUT_NOT_REMOTE is set to TRUE only
 links or scripts that reside on the local machine and are
 referenced with a URL beginning with "file://localhost/" or meet
 TRUSTED_EXEC or ALWAYS_TRUSTED_EXEC rules (see below) will be
 executed.  This is much less dangerous than enabling all execution
 links, but can still be dangerous.
-#
-#LOCAL_EXECUTION_LINKS_ALWAYS_ON:FALSE
-#LOCAL_EXECUTION_LINKS_ON_BUT_NOT_REMOTE:FALSE
-*** trusted exec
+
+: LOCAL_EXECUTION_LINKS_ALWAYS_ON:FALSE
+: LOCAL_EXECUTION_LINKS_ON_BUT_NOT_REMOTE:FALSE
+**** trusted exec
 If LOCAL_EXECUTION_LINK_ON_BUT_NOT_REMOTE is TRUE, and no TRUSTED_EXEC
 rule is defined, it defaults to "file://localhost/" and any lynxexec
 or lynxprog command will be permitted if it was referenced from within
@@ -1974,30 +1995,30 @@ a document whose URL begins with that string.  If you wish to restrict the
 referencing URLs further, you can extend the string to include a trusted
 path.  You also can specify a trusted directory for http URLs, which will
 then be treated as if they were local rather than remote.  For example:
-#
-#	TRUSTED_EXEC:file://localhost/trusted/
-#	TRUSTED_EXEC:http://www.wfbr.edu/trusted/
-#
+
+: 	TRUSTED_EXEC:file://localhost/trusted/
+: 	TRUSTED_EXEC:http://www.wfbr.edu/trusted/
+
 If you also wish to restrict the commands which can be executed, create
 a series of rules with the path (Unix) or command name (VMS) following
 the string, separated by a tab.  For example:
-#
+
 Unix:
 ====
-#	TRUSTED_EXEC:file://localhost/<tab>/bin/cp
-#	TRUSTED_EXEC:file://localhost/<tab>/bin/rm
+: 	TRUSTED_EXEC:file://localhost/<tab>/bin/cp
+: 	TRUSTED_EXEC:file://localhost/<tab>/bin/rm
 VMS:
 ===
-#	TRUSTED_EXEC:file://localhost/<tab>copy
-#	TRUSTED_EXEC:file://localhost/<tab>delete
-#
+: 	TRUSTED_EXEC:file://localhost/<tab>copy
+: 	TRUSTED_EXEC:file://localhost/<tab>delete
+
 Once you specify a TRUSTED_EXEC referencing string, the default is
 replaced, and all the referencing strings you desire must be specified
 as a series.  Similarly, if you associate a command with the referencing
 string, you must specify all of the allowable commands as a series of
 TRUSTED_EXEC rules for that string.  If you specify ALWAYS_TRUSTED_EXEC
 rules below, you need not repeat them as TRUSTED_EXEC rules.
-#
+
 If EXEC_LINKS and JUMPFILE have been defined, any lynxexec or lynxprog
 URLs in that file will be permitted, regardless of other settings.  If
 you also set LOCAL_EXECUTION_LINKS_ON_BUT_NOT_REMOTE:TRUE and a single
@@ -2010,47 +2031,47 @@ anonymous account will not be able to access the jumps file or enter
 'j'ump shortcuts, and this selective execution feature will be overridden
 as well (i.e., they will only be able to access lynxexec or lynxprog
 URLs which meet any ALWAYS_TRUSTED_EXEC rules).
-#
-TRUSTED_EXEC:none
-*** alwats trusted exec
+
+: TRUSTED_EXEC:none
+**** alwats trusted exec
 If EXEC_LINKS was defined, any lynxexec or lynxprog URL can be made
 always enabled by an ALWAYS_TRUSTED_EXEC rule for it.  This is useful for
 anonymous accounts in which you have disabled execution links generally,
 and may also have disabled jumps file links, but still want to allow
 execution of particular utility scripts or programs.  The format is
 like that for TRUSTED_EXEC.  For example:
-#
+
 Unix:
 ====
-  ALWAYS_TRUSTED_EXEC:file://localhost/<tab>/usr/local/kinetic/bin/usertime
-  ALWAYS_TRUSTED_EXEC:http://www.more.net/<tab>/usr/local/kinetic/bin/who.sh
+:   ALWAYS_TRUSTED_EXEC:file://localhost/<tab>/usr/local/kinetic/bin/usertime
+:   ALWAYS_TRUSTED_EXEC:http://www.more.net/<tab>/usr/local/kinetic/bin/who.sh
 VMS:
 ===
-  ALWAYS_TRUSTED_EXEC:file://localhost/<tab>usertime
-  ALWAYS_TRUSTED_EXEC:http://www.more.net/<tab>show users
-#
+:   ALWAYS_TRUSTED_EXEC:file://localhost/<tab>usertime
+:   ALWAYS_TRUSTED_EXEC:http://www.more.net/<tab>show users
+
 The default ALWAYS_TRUSTED_EXEC rule is "none".
-#
-ALWAYS_TRUSTED_EXEC:none
-*** trusted LYNXCGI
+
+: ALWAYS_TRUSTED_EXEC:none
+**** trusted LYNXCGI
 Unix:
 =====
 TRUSTED_LYNXCGI rules define the permitted sources and/or paths for
 lynxcgi links (if LYNXCGI_LINKS is defined in userdefs.h).  The format
 is the same as for TRUSTED_EXEC rules (see above).  Example rules:
-#
-#	TRUSTED_LYNXCGI:file://localhost/
-#	TRUSTED_LYNXCGI:<tab>/usr/local/etc/httpd/cgi-bin/
-#	TRUSTED_LYNXCGI:file://localhost/<tab>/usr/local/www/cgi-bin/
-#
+
+: 	TRUSTED_LYNXCGI:file://localhost/
+: 	TRUSTED_LYNXCGI:<tab>/usr/local/etc/httpd/cgi-bin/
+: 	TRUSTED_LYNXCGI:file://localhost/<tab>/usr/local/www/cgi-bin/
+
 VMS:
 ====
 Do not define this.
-#
+
 The default TRUSTED_LYNXCGI rule is "none".
-#
-#TRUSTED_LYNXCGI:none
-*** LYNXCGI environment
+
+: TRUSTED_LYNXCGI:none
+**** LYNXCGI environment
 Unix:
 =====
 LYNXCGI_ENVIRONMENT adds the current value of the specified
@@ -2059,37 +2080,37 @@ lynxcgi script.  Useful variables are HOME, USER, etc...  If proxies
 are in use, and the script invokes another copy of lynx (or a program like
 wget) in a subsidiary role, it can be useful to add http_proxy and other
 *_proxy variables.
-#
+
 VMS:
 ====
 Do not define this.
-#
-#LYNXCGI_ENVIRONMENT:
-*** LYNXCGI document root
+
+: LYNXCGI_ENVIRONMENT:
+**** LYNXCGI document root
 Unix:
 =====
 LYNXCGI_DOCUMENT_ROOT is the value of DOCUMENT_ROOT that will be passed
 to lynxcgi scripts.  If set and the URL has PATH_INFO data, then
 PATH_TRANSLATED will also be generated.  Examples:
-#	LYNXCGI_DOCUMENT_ROOT:/usr/local/etc/httpd/htdocs
-#	LYNXCGI_DOCUMENT_ROOT:/data/htdocs/
-#
+: 	LYNXCGI_DOCUMENT_ROOT:/usr/local/etc/httpd/htdocs
+: 	LYNXCGI_DOCUMENT_ROOT:/data/htdocs/
+
 VMS:
 ====
 Do not define this.
-#
-#LYNXCGI_DOCUMENT_ROOT:
-** Cookies
-*** force ssl cookiers secure
+
+: LYNXCGI_DOCUMENT_ROOT:
+*** Cookies
+**** force ssl cookiers secure
 If FORCE_SSL_COOKIES_SECURE is set to TRUE, then SSL encrypted cookies
 received from https servers never will be sent unencrypted to http
 servers.  The compilation default is to impose this block only if the
 https server included a secure attribute for the cookie.  The normal
 default or that defined here can be toggled via the -force_secure
 command line switch.
-#
-#FORCE_SSL_COOKIES_SECURE:FALSE
-*** set cookies
+
+: FORCE_SSL_COOKIES_SECURE:FALSE
+**** set cookies
 If SET_COOKIES is set FALSE, Lynx will ignore Set-Cookie headers
 in http server replies.  Note that if a COOKIE_FILE is in use (see
 below) that contains cookies at startup, Lynx will still send those
@@ -2101,9 +2122,9 @@ not point to a file with cookies, in addition to setting SET_COOKIES
 to FALSE.
 The default is defined in userdefs.h, and can be overridden here,
 and/or toggled via the -cookies command line switch.
-#
-SET_COOKIES:FALSE
-*** accept all cookies
+
+: SET_COOKIES:FALSE
+**** accept all cookies
 If ACCEPT_ALL_COOKIES is set TRUE, Lynx will accept cookies from all
 domains with no user interaction.  This is equivalent to automatically
 replying to all cookie 'Allow?' prompts with 'A'lways.  Note that it
@@ -2112,9 +2133,9 @@ does not preempt validity checking, which has to be controlled separately
 The default is defined in userdefs.h and can be overridden here, or
 in the .lynxrc file via an o(ptions) screen setting.  It may also be
 toggled via the -accept_all_cookies command line switch.
-#
-ACCEPT_ALL_COOKIES:FALSE
-*** cookie accept/rejet domains
+
+: ACCEPT_ALL_COOKIES:FALSE
+**** cookie accept/rejet domains
 COOKIE_ACCEPT_DOMAINS and COOKIE_REJECT_DOMAINS are comma-delimited lists
 of domains from which Lynx should automatically accept or reject cookies
 without asking for confirmation.  If the same domain is specified in both
@@ -2124,10 +2145,10 @@ in the form in which they would appear on the Cookie Jar page (case is
 insignificant).  They are not wildcards.  Domains that apply to more than
 one host have a leading '.', but have to match *the cookie's* domain
 exactly.
-#
-#COOKIE_ACCEPT_DOMAINS:
-#COOKIE_REJECT_DOMAINS:
-*** cookie loose invalid domains, cookie strict invalid domains, cookie query invalid domains
+
+: COOKIE_ACCEPT_DOMAINS:
+: COOKIE_REJECT_DOMAINS:
+**** cookie loose invalid domains, cookie strict invalid domains, cookie query invalid domains
 COOKIE_LOOSE_INVALID_DOMAINS, COOKIE_STRICT_INVALID_DOMAINS, and
 COOKIE_QUERY_INVALID_DOMAINS are comma-delimited lists of domains.
 They control the degree of validity checking that is applied to cookies
@@ -2145,49 +2166,49 @@ Cookie validity checking takes place as a separate step before the
 final decision to accept or reject (see previous options), therefore
 a cookie that passes validity checking may still be automatically
 rejected or cause another prompt.
-#
-#COOKIE_LOOSE_INVALID_DOMAINS:
-#COOKIE_STRICT_INVALID_DOMAINS:
-#COOKIE_QUERY_INVALID_DOMAINS:
-*** max cookies domains/global/buffer
+
+: COOKIE_LOOSE_INVALID_DOMAINS:
+: COOKIE_STRICT_INVALID_DOMAINS:
+: COOKIE_QUERY_INVALID_DOMAINS:
+**** max cookies domains/global/buffer
 MAX_COOKIES_DOMAIN,
 MAX_COOKIES_GLOBAL and
 MAX_COOKIES_BUFFER are limits on the total number of cookies for each domain,
 globally, and the per-cookie buffer size.  These limits are by default large
 enough for reasonable usage; if they are very high, some sites may present
 undue performance waste.
-#
-#MAX_COOKIES_DOMAIN:50
-#MAX_COOKIES_GLOBAL:500
-#MAX_COOKIES_BUFFER:4096
-*** persistent cookies
+
+: MAX_COOKIES_DOMAIN:50
+: MAX_COOKIES_GLOBAL:500
+: MAX_COOKIES_BUFFER:4096
+**** persistent cookies
 PERSISTENT_COOKIES indicates that cookies should be read at startup from
 the COOKIE_FILE, and saved at exit for storage between Lynx sessions.
 It is not used if Lynx was compiled without USE_PERSISTENT_COOKIES.
 The default is FALSE, so that the feature needs to be enabled here
 explicitly if you want it.
-#
-PERSISTENT_COOKIES:FALSE
-*** cookie file
+
+: PERSISTENT_COOKIES:FALSE
+**** cookie file
 COOKIE_FILE is the default file from which persistent cookies are read
 at startup (if the file exists), if Lynx was compiled with
 USE_PERSISTENT_COOKIES and the PERSISTENT_COOKIES option is enabled.
 The cookie file can also be specified in .lynxrc or on the command line.
-#
-#COOKIE_FILE:~/.lynx_cookies
-*** cookie save file
+
+: COOKIE_FILE:~/.lynx_cookies
+**** cookie save file
 COOKIE_SAVE_FILE is the default file in which persistent cookies are
 stored at exit, if Lynx was compiled with USE_PERSISTENT_COOKIES and the
 PERSISTENT_COOKIES option is enabled.  The cookie save file can also be
 specified on the command line.
-#
+
 With an interactive Lynx session, COOKIE_SAVE_FILE will default to
 COOKIE_FILE if it is not set.  With a non-interactive Lynx session (e.g.,
 -dump), cookies will only be saved to file if COOKIE_SAVE_FILE is set.
-#
-#COOKIE_SAVE_FILE:~/.lynx_cookies
-** News groups
-*** nntpserver
+
+: COOKIE_SAVE_FILE:~/.lynx_cookies
+*** News groups
+**** nntpserver
 To enable news reading ability via Lynx, the environment variable NNTPSERVER
 must be set so that it points to your site's NNTP server
 (see Lynx Users Guide on environment variables).
@@ -2201,21 +2222,21 @@ Note that on VMS it is set as a process logical rather than symbol, and will
 outlive the Lynx image.
 The news reading facility in Lynx is quite limited.  Lynx does not provide a
 full featured news reader with elaborate error checking and safety features.
-#
-#NNTPSERVER:news.server.dom
-*** list news numbers
+
+: NNTPSERVER:news.server.dom
+**** list news numbers
 If LIST_NEWS_NUMBERS is set TRUE, Lynx will use an ordered list and include
 the numbers of articles in news listings, instead of using an unordered
 list.  The default is defined in userdefs.h, and can be overridden here.
-#
-#LIST_NEWS_NUMBERS:FALSE
-*** list news dates
+
+: LIST_NEWS_NUMBERS:FALSE
+**** list news dates
 If LIST_NEWS_DATES is set TRUE, Lynx will include the dates of articles in
 news listings.  The dates always are included in the articles, themselves.
 The default is defined in userdefs.h, and can be overridden here.
-#
-#LIST_NEWS_DATES:FALSE
-*** News chunk_size/max_chunks
+
+: LIST_NEWS_DATES:FALSE
+**** News chunk_size/max_chunks
 NEWS_CHUNK_SIZE and NEWS_MAX_CHUNK regulate the chunking of news article
 listings with inclusion of links for listing earlier and/or later articles.
 The defaults are defined in HTNews.c as 30 and 40, respectively.  If the
@@ -2231,10 +2252,10 @@ line, based on the direction of intended change relative to the compilation
 or configuration defaults.  The compilation defaults ensure that there will
 be at least 10 earlier articles before bothering to chunk and create a link
 for earlier articles.
-#
-#NEWS_CHUNK_SIZE:30
-#NEWS_MAX_CHUNK:40
-*** news posting
+
+: NEWS_CHUNK_SIZE:30
+: NEWS_MAX_CHUNK:40
+**** news posting
 Set NEWS_POSTING to FALSE if you do not want to support posting to
 news groups via Lynx.  If left TRUE, Lynx will use its news gateway to
 post new messages or followups to news groups, using the URL schemes
@@ -2249,30 +2270,30 @@ the default is TRUE, posting can still be disallowed via the
 -restrictions command line switch.
 The posting facility in Lynx is quite limited.  Lynx does not provide a
 full featured news poster with elaborate error checking and safety features.
-#
-#NEWS_POSTING:TRUE
-*** lynx sig file
+
+: NEWS_POSTING:TRUE
+**** lynx sig file
 LYNX_SIG_FILE defines the name of a file containing a signature which
 can be appended to email messages and news postings or followups.  The
 user will be prompted whether to append it.  It is sought in the home
 directory.  If it is in a subdirectory, begin it with a dot-slash
 (e.g., ./lynx/.lynxsig).  The definition is set in userdefs.h and can
 be changed here.
-#
-#LYNX_SIG_FILE:.lynxsig
-** Bibliographic protocol
-*** BIBP global server
+
+: LYNX_SIG_FILE:.lynxsig
+*** Bibliographic protocol
+**** BIBP global server
 BIBP_GLOBAL_SERVER is the default global server for bibp: links, used
 when a local bibhost or document-specified citehost is unavailable.
 Set in userdefs.h and can be changed here.
-#BIBP_GLOBAL_SERVER:http://usin.org/
-*** BIBP bibhost
+: BIBP_GLOBAL_SERVER:http://usin.org/
+**** BIBP bibhost
 BIBP_BIBHOST is the URL at which local bibp service may be found, if
 it exists.   Defaults to http://bibhost/ for protocol conformance, but
 may be overridden here or via -bibhost parameter.
-#BIBP_BIBHOST:http://bibhost/
-** Mail related
-*** system mail, system mail flags
+: BIBP_BIBHOST:http://bibhost/
+*** Mail related
+**** system mail, system mail flags
 VMS:
 ===
 The mail command and qualifiers are defined in userdefs.h.  Lynx
@@ -2285,34 +2306,29 @@ of other relevant headers may not be possible.
 If your mailer uses another syntax, some hacking of the mailform()
 mailmsg() and reply_by_mail() functions in LYMail.c, and send_file_to_mail()
 function in LYPrint.c, may be required.
-#
-.ex 2
-#SYSTEM_MAIL:PMDF SEND
-#SYSTEM_MAIL_FLAGS:/headers
-#
-.ex 2
-#SYSTEM_MAIL:MAIL
-#SYSTEM_MAIL_FLAGS:
-#
+
+: SYSTEM_MAIL:PMDF SEND
+: SYSTEM_MAIL_FLAGS:/headers
+
+: SYSTEM_MAIL:MAIL
+: SYSTEM_MAIL_FLAGS:
+
 Unix:
 #======
 The mail path and flags normally are defined for sendmail (or submit
 with MMDF) in userdefs.h.  You can change them here, but should first
 read the zillions of CERT advisories about security problems with Unix
 mailers.
-#
-.ex 2
-#SYSTEM_MAIL:/usr/mmdf/bin/submit
-#SYSTEM_MAIL_FLAGS:-mlruxto,cc\*
-#
-.ex 2
-#SYSTEM_MAIL:/usr/sbin/sendmail
-#SYSTEM_MAIL_FLAGS:-t -oi
-#
-.ex 2
-#SYSTEM_MAIL:/usr/lib/sendmail
-#SYSTEM_MAIL_FLAGS:-t -oi
-#
+
+: SYSTEM_MAIL:/usr/mmdf/bin/submit
+: SYSTEM_MAIL_FLAGS:-mlruxto,cc\*
+
+: SYSTEM_MAIL:/usr/sbin/sendmail
+: SYSTEM_MAIL_FLAGS:-t -oi
+
+: SYSTEM_MAIL:/usr/lib/sendmail
+: SYSTEM_MAIL_FLAGS:-t -oi
+
 Win32:
 #=======
 The Win32 port assumes that the mailer cannot read via a pipe.  That is, it
@@ -2320,27 +2336,27 @@ must read all information from files.  The "sendmail" utility in the 2.8.1
 release is able to work with that assumption.  There is no way to tell the
 Win32 port of Lynx to send its information to the sendmail utility via a
 pipe.
-#
+
 Please read sendmail.txt in the LYNX_W32.ZIP distribution
 .url	http://invisible-mirror.net/archives/lynx/tarballs/lynx2.8.1_w32.zip
 .url	ftp://ftp.invisible-island.net/lynx/tarballs/lynx2.8.1_w32.zip
-#
+
 As an alternative, the newer "sendmail for windows" may be useful:
 .url	http://glob.com.au/sendmail/
-#
+
 See also BLAT_MAIL and ALT_BLAT_MAIL flags.
-#
-#SYSTEM_MAIL:sendmail -f me@my.host -h my.host -r my.smtp.mailer -m SMTP
-*** mail adrs
+
+: SYSTEM_MAIL:sendmail -f me@my.host -h my.host -r my.smtp.mailer -m SMTP
+**** mail adrs
 VMS ONLY:
 ========
 MAIL_ADRS is defined in userdefs.h and normally is structured for PMDF's
 IN%"INTERNET_ADDRESS" scheme.  The %s is replaced with the address given
 by the user.  If you are using a different Internet mail transport, change
 the IN appropriately (e.g., to SMTP, MX, or WINS).
-#
-#MAIL_ADRS:"IN%%""%s"""
-*** use fixed records
+
+: MAIL_ADRS:"IN%%""%s"""
+**** use fixed records
 VMS ONLY:
 ========
 If USE_FIXED_RECORDS is set to TRUE here or in userdefs.h, Lynx will
@@ -2351,39 +2367,39 @@ Carriage Control, which is incorrect, and can cause downloading software
 to get confused and unhappy.  If you do set it FALSE, you can use the
 FIXED512.COM command file, which is included in this distribution, to do
 the conversion externally.
-#
-#USE_FIXED_RECORDS:TRUE
-*** blat mail
+
+: USE_FIXED_RECORDS:TRUE
+**** blat mail
 BLAT_MAIL is used in the Win32 port.  It tells Lynx whether to use the
 "blat" mailer, or the "sendmail" utility.  Normally the "blat" mailer is
 used for Win32, because the sendmail look-alikes have fewer features.
 This feature can also be set/reset via the command-line "-noblat" option.
-#
+
 Blat is available from
 .url http://www.blat.net
-#
+
 See also ALT_BLAT_MAIL and SYSTEM_MAIL flags.
-#BLAT_MAIL:TRUE
-*** alt blat mail
+: BLAT_MAIL:TRUE
+**** alt blat mail
 BLAT_MAIL is used in the Win32 port.  It tells Lynx whether to use the
 "blat" mailer, or the "blatj" utility.  This feature can also be set/reset
 via the command-line "-altblat" option.
-#
+
 Some users prefer blatj, which can handle Japanese characters.  It is
 available from
 .url http://www.piedey.co.jp/blatj/
 (caution - the page is in Japanese).
-#
+
 See also BLAT_MAIL and SYSTEM_MAIL flags.
-#ALT_BLAT_MAIL:FALSE
-** Keyboard input
+: ALT_BLAT_MAIL:FALSE
+*** Keyboard input
 These settings control the way Lynx interprets user input.
-*** vi keys always on, emacs keys always on
+**** vi keys always on, emacs keys always on
 Vi or Emacs movement keys, i.e. familiar hjkl or ^N^P^F^B .
 These are defaults, which can be changed in the Options Menu or .lynxrc .
-VI_KEYS_ALWAYS_ON:TRUE
-#EMACS_KEYS_ALWAYS_ON:FALSE
-*** default keypad mode
+: VI_KEYS_ALWAYS_ON:TRUE
+: EMACS_KEYS_ALWAYS_ON:FALSE
+**** default keypad mode
 DEFAULT_KEYPAD_MODE may be set to NUMBERS_AS_ARROWS
                                or LINKS_ARE_NOT_NUMBERED (the same)
                                or LINKS_ARE_NUMBERED
@@ -2395,68 +2411,69 @@ or numbers on the numeric key-pad work like arrows;
 the "FIELDS" options cause form fields also to be numbered.
 This may be overridden by the keypad_mode setting in .lynxrc,
 and can also be changed via the Options Menu.
-#
-#DEFAULT_KEYPAD_MODE:NUMBERS_AS_ARROWS
-*** number links/fields on left
+
+: DEFAULT_KEYPAD_MODE:NUMBERS_AS_ARROWS
+**** number links/fields on left
 Denotes the position for link- and field-numbers (whether it is on the left
 or right of the anchor).  These are subject to DEFAULT_KEYPAD_MODE, which
 determines whether numbers are shown.
-#NUMBER_LINKS_ON_LEFT:TRUE
-#NUMBER_FIELDS_ON_LEFT:TRUE
-*** default keypad mode is number as arrows
+: NUMBER_LINKS_ON_LEFT:TRUE
+: NUMBER_FIELDS_ON_LEFT:TRUE
+**** default keypad mode is number as arrows
 Obsolete form of DEFAULT_KEYPAD_MODE,
 numbers work like arrows or numbered links.
 Set to TRUE, indicates numbers act as arrows,
 and set to FALSE indicates numbers refer to numbered links on the page.
 LINKS_AND_FIELDS_ARE_NUMBERED cannot be set by this option because
 it allows only two values (true and false).
-#
-#DEFAULT_KEYPAD_MODE_IS_NUMBERS_AS_ARROWS:TRUE
-*** case sensitive always on
+
+: DEFAULT_KEYPAD_MODE_IS_NUMBERS_AS_ARROWS:TRUE
+**** case sensitive always on
 The default search type.
 This is a default that can be overridden by the user!
-#
-#CASE_SENSITIVE_ALWAYS_ON:FALSE
-*** keyboard layout
+
+: CASE_SENSITIVE_ALWAYS_ON:FALSE
+**** keyboard layout
 If your terminal (or terminal emulator, or operating system) does not
 support 8-bit input (at all or in easy way), you can use Lynx to
 generate 8-bit characters from 7-bit ones output by terminal.
-#
+
 Currently available keyboard layouts:
-#	ROT13'd keyboard layout
-#	JCUKEN Cyrillic, for AT 101-key kbd
-#	YAWERTY Cyrillic, for DEC LK201 kbd
-#
+: 	ROT13'd keyboard layout
+: 	JCUKEN Cyrillic, for AT 101-key kbd
+: 	YAWERTY Cyrillic, for DEC LK201 kbd
+
 This feature is ifdef'd with EXP_KEYBOARD_LAYOUT.
-#KEYBOARD_LAYOUT:JCUKEN Cyrillic, for AT 101-key kbd
-*** keymap
+: KEYBOARD_LAYOUT:JCUKEN Cyrillic, for AT 101-key kbd
+**** keymap
 Key remapping definitions!
-#
+
 You may redefine the keymapping of any function in Lynx by
 using the KEYMAP option.  The basic form of KEYMAP is:
  KEYMAP:<KEYSTROKE>:<LYNX FUNCTION>
 (See below for an extended format.)
-#
+
 You must map upper and lowercase keys separately.
-#
+
 A representative list of functions mapped to their default keys is
 provided below.  All of the mappings are commented out by default
 since they just repeat the default mappings, except for TOGGLE_HELP
 (see below).  See LYKeymap.c for the complete key mapping.  Use the
 'K'eymap command when running Lynx for a list of the _current_ keymappings.
-#
+
 You can disable any of the default key-mappings by mapping the key to
 "UNMAPPED".
-#
+
 (However, in contrast to the output of 'K' command,
 'H'elp (lynx_help/*.html and lynx_help/keystrokes/*.html files) shows
 the default mapping unless you change that files manually,
 so you are responsible for possible deviations
 when you are changing any KEYMAP below).
-#
+
 Lynx accepts special keys either by name, or by lynx-specific codes.  These
 names and codes are listed below, with a brief description:
-.nf
+
+#+begin_example
         UPARROW: 0x100 (Up Arrow)
         DNARROW: 0x101 (Down Arrow)
         RTARROW: 0x102 (Right Arrow)
@@ -2485,7 +2502,8 @@ names and codes are listed below, with a brief description:
             F11: 0x119 (VT220 Function-key 11)
             F12: 0x11A (VT220 Function-key 12)
           MOUSE: 0x11D (reserved for internal use with -use_mouse)
-.fi
+#+end_example
+
 Other codes not listed above may be available for additional keys,
 depending on operating system and libraries used to compile Lynx.
 On Unix-like systems, if compiled with slang or ncurses, an additional
@@ -2497,134 +2515,135 @@ subdirectory for further explanation.  Note that mapping via
 mappings done here: KEYMAP maps the result of that step (which still
 represents a key) to a function (which represents an action that Lynx
 should perform).
-.nf
-#
-#KEYMAP:0x5C:SOURCE		Toggle source viewing mode (show HTML source)
-#KEYMAP:^R:RELOAD		Reload the current document and redisplay
-#KEYMAP:^U:NEXT_DOC		Undo PREV_DOC)
-#KEYMAP:q:QUIT			Ask the user to quit
+
+#+begin_example
+KEYMAP:0x5C:SOURCE		Toggle source viewing mode (show HTML source)
+KEYMAP:^R:RELOAD		Reload the current document and redisplay
+KEYMAP:^U:NEXT_DOC		Undo PREV_DOC)
+KEYMAP:q:QUIT			Ask the user to quit
 KEYMAP:q:ABORT			Quit without verification
 KEYMAP:0x20:NEXT_PAGE		Move down to next page
-#KEYMAP:-:PREV_PAGE		Move up to previous page
-#KEYMAP:^P:UP_TWO		Move display up two lines
-#KEYMAP:INSERT_KEY:UP_TWO	Function key Insert - Move display up two lines
-#KEYMAP:^N:DOWN_TWO		Move display down two lines
-#KEYMAP:REMOVE_KEY:DOWN_TWO	Function key Remove - Move display down two lines
-#KEYMAP:(:UP_HALF		Move display up half a page
-#KEYMAP:):DOWN_HALF		Move display down half a page
-#KEYMAP:^W:REFRESH		Refresh the screen
+KEYMAP:-:PREV_PAGE		Move up to previous page
+KEYMAP:^P:UP_TWO		Move display up two lines
+KEYMAP:INSERT_KEY:UP_TWO	Function key Insert - Move display up two lines
+KEYMAP:^N:DOWN_TWO		Move display down two lines
+KEYMAP:REMOVE_KEY:DOWN_TWO	Function key Remove - Move display down two lines
+KEYMAP:(:UP_HALF		Move display up half a page
+KEYMAP:):DOWN_HALF		Move display down half a page
+KEYMAP:^W:REFRESH		Refresh the screen
 KEYMAP:0:HOME			Go to top of current document
-#KEYMAP:HOME:HOME		Keypad Home - Go to top of current document
-#KEYMAP:FIND_KEY:HOME		Function key Find - Go to top of current document
+KEYMAP:HOME:HOME		Keypad Home - Go to top of current document
+KEYMAP:FIND_KEY:HOME		Function key Find - Go to top of current document
 KEYMAP:G:END			Go to bottom of current document
-#KEYMAP:END:END			Keypad End - Go to bottom of current document
-#KEYMAP:SELECT_KEY:END		Function key Select - Go to bottom of current document
-#KEYMAP:UPARROW:PREV_LINK	Move to the previous link or page
-#KEYMAP:DNARROW:NEXT_LINK	Move to the next link or page
-#KEYMAP:BACKTAB_KEY:FASTBACKW_LINK	Back Tab - Move to previous link or text area
-#KEYMAP:^I:FASTFORW_LINK	Tab key - Move always to next link or text area
-#KEYMAP:^:FIRST_LINK		Move to the first link on line
-#KEYMAP:$:LAST_LINK		Move to the last link on line
-#KEYMAP:<:UP_LINK		Move to the link above
-#KEYMAP:>:DOWN_LINK		Move to the link below
-#KEYMAP:0x7F:HISTORY		Show the history list
-#KEYMAP:0x08:HISTORY		Show the history list
-#KEYMAP:LTARROW:PREV_DOC	Return to the previous document in history stack
-#KEYMAP:RTARROW:ACTIVATE	Select the current link
-#KEYMAP:DO_KEY:ACTIVATE		Function key Do - Select the current link
-#KEYMAP:g:GOTO			Goto a random URL
+KEYMAP:END:END			Keypad End - Go to bottom of current document
+KEYMAP:SELECT_KEY:END		Function key Select - Go to bottom of current document
+KEYMAP:UPARROW:PREV_LINK	Move to the previous link or page
+KEYMAP:DNARROW:NEXT_LINK	Move to the next link or page
+KEYMAP:BACKTAB_KEY:FASTBACKW_LINK	Back Tab - Move to previous link or text area
+KEYMAP:^I:FASTFORW_LINK	Tab key - Move always to next link or text area
+KEYMAP:^:FIRST_LINK		Move to the first link on line
+KEYMAP:$:LAST_LINK		Move to the last link on line
+KEYMAP:<:UP_LINK		Move to the link above
+KEYMAP:>:DOWN_LINK		Move to the link below
+KEYMAP:0x7F:HISTORY		Show the history list
+KEYMAP:0x08:HISTORY		Show the history list
+KEYMAP:LTARROW:PREV_DOC	Return to the previous document in history stack
+KEYMAP:RTARROW:ACTIVATE	Select the current link
+KEYMAP:DO_KEY:ACTIVATE		Function key Do - Select the current link
+KEYMAP:g:GOTO			Goto a random URL
 KEYMAP:u:ECGOTO		Edit the current document's URL and go to it
-#KEYMAP:H:HELP			Show default help screen
-#KEYMAP:F1:DWIMHELP		Function key Help - Show a help screen
-#KEYMAP:i:INDEX			Show default index
+KEYMAP:H:HELP			Show default help screen
+KEYMAP:F1:DWIMHELP		Function key Help - Show a help screen
+KEYMAP:i:INDEX			Show default index
 #*** Edit FORM_LINK_* messages in LYMessages_en.h if you change NOCACHE ***
-#KEYMAP:x:NOCACHE		Force submission of form or link with no-cache
+KEYMAP:x:NOCACHE		Force submission of form or link with no-cache
 #*** Do not change INTERRUPT from 'z' & 'Z' ***
-#KEYMAP:z:INTERRUPT		Interrupt network transmission
-#KEYMAP:m:MAIN_MENU		Return to the main menu
-#KEYMAP:o:OPTIONS		Show the options menu
-#KEYMAP:i:INDEX_SEARCH		Search a server based index
+KEYMAP:z:INTERRUPT		Interrupt network transmission
+KEYMAP:m:MAIN_MENU		Return to the main menu
+KEYMAP:o:OPTIONS		Show the options menu
+KEYMAP:i:INDEX_SEARCH		Search a server based index
 KEYMAP:/:WHEREIS		Find a string within the current document
 KEYMAP:n:NEXT			Find next occurrence of string within document
-#KEYMAP:c:COMMENT		Comment to the author of the current document
-#KEYMAP:C:CHDIR			Change current directory
+KEYMAP:c:COMMENT		Comment to the author of the current document
+KEYMAP:C:CHDIR			Change current directory
 KEYMAP:e:EDIT			Edit current document or form's textarea (call: ^Ve)
-#KEYMAP:E:ELGOTO		Edit the current link's URL or ACTION and go to it
+KEYMAP:E:ELGOTO		Edit the current link's URL or ACTION and go to it
 KEYMAP:i:INFO			Show info about current document
-#KEYMAP:p:PRINT			Show print options
-#KEYMAP:a:ADD_BOOKMARK		Add current document to bookmark list
-#KEYMAP:v:VIEW_BOOKMARK		View the bookmark list
-#KEYMAP:V:VLINKS		List links visited during the current Lynx session
-#KEYMAP:!:SHELL			Spawn default shell
+KEYMAP:p:PRINT			Show print options
+KEYMAP:a:ADD_BOOKMARK		Add current document to bookmark list
+KEYMAP:v:VIEW_BOOKMARK		View the bookmark list
+KEYMAP:V:VLINKS		List links visited during the current Lynx session
+KEYMAP:!:SHELL			Spawn default shell
 KEYMAP:d:DOWNLOAD		Download current link
-#KEYMAP:j:JUMP			Jump to a predefined target
-#KEYMAP:k:KEYMAP		Display the current key map
-#KEYMAP:l:LIST			List the references (links) in the current document
-#KEYMAP:#:TOOLBAR		Go to the Toolbar or Banner in the current document
-#KEYMAP:^T:TRACE_TOGGLE		Toggle detailed tracing for debugging
-#KEYMAP:;:TRACE_LOG		View trace log if available for the current session
-#KEYMAP:*:IMAGE_TOGGLE		Toggle inclusion of links for all images
-#KEYMAP:[:INLINE_TOGGLE		Toggle pseudo-ALTs for inlines with no ALT string
-#KEYMAP:]:HEAD			Send a HEAD request for current document or link
+KEYMAP:j:JUMP			Jump to a predefined target
+KEYMAP:k:KEYMAP		Display the current key map
+KEYMAP:l:LIST			List the references (links) in the current document
+KEYMAP:#:TOOLBAR		Go to the Toolbar or Banner in the current document
+KEYMAP:^T:TRACE_TOGGLE		Toggle detailed tracing for debugging
+KEYMAP:;:TRACE_LOG		View trace log if available for the current session
+KEYMAP:*:IMAGE_TOGGLE		Toggle inclusion of links for all images
+KEYMAP:[:INLINE_TOGGLE		Toggle pseudo-ALTs for inlines with no ALT string
+KEYMAP:]:HEAD			Send a HEAD request for current document or link
 #*** Must be compiled with USE_EXTERNALS to enable EXTERN_LINK, EXTERN_PAGE ***
-#KEYMAP:,:EXTERN_PAGE		Run external program with current page
-#KEYMAP:.:EXTERN_LINK		Run external program with current link
+KEYMAP:,:EXTERN_PAGE		Run external program with current page
+KEYMAP:.:EXTERN_LINK		Run external program with current link
 #*** Escaping from text input fields with ^V is independent from this: ***
-#KEYMAP:^V:SWITCH_DTD		Toggle between SortaSGML and TagSoup HTML parsing
-#KEYMAP:0x00:DO_NOTHING		Does nothing (ignore this key)
-#KEYMAP:DO_NOTHING:DO_NOTHING	Does nothing (ignore this key)
-#KEYMAP:{:SHIFT_LEFT		shift the screen left
-#KEYMAP:}:SHIFT_RIGHT		shift the screen right
-#KEYMAP:|:LINEWRAP_TOGGLE	toggle linewrap on/off, for shift-commands
-#KEYMAP:~:NESTED_TABLES		toggle nested-tables parsing on/off
-.fi
+KEYMAP:^V:SWITCH_DTD		Toggle between SortaSGML and TagSoup HTML parsing
+KEYMAP:0x00:DO_NOTHING		Does nothing (ignore this key)
+KEYMAP:DO_NOTHING:DO_NOTHING	Does nothing (ignore this key)
+KEYMAP:{:SHIFT_LEFT		shift the screen left
+KEYMAP:}:SHIFT_RIGHT		shift the screen right
+KEYMAP:|:LINEWRAP_TOGGLE	toggle linewrap on/off, for shift-commands
+KEYMAP:~:NESTED_TABLES		toggle nested-tables parsing on/off
+#+end_example
+
 In addition to the bindings available by default, the following functions
 are not directly mapped to any keys by default, although some of them may
 be mapped in specific line-editor bindings (effective while in text input
 fields):
-.nf
-#
-#KEYMAP:???:RIGHT_LINK		Move to the link to the right
-#KEYMAP:???:LEFT_LINK		Move to the link to the left
-#KEYMAP:???:LPOS_PREV_LINK	Like PREV_LINK, last column pos if form input
-#KEYMAP:???:LPOS_NEXT_LINK	Like NEXT_LINK, last column pos if form input
+
+#+begin_example
+KEYMAP:???:RIGHT_LINK		Move to the link to the right
+KEYMAP:???:LEFT_LINK		Move to the link to the left
+KEYMAP:???:LPOS_PREV_LINK	Like PREV_LINK, last column pos if form input
+KEYMAP:???:LPOS_NEXT_LINK	Like NEXT_LINK, last column pos if form input
 #*** Only useful in form text fields , need PASS or prefixing with ^V: ***
-#KEYMAP:???:DWIMHELP		Display help page that may depend on context
-#KEYMAP:???:DWIMEDIT		Use external editor for context-dependent purpose
+KEYMAP:???:DWIMHELP		Display help page that may depend on context
+KEYMAP:???:DWIMEDIT		Use external editor for context-dependent purpose
 #*** Only useful in a form textarea, need PASS or prefixing with ^V: ***
-#KEYMAP:???:EDITTEXTAREA	use external editor to edit a form textarea
-#KEYMAP:???:GROWTEXTAREA	Add some blank lines to bottom of textarea
-#KEYMAP:???:INSERTFILE		Insert file into a textarea (just above cursor)
+KEYMAP:???:EDITTEXTAREA	use external editor to edit a form textarea
+KEYMAP:???:GROWTEXTAREA	Add some blank lines to bottom of textarea
+KEYMAP:???:INSERTFILE		Insert file into a textarea (just above cursor)
 #*** Only useful with dired support and OK_INSTALL: ***
-#KEYMAP:???:INSTALL		install (i.e. copy) local files to new location
-.fi
-#
+KEYMAP:???:INSTALL		install (i.e. copy) local files to new location
+#+end_example
+
 If TOGGLE_HELP is mapped, in novice mode the second help menu line
 can be toggled among NOVICE_LINE_TWO_A, _B, and _C, as defined in
 LYMessages_en.h  Otherwise, it will be NOVICE_LINE_TWO.
-#
-#KEYMAP:O:TOGGLE_HELP		Show other commands in the novice help menu
-#
+
+: KEYMAP:O:TOGGLE_HELP		Show other commands in the novice help menu
+
 KEYMAP lines can have one or two additional fields.  The extended format is
  KEYMAP:<KEYSTROKE>:[<MAIN LYNX FUNCTION>]:<OTHER BINDING>[:<SELECT>]
-#
+
 If the additional field OTHER BINDING specifies DIRED, then the function is
 mapped in the override table used only in DIRED mode.  This is only valid
 if lynx was compiled with dired support and OK_OVERRIDE defined.  A
 MAIN LYNX FUNCTION must be given (it should of course be one that makes
 sense in Dired mode), and SELECT is meaningless.  Default built-in override
 mappings are
-#
-#KEYMAP:^U:NEXT_DOC:DIRED	Undo going back to the previous document
-#KEYMAP:.:TAG_LINK:DIRED	Tag a file or directory for later action
-#KEYMAP:c:CREATE:DIRED		Create a new file or directory
-#KEYMAP:C:CHDIR:DIRED		change current directory
-#KEYMAP:f:DIRED_MENU:DIRED	Display a menu of file operations
-#KEYMAP:m:MODIFY:DIRED		Modify name or location of a file or directory
-#KEYMAP:r:REMOVE:DIRED		Remove files or directories
-#KEYMAP:t:TAG_LINK:DIRED	Tag a file or directory for later action
-#KEYMAP:u:UPLOAD:DIRED		Show menu of "Upload Options"
-#
+
+: KEYMAP:^U:NEXT_DOC:DIRED	Undo going back to the previous document
+: KEYMAP:.:TAG_LINK:DIRED	Tag a file or directory for later action
+: KEYMAP:c:CREATE:DIRED		Create a new file or directory
+: KEYMAP:C:CHDIR:DIRED		change current directory
+: KEYMAP:f:DIRED_MENU:DIRED	Display a menu of file operations
+: KEYMAP:m:MODIFY:DIRED		Modify name or location of a file or directory
+: KEYMAP:r:REMOVE:DIRED		Remove files or directories
+: KEYMAP:t:TAG_LINK:DIRED	Tag a file or directory for later action
+: KEYMAP:u:UPLOAD:DIRED		Show menu of "Upload Options"
+
 If the OTHER BINDING field does not specify DIRED, then it is taken as a
 line-editor action.  It is possible to keep the MAIN LYNX FUNCTION field
 empty in that case, for changing only the line-editing behavior.
@@ -2636,11 +2655,11 @@ number, only the binding for the numbered style is changed (numbering
 is in the order in which styles are shown in the Options Menu, starting
 with 1 for the Default style).  If SELECT is negative (-n), all styles
 except n are affected.
-.nf
-#
+
+#+begin_example
  NOP		Do Nothing
  ABORT	Input cancelled
-#
+
  BOL		Go to begin of line
  EOL		Go to end   of line
  FORW		Cursor forwards
@@ -2649,7 +2668,7 @@ except n are affected.
  FORWW	Word forward
  BACKW	Word back
  BACK_LL	Cursor backwards or left link
-#
+
  DELN		Delete next/curr char
  DELP		Delete prev      char
  DELNW	Delete next word
@@ -2659,68 +2678,62 @@ except n are affected.
  ERASE	Erase the line
  LOWER	Lower case the line
  UPPER	Upper case the line
-#
+
  LKCMD	In fields: Invoke key command prompt (default for ^V)
  PASS		In fields: handle as non-lineedit key; in prompts: ignore
-#
-.fi
+#+end_example
+
 Modify following key (prefixing only works within line-editing, edit actions
 of some resulting prefixed keys are built-in, see Line Editor help pages)
  SETM1	Set modifier 1 flag (default for ^X - key prefix)
  SETM2	Set modifier 2 flag (another key prefix - same effect)
-#
+
 May not always be compiled in:
-.nf
-#
- TPOS		Transpose characters
- SETMARK	emacs-like set-mark-command
- XPMARK	emacs-like exchange-point-and-mark
- KILLREG	emacs-like kill-region
- YANK		emacs-like yank
- SWMAP	Switch input keymap
- PASTE	ClipBoard to Lynx - Windows Extension
-#
-.fi
+
+:  TPOS		Transpose characters
+:  SETMARK	emacs-like set-mark-command
+:  XPMARK	emacs-like exchange-point-and-mark
+:  KILLREG	emacs-like kill-region
+:  YANK		emacs-like yank
+:  SWMAP	Switch input keymap
+:  PASTE	ClipBoard to Lynx - Windows Extension
+
 May work differently from expected if not bound to their expected keys:
-.nf
-#
- CHAR		Insert printable char (default for all ASCII printable)
- ENTER	Input complete, return char/lynxkeycode (for RETURN/ENTER)
- TAB		Input complete, return TAB (for ASCII TAB char ^I)
-#
-.fi
+
+:  CHAR		Insert printable char (default for all ASCII printable)
+:  ENTER	Input complete, return char/lynxkeycode (for RETURN/ENTER)
+:  TAB		Input complete, return TAB (for ASCII TAB char ^I)
+
 Internal use, probably not useful for binding, listed for completeness:
-.nf
-#
- UNMOD	Fall back to no-modifier command
- AIX		Hex 97
- C1CHAR	Insert C1 char if printable
-#
-.fi
+
+:  UNMOD	Fall back to no-modifier command
+:  AIX		Hex 97
+:  C1CHAR	Insert C1 char if printable
+
 If OTHER BINDING specifies PASS, then if the key is pressed in a text input
 field it is passed by the built-in line-editor to normal KEYMAP handling,
 i.e. this flag acts like an implied ^V escape (always overrides line-editor
 behavior of the key).  For example,
-#KEYMAP:INSERT_KEY:UP_TWO:PASS Function key Insert - Move display up two lines
-#
+: KEYMAP:INSERT_KEY:UP_TWO:PASS Function key Insert - Move display up two lines
+
 Other examples (repeating built-in bindings)
-#KEYMAP:^V::LKCMD	set (only) line-edit action for ^V
-#KEYMAP:^V:SWITCH_DTD:LKCMD set main lynxaction and line-edit action for ^V
-#KEYMAP:^U::ERASE:1	set line-edit binding for ^U, for default style
-#KEYMAP:^[::SETM2:3	use escape key as modifier - works only sometimes
-** External Programs
+: KEYMAP:^V::LKCMD	set (only) line-edit action for ^V
+: KEYMAP:^V:SWITCH_DTD:LKCMD set main lynxaction and line-edit action for ^V
+: KEYMAP:^U::ERASE:1	set line-edit binding for ^U, for default style
+: KEYMAP:^[::SETM2:3	use escape key as modifier - works only sometimes
+*** External Programs
 MIME types and viewers!
-#
+
 file extensions may be assigned to MIME types using
 the SUFFIX: definition.
-#
+
 NOTE: It is normally preferable to define new extension mappings in
       EXTENSION_MAP files (see below) instead of here:  Definitions
       here are overridden by those in EXTENSION_MAP files and even by
       some built-in defaults in src/HTInit.c.  On the other hand,
       definitions here allow some more fields that are not possible
       in those files.
-#
+
       Extension mappings have an effect mostly for ftp and local files,
       they are NOT used to determine the type of content for URLs with
       the http protocol.  This is because HTTP servers already specify
@@ -2729,64 +2742,66 @@ NOTE: It is normally preferable to define new extension mappings in
       even if they are accessed only via the HTTP protocol, if the viewer
       (see below) for those MIME types requires a certain suffix for the
       temporary file passed to it.]
-*** default editor
+**** default editor
 If DEFAULT_EDITOR is defined, users may edit local documents with it
 & it will also be used for sending mail messages.
 If no editor is defined here or by the user,
 the user will not be able to edit local documents
 and a primitive line-oriented mail-input mode will be used.
-#
+
 For sysadmins: do not define a default editor
 unless you know EVERY user will know how to use it;
 users can easily define their own editor in the Options Menu.
-#
-#DEFAULT_EDITOR:
-*** system editor
+
+: DEFAULT_EDITOR:
+**** system editor
 SYSTEM_EDITOR behaves the same as DEFAULT_EDITOR,
 except that it can't be changed by users.
-#
-#SYSTEM_EDITOR:
-**** positionable editor
+
+: SYSTEM_EDITOR:
+***** positionable editor
 If POSITIONABLE_EDITOR is defined once or multiple times and if the same
 editor is used as editor in lynx, lynx will use its features, i.e., adding an
 option to set the initial line-position, when editing files and textarea.
 The commented editors below are already known; there is no need to uncomment
 them.
-#
-#POSITIONABLE_EDITOR:emacs
-#POSITIONABLE_EDITOR:jed
-#POSITIONABLE_EDITOR:jmacs
-#POSITIONABLE_EDITOR:joe
-#POSITIONABLE_EDITOR:jove
-#POSITIONABLE_EDITOR:jpico
-#POSITIONABLE_EDITOR:jstar
-#POSITIONABLE_EDITOR:nano
-#POSITIONABLE_EDITOR:pico
-#POSITIONABLE_EDITOR:rjoe
-#POSITIONABLE_EDITOR:vi
-*** printer, downloader, uploader
+
+#+begin_example
+POSITIONABLE_EDITOR:emacs
+POSITIONABLE_EDITOR:jed
+POSITIONABLE_EDITOR:jmacs
+POSITIONABLE_EDITOR:joe
+POSITIONABLE_EDITOR:jove
+POSITIONABLE_EDITOR:jpico
+POSITIONABLE_EDITOR:jstar
+POSITIONABLE_EDITOR:nano
+POSITIONABLE_EDITOR:pico
+POSITIONABLE_EDITOR:rjoe
+POSITIONABLE_EDITOR:vi
+#+end_example
+**** printer, downloader, uploader
 PRINTER, DOWNLOADER & UPLOADER DEFINITIONS:
 Lynx has 4 pre-defined print options & 1 pre-defined download option,
 which are called up on-screen when `p' or `d' are entered;
 any number of options can be added by the user, as explained below.
 Uploaders can be defined only for UNIX with DIRED_SUPPORT:
 see the Makefile in the top directory & the header of src/LYUpload.c .
-#
+
 For `p' pre-defined options are: `Save to local file', `E-mail the file',
 `Print to screen' and `Print to local printer attached to vt100'.
 `Print to screen' allows file transfers in the absence of alternatives
 and is often the only option allowed here for anonymous users;
 the 3rd & 4th options are not pre-defined for DOS/WINDOWS versions of Lynx.
 For `d' the pre-defined option is: `Download to local file'.
-#
+
 To define your own print or download option use the following formats:
-#
+
 PRINTER:<name>:<command>:<option>:<lines/page>[:<environment>]
-#
+
 DOWNLOADER:<name>:<command>:<option>[:<environment>]
-#
+
 <name>       is what you will see on the print/download screen.
-#
+
 <command>    is the command your system will execute:
              the 1st %s in the command will be replaced
              by the temporary filename used by Lynx;
@@ -2798,18 +2813,18 @@ DOWNLOADER:<name>:<command>:<option>[:<environment>]
              If the command format of your printer/downloader requires
              a different layout, you will need to use a script
              (see the last 2 download examples below).
-#
+
 <option>     TRUE : the printer/downloader will always be ENABLED,
              except that downloading is disabled when -validate is used;
              FALSE : both will be DISABLED for anonymous users
              and printing will be disabled when -noprint is used.
-#
+
 <lines/page> (printers: optional) the number of lines/page (default 66):
              used to compute the approximate output size
              and prompt if the document is > 4 printer pages;
              it uses current screen length for the computation
              when `Print to screen' is selected.
-#
+
 [:<environment>]
              optional, if XWINDOWS then printer/downloader will be
              enabled if DISPLAY environment variable IS defined and
@@ -2818,83 +2833,83 @@ DOWNLOADER:<name>:<command>:<option>[:<environment>]
              environment variable IS NOT defined and disabled otherwise,
              for anything else or if environment is not specified
              printer/downloader is always enabled.
-#
+
 You must put the whole definition on one line;
 if you use a colon, precede it with a backslash.
-#
+
 `Printer' can be any file-handling program you find useful,
 even if it does not physically print anything.
-#
+
 Usually, down/up-loading involves the use of (e.g.) Ckermit or ZModem
 to transfer files to a user's local machine over a serial link,
 but download options do not have to be download-protocol programs.
-#
+
 Printer examples:
-.ex 3
-#PRINTER:Computer Center printer:lpr -Pccprt %s:FALSE
-#PRINTER:Office printer:lpr -POffprt %s:TRUE
-#PRINTER:VMS printer:print /queue=cc$print %s:FALSE:58
+
+: PRINTER:Computer Center printer:lpr -Pccprt %s:FALSE
+: PRINTER:Office printer:lpr -POffprt %s:TRUE
+: PRINTER:VMS printer:print /queue=cc$print %s:FALSE:58
 If you have a very busy VMS print queue
 and Lynx deletes the temporary files before they have been queued,
 use the VMSPrint.com included in the distribution:
-.ex
-#PRINTER:Busy VMS printer:@Lynx_Dir\:VMSPrint sys$print %s:FALSE:58
+
+: PRINTER:Busy VMS printer:@Lynx_Dir\:VMSPrint sys$print %s:FALSE:58
 To specify a print option at run-time:
 NBB if you have ANONYMOUS users, DO NOT allow this option!
-.ex
-#PRINTER:Specify at run-time:echo -n "Enter a print command\: "; read word; sh -c "$word %s":FALSE
+
+: PRINTER:Specify at run-time:echo -n "Enter a print command\: "; read word; sh -c "$word %s":FALSE
 To pass to a sophisticated file viewer: -k suppresses invocation
 of hex display mode if 8-bit or control characters are present;
 +s invokes secure mode (see ftp://space.mit.edu/pub/davis/most):
-.ex
-#PRINTER:Use Most to view:most -k +s %s:TRUE:23
-#
+
+: PRINTER:Use Most to view:most -k +s %s:TRUE:23
+
 Downloader examples:
 in Kermit, -s %s is the filename sent, -a %s the filename on arrival
 (if they are given in reverse order here, the command will fail):
-.ex
-#DOWNLOADER:Use Kermit to download to the terminal:kermit -i -s %s -a %s:TRUE
+
+: DOWNLOADER:Use Kermit to download to the terminal:kermit -i -s %s -a %s:TRUE
 NB don't use -k with Most, so that binaries will invoke hexadecimal mode:
-.ex
-#DOWNLOADER:Use Most to view:most +s %s:TRUE
+
+: DOWNLOADER:Use Most to view:most +s %s:TRUE
 The following example gives wrong filenames
 (`sz' doesn't support a suggested filename parameter):
-.ex
-#DOWNLOADER:Use Zmodem to download to the local terminal:sz %s:TRUE
+
+: DOWNLOADER:Use Zmodem to download to the local terminal:sz %s:TRUE
 The following example returns correct filenames
 by using a script to make a subdirectory in /tmp,
 but may conflict with very strong security or permissions restrictions:
-.ex
-#DOWNLOADER:Use Zmodem to download to the local terminal:set %s %s;td=/tmp/Lsz$$;mkdir $td;ln -s $1 $td/"$2";sz $td/"$2";rm -r $td:TRUE
-.ex 2
-#UPLOADER:Use Kermit to upload from your computer: kermit -i -r -a %s:TRUE
-#UPLOADER:Use Zmodem to upload from your computer: rz %s:TRUE
-#
+
+: DOWNLOADER:Use Zmodem to download to the local terminal:set %s %s;td=/tmp/Lsz$$;mkdir $td;ln -s $1 $td/"$2";sz $td/"$2";rm -r $td:TRUE
+
+: UPLOADER:Use Kermit to upload from your computer: kermit -i -r -a %s:TRUE
+: UPLOADER:Use Zmodem to upload from your computer: rz %s:TRUE
+
 Note for OS/390: /* S/390 -- gil -- 1464 */
 The following is strongly recommended to undo ASCII->EBCDIC conversion.
-.ex
-#DOWNLOADER:Save OS/390 binary file: iconv -f IBM-1047 -t ISO8859-1 %s >%s:FALSE
-*** global/personal extension map
+
+: DOWNLOADER:Save OS/390 binary file: iconv -f IBM-1047 -t ISO8859-1 %s >%s:FALSE
+**** global/personal extension map
 The global and personal EXTENSION_MAP files allow you to assign extensions
 to MIME types which will override any of the suffix maps in this (lynx.cfg)
 configuration file, or in src/HTInit.c.  See the example mime.types file
 in the samples subdirectory.
-#
+
 Unix:
 ====
-#GLOBAL_EXTENSION_MAP:/usr/local/lib/mosaic/mime.types
+: GLOBAL_EXTENSION_MAP:/usr/local/lib/mosaic/mime.types
 VMS:
 ===
-#GLOBAL_EXTENSION_MAP:Lynx_Dir:mime.types
-#
+: GLOBAL_EXTENSION_MAP:Lynx_Dir:mime.types
+
 #	Unix (sought in user's home directory):
-#PERSONAL_EXTENSION_MAP:.mime.types
+: PERSONAL_EXTENSION_MAP:.mime.types
 #	VMS (sought in user's sys$login directory):
-#PERSONAL_EXTENSION_MAP:mime.types
-*** suffix order
+: PERSONAL_EXTENSION_MAP:mime.types
+**** suffix order
 With SUFFIX_ORDER the precedence of suffix mappings can be changed.
 Two kinds of settings are recognized:
-#
+
    PRECEDENCE_OTHER or PRECEDENCE_HERE
      Suffix mappings can come from four sources: (1) SUFFIX rules
      given here - see below, (2) built-in defaults (HTInit.c), and the
@@ -2905,7 +2920,7 @@ Two kinds of settings are recognized:
      ones elsewhere.  This default ordering is called PRECEDENCE_OTHER.
      With PRECEDENCE_HERE, the order becomes (2) (3) (4) (1), i.e.
      mappings here override others made elsewhere.
-#
+
    NO_BUILTIN
      This disables all built-in default rules.  In other words, (2) in the
      list above is skipped.  Some recognition for compressed files (".gz",
@@ -2917,16 +2932,16 @@ Both kinds of settings can be combined, separated by comma as in
 Note: Using PRECEDENCE_HERE has only an effect on SUFFIX rules that follow.
 Moreover, if GLOBAL_EXTENSION_MAP or PERSONAL_EXTENSION_MAP directives
 are used, they should come *before* a SUFFIX_ORDER:PRECEDENCE_HERE.
-#
-#SUFFIX_ORDER:PRECEDENCE_OTHER
-*** suffix
+
+: SUFFIX_ORDER:PRECEDENCE_OTHER
+**** suffix
 The SUFFIX definition takes the form of:
-#
+
    SUFFIX:<file extension>:<mime type>:<encoding>:<quality>:<description>
-#
+
 All fields after <mime type> are optional (including the separators
 if no more fields follow).
-#
+
     <file extension> trailing end of file name.  This need not strictly
                      be a file extension as understood by the OS, a dot
                      has to be given explicitly if it is indented, for
@@ -2937,91 +2952,93 @@ if no more fields follow).
                      the name, the second without), these are currently
                      mapped to text/plain in the (HTInit.c) built-in code.
                      Lynx compares the file-extensions ignoring case.
-#
+
     <mime type> a MIME content type.  It can also contain a charset
                 parameter, see example below.  This should be given in
                 all lowercase, use <description> for more fancy labels.
                 It can be left empty if an HTTP style encoding is given.
-#
+
 Fields in addition to the usual ones are
-#
+
     <encoding>  either a mail style trivial encoding (7bit, 8bit, binary)
                 which could be used on some systems to determine how to
                 open local files (currently it isn't), and is used to
                 determine transfer mode for some FTP URLs; or a HTTP style
                 content encoding (gzip (equivalent to x-gzip), compress)
-#
+
     <quality> a floating point quality factor, usually between 0.0 and 1.0
               currently unused in most situations.
-#
+
     <description> text that can appear in FTP directory listings, and in
                   local directory listings (see LIST_FORMAT, code %t)
-#
+
 For instance the following definition maps the
 extension ".gif" to the mime type "image/gif"
-.ex
-   SUFFIX:.gif:image/gif
-#
+
+:   SUFFIX:.gif:image/gif
+
 The following can be used if you have a convention to label
 HTML files in some character set that differs from your local
 default (see also ASSUME_LOCAL_CHARSET) with a different
 extension, here ".html-u8".  It also demonstrates use of the
 description field, note extra separators for omitted fields:
-.ex
-   SUFFIX:.html-u8:text/html;charset=utf-8:::UTF-8 HTML
-#
+
+:   SUFFIX:.html-u8:text/html;charset=utf-8:::UTF-8 HTML
+
 The following shows how a suffix can indicate a combination
 of MIME type and compression method. (The ending ".ps.gz" should
 already be recognized by default; the form below could be used on
 systems that don't allow more than one dot in filenames.)
-.ex
-   SUFFIX:.ps_gz:application/postscript:gzip::gzip'd Postscript
-#
+
+:   SUFFIX:.ps_gz:application/postscript:gzip::gzip'd Postscript
+
 The following is meant to match a full filename (but can match
 any file ending in "core", so be careful):
-.ex
-   SUFFIX:core:application/x-core-file
-#
+
+:   SUFFIX:core:application/x-core-file
+
 file suffixes are case INsensitive!
-#
+
 The suffix definitions listed here in the default lynx.cfg file are
 similar to those normally established via src/HTInit.c.  You can change
 the defaults by editing that file or disable them, or via the global or
 personal mime.types files at run time (except for the additional fields).
 Assignments made here are overridden by entries in those files
 unless preceded with a SUFFIX_ORDER:PRECEDENCE_HERE.
-#
-.ex 29
-#SUFFIX:.ps:application/postscript
-#SUFFIX:.eps:application/postscript
-#SUFFIX:.ai:application/postscript
-#SUFFIX:.rtf:application/rtf
-#SUFFIX:.snd:audio/basic
-#SUFFIX:.gif:image/gif
-#SUFFIX:.rgb:image/x-rgb
-#SUFFIX:.png:image/png
-#SUFFIX:.xbm:image/x-xbitmap
-#SUFFIX:.tiff:image/tiff
-#SUFFIX:.jpg:image/jpeg
-#SUFFIX:.jpeg:image/jpeg
-#SUFFIX:.mpg:video/mpeg
-#SUFFIX:.mpeg:video/mpeg
-#SUFFIX:.mov:video/quicktime
-#SUFFIX:.hqx:application/mac-binhex40
-#SUFFIX:.bin:application/octet-stream
-#SUFFIX:.exe:application/octet-stream
-#SUFFIX:.tar:application/x-tar
-#SUFFIX:.tgz:application/x-tar:gzip
-#SUFFIX:.Z::compress
-#SUFFIX:.gz::gzip
-#SUFFIX:.bz2:application/x-bzip2
-#SUFFIX:.zip:application/zip
-#SUFFIX:.lzh:application/x-lzh
-#SUFFIX:.lha:application/x-lha
-#SUFFIX:.dms:application/x-dms
-#SUFFIX:.html:text/html
-#SUFFIX:.txt:text/plain
-*** xloadimage command
+
+
+#+begin_example
+SUFFIX:.ps:application/postscript
+SUFFIX:.eps:application/postscript
+SUFFIX:.ai:application/postscript
+SUFFIX:.rtf:application/rtf
+SUFFIX:.snd:audio/basic
+SUFFIX:.gif:image/gif
+SUFFIX:.rgb:image/x-rgb
+SUFFIX:.png:image/png
+SUFFIX:.xbm:image/x-xbitmap
+SUFFIX:.tiff:image/tiff
+SUFFIX:.jpg:image/jpeg
+SUFFIX:.jpeg:image/jpeg
+SUFFIX:.mpg:video/mpeg
+SUFFIX:.mpeg:video/mpeg
+SUFFIX:.mov:video/quicktime
+SUFFIX:.hqx:application/mac-binhex40
+SUFFIX:.bin:application/octet-stream
+SUFFIX:.exe:application/octet-stream
+SUFFIX:.tar:application/x-tar
+SUFFIX:.tgz:application/x-tar:gzip
+SUFFIX:.Z::compress
+SUFFIX:.gz::gzip
+SUFFIX:.bz2:application/x-bzip2
+SUFFIX:.zip:application/zip
+SUFFIX:.lzh:application/x-lzh
+SUFFIX:.lha:application/x-lha
+SUFFIX:.dms:application/x-dms
+SUFFIX:.html:text/html
+SUFFIX:.txt:text/plain
+#+end_example
+**** xloadimage command
 VMS:
 ====
 XLOADIMAGE_COMMAND will be used as a default in src/HTInit.c
@@ -3034,12 +3051,12 @@ http://www.openvms.digital.com/cd/XV310A/ subdirectories.  You
 must also have a "%s" for the filename.  The default is defined
 in userdefs.h and can be overridden here, or via the global or
 personal mailcap files (see below).
-#
+
 Make this empty (but not commented out) if you don't have such a viewer or
 want to disable the built-in default viewer mappings for image types.
-#
-#XLOADIMAGE_COMMAND:xv %s
-#
+
+: XLOADIMAGE_COMMAND:xv %s
+
 Unix:
 =====
 XLOADIMAGE_COMMAND will be used as a default in src/HTInit.c for
@@ -3058,13 +3075,13 @@ mappings for image types.
 Note that open is used as the default for NeXT, instead of the
 XLOADIMAGE_COMMAND definition.
 If you use xli, you may want to add the -quiet flag.
-#
-#XLOADIMAGE_COMMAND:xli %s &
-XLOADIMAGE_COMMAND:xdg-open %s &
-*** viewer
+
+: XLOADIMAGE_COMMAND:xli %s &
+: XLOADIMAGE_COMMAND:xdg-open %s &
+**** viewer
 MIME types may be assigned to external viewers using
 the VIEWER definition.
-#
+
 NOTE: if you do not define a viewer to a new MIME type
       that you assigned above then it will be saved to
       disk by default.
@@ -3072,7 +3089,7 @@ NOTE: if you do not define a viewer to a new MIME type
       MAILCAP files (see below) instead of here:  Definitions
       here are overridden by those in MAILCAP files and even
       by some built-in defaults in src/HTInit.c.
-#
+
 The VIEWER definition takes the form of:
    VIEWER:<mime type>:<viewer command>[:<environment>]
      where -mime type is the MIME content type of the file
@@ -3088,80 +3105,79 @@ The VIEWER definition takes the form of:
             is specified the specified viewer will only be defined when the
             user DOES NOT have the environment variable DISPLAY defined.
  examples:
-#		VIEWER:image/gif:xli %s:XWINDOWS
+: 		VIEWER:image/gif:xli %s:XWINDOWS
               VIEWER:image/gif:ascii-view %s:NON_XWINDOWS
               VIEWER:application/start-elm:elm
-#
+
 You must put the whole definition on one line.
-#
+
 If you must use a colon in the viewer command, precede it with a backslash!
-#
+
 The MIME_type:viewer:XWINDOWS definitions listed here in the lynx.cfg
 file are among those established via src/HTInit.c.  For the image types,
 HTInit.c uses the XLOADIMAGE_COMMAND definition in userdefs.h or above
 (open is used for NeXT).  You can change any of these defaults via the
 global or personal mailcap files.  Assignments made here will be overridden
 by entries in those files.
-#
-.ex 7
-#VIEWER:application/postscript:ghostview %s&:XWINDOWS
-#VIEWER:image/gif:xli %s&:XWINDOWS
-#VIEWER:image/x-xbm:xli %s&:XWINDOWS
-#VIEWER:image/png:xli %s&:XWINDOWS
-#VIEWER:image/tiff:xli %s&:XWINDOWS
-#VIEWER:image/jpeg:xli %s&:XWINDOWS
-#VIEWER:video/mpeg:mpeg_play %s &:XWINDOWS
-*** global/personal mailcap
+
+: VIEWER:application/postscript:ghostview %s&:XWINDOWS
+: VIEWER:image/gif:xli %s&:XWINDOWS
+: VIEWER:image/x-xbm:xli %s&:XWINDOWS
+: VIEWER:image/png:xli %s&:XWINDOWS
+: VIEWER:image/tiff:xli %s&:XWINDOWS
+: VIEWER:image/jpeg:xli %s&:XWINDOWS
+: VIEWER:video/mpeg:mpeg_play %s &:XWINDOWS
+**** global/personal mailcap
 The global and personal MAILCAP files allow you to specify external
 viewers to be spawned when Lynx encounters different MIME types, which
 will override any of the suffix maps in this (lynx.cfg) configuration
 file, or in src/HTInit.c.  See
 .url http://tools.ietf.org/html/rfc1524
 and the example mailcap file in the samples subdirectory.
-#
+
 Unix:
 ====
-#GLOBAL_MAILCAP:/usr/local/lib/mosaic/mailcap
+: GLOBAL_MAILCAP:/usr/local/lib/mosaic/mailcap
 VMS:
 ===
-#GLOBAL_MAILCAP:Lynx_Dir:mailcap
-#
+: GLOBAL_MAILCAP:Lynx_Dir:mailcap
+
 #	Sought in user's home (Unix) or sys$login (VMS) directory.
-#PERSONAL_MAILCAP:.mailcap
-*** prefered media types
+: PERSONAL_MAILCAP:.mailcap
+**** prefered media types
 When doing a GET, lynx lists the MIME types which it knows how to present
 (the "Accept:" string).  Depending on your system configuration, the
 mime.types or other data given by the GLOBAL_EXTENSION_MAP may include many
 entries that lynx really does not handle.  Use this option to select one
 of the built-in subsets of the MIME types that lynx could list in the
 Accept.
-#
+
 Values for this option are keywords:
-#	INTERNAL	lynx's built-in types for internal conversions
-#	CONFIGFILE	adds lynx.cfg
-#	USER		adds PERSONAL_EXTENSION_MAP settings
-#	SYSTEM		adds GLOBAL_EXTENSION_MAP  settings
-#	ALL		adds lynx's built-in types for external conversions
-#
-#PREFERRED_MEDIA_TYPES:internal
-*** preferred encoding
+: 	INTERNAL	lynx's built-in types for internal conversions
+: 	CONFIGFILE	adds lynx.cfg
+: 	USER		adds PERSONAL_EXTENSION_MAP settings
+: 	SYSTEM		adds GLOBAL_EXTENSION_MAP  settings
+: 	ALL		adds lynx's built-in types for external conversions
+
+: PREFERRED_MEDIA_TYPES:internal
+**** preferred encoding
 When doing a GET, lynx tells what types of compressed data it can decompress
 (the "Accept-Encoding:" string).  This is determined by compiled-in support
 for decompression or external decompression programs.
-#
+
 Values for this option are keywords:
-#	NONE		Do not request compressed data
-#	GZIP		For gzip
-#	COMPRESS	For compress
-#	BZIP2		For bzip2
-#	ALL		All of the above.
-#PREFERRED_ENCODING:all
-*** preferred content type
+: 	NONE		Do not request compressed data
+: 	GZIP		For gzip
+: 	COMPRESS	For compress
+: 	BZIP2		For bzip2
+: 	ALL		All of the above.
+: PREFERRED_ENCODING:all
+**** preferred content type
 When doing a GET, lynx expects the server to provide a Content-Type, i.e.,
 the MIME name which tells it how to present data.  When that is missing
 lynx uses this value.
-#PREFERRED_CONTENT_TYPE: text/plain
-*** cswing path
+: PREFERRED_CONTENT_TYPE: text/plain
+**** cswing path
 These settings control the ability of Lynx to invoke various programs for
 the user.
 
@@ -3175,16 +3191,16 @@ regulatory switches you want included.  If not defined, or defined as
 a zero-length string ("") or "none" (case-insensitive), the support
 will be disabled.  It will also be disabled if the -nobrowse or
 -selective switches are used, or if the file_url restriction is set.
-#
+
 When enabled, the DIRED_MENU command (normally 'f' or 'F') will invoke
 CSwing, normally with the current default directory as an argument to
 position the user on that node of the directory tree.  However, if the
 current document is a local directory listing, or a local file and not
 one of the temporary menu or list files, the associated directory will
 be passed as an argument, to position the user on that node of the tree.
-#
-#CSWING_PATH:swing
-*** dired menu
+
+: CSWING_PATH:swing
+**** dired menu
 Unix ONLY:
 #===========
 DIRED_MENU items are used to compose the F)ull menu list in DIRED mode
@@ -3192,261 +3208,261 @@ The behavior of the default configuration given here is much the same
 as it was when this menu was hard-coded but these items can now be adjusted
 to suit local needs.  In particular, many of the LYNXDIRED actions can be
 replaced with lynxexec, lynxprog and lynxcgi script references.
-#
+
 NOTE that defining even one DIRED_MENU line overrides all the built-in
 definitions, so a complete set must then be defined here.
-#
+
 Each line consists of the following fields:
-.nf
-#
-#	DIRED_MENU:type:suffix:link text:extra text:action
-#
-#	type: TAG:   list only when one or more files are tagged
-#	      FILE:  list only when the current selection is a regular file
-#	      DIR:   list only when the current selection is a directory
-#	      LINK:  list only when the current selection is a symbolic link
-#
-#	suffix:  list only if the current selection ends in this pattern
-#
-#	link text:  the displayed text of the link
-#
-#	extra text:  the text displayed following the link
-#
-#	action:  the URL to be followed upon selection
-#
-#	link text and action are scanned for % sequences that are expanded
-#	at display time as follows:
-#
-#		%p  path of current selection
-#		%f  filename (last component) of current selection
-#		%t  tagged list (full paths)
-#		%l  list of tagged file names
-#		%d  the current directory
-#
-.fi
-#DIRED_MENU:::New File:(in current directory):LYNXDIRED://NEW_FILE%d
-#DIRED_MENU:::New Directory:(in current directory):LYNXDIRED://NEW_FOLDER%d
-#
+
+#+begin_example
+	DIRED_MENU:type:suffix:link text:extra text:action
+
+	type: TAG:   list only when one or more files are tagged
+	      FILE:  list only when the current selection is a regular file
+	      DIR:   list only when the current selection is a directory
+	      LINK:  list only when the current selection is a symbolic link
+
+	suffix:  list only if the current selection ends in this pattern
+
+	link text:  the displayed text of the link
+
+	extra text:  the text displayed following the link
+
+	action:  the URL to be followed upon selection
+
+	link text and action are scanned for % sequences that are expanded
+	at display time as follows:
+
+		%p  path of current selection
+		%f  filename (last component) of current selection
+		%t  tagged list (full paths)
+		%l  list of tagged file names
+		%d  the current directory
+#+end_example
+
+: DIRED_MENU:::New File:(in current directory):LYNXDIRED://NEW_FILE%d
+: DIRED_MENU:::New Directory:(in current directory):LYNXDIRED://NEW_FOLDER%d
+
 Following depends on OK_INSTALL
-#DIRED_MENU:FILE::Install:selected file to new location:LYNXDIRED://INSTALL_SRC%p
-#DIRED_MENU:DIR::Install:selected directory to new location:LYNXDIRED://INSTALL_SRC%p
-#
-#DIRED_MENU:FILE::Modify File Name:(of current selection):LYNXDIRED://MODIFY_NAME%p
-#DIRED_MENU:DIR::Modify Directory Name:(of current selection):LYNXDIRED://MODIFY_NAME%p
-#DIRED_MENU:LINK::Modify Name:(of selected symbolic link):LYNXDIRED://MODIFY_NAME%p
-#
+: DIRED_MENU:FILE::Install:selected file to new location:LYNXDIRED://INSTALL_SRC%p
+: DIRED_MENU:DIR::Install:selected directory to new location:LYNXDIRED://INSTALL_SRC%p
+
+: DIRED_MENU:FILE::Modify File Name:(of current selection):LYNXDIRED://MODIFY_NAME%p
+: DIRED_MENU:DIR::Modify Directory Name:(of current selection):LYNXDIRED://MODIFY_NAME%p
+: DIRED_MENU:LINK::Modify Name:(of selected symbolic link):LYNXDIRED://MODIFY_NAME%p
+
 Following depends on OK_PERMIT
-#DIRED_MENU:FILE::Modify File Permissions:(of current selection):LYNXDIRED://PERMIT_SRC%p
-#DIRED_MENU:DIR::Modify Directory Permissions:(of current selection):LYNXDIRED://PERMIT_SRC%p
-#
-#DIRED_MENU:FILE::Change Location:(of selected file):LYNXDIRED://MODIFY_LOCATION%p
-#DIRED_MENU:DIR::Change Location:(of selected directory):LYNXDIRED://MODIFY_LOCATION%p
-#DIRED_MENU:LINK::Change Location:(of selected symbolic link):LYNXDIRED://MODIFY_LOCATION%p
-#DIRED_MENU:FILE::Remove File:(current selection):LYNXDIRED://REMOVE_SINGLE%p
-#DIRED_MENU:DIR::Remove Directory:(current selection):LYNXDIRED://REMOVE_SINGLE%p
-#DIRED_MENU:LINK::Remove Symbolic Link:(current selection):LYNXDIRED://REMOVE_SINGLE%p
-#
+: DIRED_MENU:FILE::Modify File Permissions:(of current selection):LYNXDIRED://PERMIT_SRC%p
+: DIRED_MENU:DIR::Modify Directory Permissions:(of current selection):LYNXDIRED://PERMIT_SRC%p
+
+: DIRED_MENU:FILE::Change Location:(of selected file):LYNXDIRED://MODIFY_LOCATION%p
+: DIRED_MENU:DIR::Change Location:(of selected directory):LYNXDIRED://MODIFY_LOCATION%p
+: DIRED_MENU:LINK::Change Location:(of selected symbolic link):LYNXDIRED://MODIFY_LOCATION%p
+: DIRED_MENU:FILE::Remove File:(current selection):LYNXDIRED://REMOVE_SINGLE%p
+: DIRED_MENU:DIR::Remove Directory:(current selection):LYNXDIRED://REMOVE_SINGLE%p
+: DIRED_MENU:LINK::Remove Symbolic Link:(current selection):LYNXDIRED://REMOVE_SINGLE%p
+
 Following depends on OK_UUDECODE and !ARCHIVE_ONLY
-#DIRED_MENU:FILE::UUDecode:(current selection):LYNXDIRED://UUDECODE%p
-#
+: DIRED_MENU:FILE::UUDecode:(current selection):LYNXDIRED://UUDECODE%p
+
 Following depends on OK_TAR and !ARCHIVE_ONLY
-#DIRED_MENU:FILE:.tar.Z:Expand:(current selection):LYNXDIRED://UNTAR_Z%p
-#
+: DIRED_MENU:FILE:.tar.Z:Expand:(current selection):LYNXDIRED://UNTAR_Z%p
+
 Following depend on OK_TAR and OK_GZIP and !ARCHIVE_ONLY
-#DIRED_MENU:FILE:.tar.gz:Expand:(current selection):LYNXDIRED://UNTAR_GZ%p
-#DIRED_MENU:FILE:.tgz:Expand:(current selection):LYNXDIRED://UNTAR_GZ%p
-#
+: DIRED_MENU:FILE:.tar.gz:Expand:(current selection):LYNXDIRED://UNTAR_GZ%p
+: DIRED_MENU:FILE:.tgz:Expand:(current selection):LYNXDIRED://UNTAR_GZ%p
+
 Following depends on !ARCHIVE_ONLY
-#DIRED_MENU:FILE:.Z:Uncompress:(current selection):LYNXDIRED://DECOMPRESS%p
-#
+: DIRED_MENU:FILE:.Z:Uncompress:(current selection):LYNXDIRED://DECOMPRESS%p
+
 Following depends on OK_GZIP and !ARCHIVE_ONLY
-#DIRED_MENU:FILE:.gz:Uncompress:(current selection):LYNXDIRED://UNGZIP%p
-#
+: DIRED_MENU:FILE:.gz:Uncompress:(current selection):LYNXDIRED://UNGZIP%p
+
 Following depends on OK_ZIP and !ARCHIVE_ONLY
-#DIRED_MENU:FILE:.zip:Uncompress:(current selection):LYNXDIRED://UNZIP%p
-#
+: DIRED_MENU:FILE:.zip:Uncompress:(current selection):LYNXDIRED://UNZIP%p
+
 Following depends on OK_TAR and !ARCHIVE_ONLY
-#DIRED_MENU:FILE:.tar:UnTar:(current selection):LYNXDIRED://UNTAR%p
-#
+: DIRED_MENU:FILE:.tar:UnTar:(current selection):LYNXDIRED://UNTAR%p
+
 Following depends on OK_TAR
-#DIRED_MENU:DIR::Tar:(current selection):LYNXDIRED://TAR%p
-#
+: DIRED_MENU:DIR::Tar:(current selection):LYNXDIRED://TAR%p
+
 Following depends on OK_TAR and OK_GZIP
-#DIRED_MENU:DIR::Tar and compress:(using GNU gzip):LYNXDIRED://TAR_GZ%p
-#
+: DIRED_MENU:DIR::Tar and compress:(using GNU gzip):LYNXDIRED://TAR_GZ%p
+
 Following depends on OK_ZIP
-#DIRED_MENU:DIR::Package and compress:(using zip):LYNXDIRED://ZIP%p
-#
-#DIRED_MENU:FILE::Compress:(using Unix compress):LYNXDIRED://COMPRESS%p
-#
+: DIRED_MENU:DIR::Package and compress:(using zip):LYNXDIRED://ZIP%p
+
+: DIRED_MENU:FILE::Compress:(using Unix compress):LYNXDIRED://COMPRESS%p
+
 Following depends on OK_GZIP
-#DIRED_MENU:FILE::Compress:(using gzip):LYNXDIRED://GZIP%p
-#
+: DIRED_MENU:FILE::Compress:(using gzip):LYNXDIRED://GZIP%p
+
 Following depends on OK_ZIP
-#DIRED_MENU:FILE::Compress:(using zip):LYNXDIRED://ZIP%p
-#
-#DIRED_MENU:TAG::Move all tagged items to another location.::LYNXDIRED://MOVE_TAGGED%d
-#
+: DIRED_MENU:FILE::Compress:(using zip):LYNXDIRED://ZIP%p
+
+: DIRED_MENU:TAG::Move all tagged items to another location.::LYNXDIRED://MOVE_TAGGED%d
+
 Following depends on OK_INSTALL
-#DIRED_MENU:TAG::Install tagged files into another directory.::LYNXDIRED://INSTALL_SRC%00
-#
-#DIRED_MENU:TAG::Remove all tagged files and directories.::LYNXDIRED://REMOVE_TAGGED
-#DIRED_MENU:TAG::Untag all tagged items.::LYNXDIRED://CLEAR_TAGGED
-*** external
+: DIRED_MENU:TAG::Install tagged files into another directory.::LYNXDIRED://INSTALL_SRC%00
+
+: DIRED_MENU:TAG::Remove all tagged files and directories.::LYNXDIRED://REMOVE_TAGGED
+: DIRED_MENU:TAG::Untag all tagged items.::LYNXDIRED://CLEAR_TAGGED
+**** external
 External application support.  This feature allows Lynx to pass a given
 URL to an external program.  It was written for three reasons.
-#
+
 1) To overcome the deficiency	of Lynx_386 not supporting ftp and news.
    External programs can be used instead by passing the URL.
-#
+
 2) To allow for background	transfers in multitasking systems.
    I use wget for http and ftp transfers via the external command.
-#
+
 3) To allow for new URLs to be used through Lynx.
-#	  URLs can be made up such as mymail: to spawn desired applications
-#	  via the external command.
-#
+	  URLs can be made up such as mymail: to spawn desired applications
+	  via the external command.
+
 Restrictions can be imposed using -restrictions=externals at the Lynx command
 line.  This will disallow all EXTERNAL lines in lynx.cfg that have FALSE in
 the 3rd field (not counting the name of the setting).  TRUE lines will still
 function.
-#
+
 The lynx.cfg line is as follows:
-#
-EXTERNAL:<url>:<command> %s:<norestriction>:<allow_for_activate>[:environment]
-#
+
+: EXTERNAL:<url>:<command> %s:<norestriction>:<allow_for_activate>[:environment]
+
 <url> Any given URL.  This can be normal ones like ftp or http or it
 can be one made up like mymail.
-#
+
 <command> The command to run with %s being the URL that will be passed.
 In Linux I use "wget -q %s &" (no quotes) to spawn a copy of wget for
 downloading http and ftp files in the background.  In Win95 I use
 "start ncftp %s" to spawn ncftp in a new window.
-#
+
 <norestriction> This complements the -restrictions=externals feature to allow
 for certain externals to be enabled while restricting others.  TRUE means
 a command will still function while Lynx is restricted.  WB
-#
+
 <allow_for_activate> Setting this to TRUE allows the use of this command not
 only when EXTERN key is pressed, but also when ACTIVATE command is invoked
 (i.e., activating the link with the given prefix will be equivalent to
 pressing EXTERN key on it).  If this component of the line is absent, then
 FALSE is assumed.
-#
+
 [:environment] Optional, if XWINDOWS then command is allowed only if
 $DISPLAY environment variable is set, else if NON_XWINDOWS then command
 is allowed only if $DISPLAY environment variable is not set, if absent or
 anything else command is always allowed.
-#
+
 For invoking the command use the EXTERN_LINK or EXTERN_PAGE key.  By default
 EXTERN_LINK is mapped to '.', and EXTERN_PAGE to ',' (if the feature is
 enabled), see the KEYMAP section above.
-#
-#EXTERNAL:ftp:wget %s &:TRUE
-EXTERNAL:http:open %s &:TRUE
-*** external menu
+
+: EXTERNAL:ftp:wget %s &:TRUE
+: EXTERNAL:http:open %s &:TRUE
+**** external menu
 Like EXTERNAL, but allows customizing the menu name.
 Here is the syntax:
-.ex 1
-EXTERNAL_MENU:<url>:<menu>:<command> %s:<norestriction>:<allow_for_activate>[:environment]
-*** path
+
+: EXTERNAL_MENU:<url>:<menu>:<command> %s:<norestriction>:<allow_for_activate>[:environment]
+**** path
 Any of the compiled-in pathnames of external programs can be overridden
 by specifying the corresponding xxx_PATH variable.  If the variable is
 given as an empty string, lynx will not use the program.  For a few cases,
 there are internal functions which can be used instead.
-**** bzip2 path
+***** bzip2 path
 This is the path used for DIRED mode and web connections to compress a file
 to ".bz2", e.g., the Unix command "bzip2".
-**** chmod path
+***** chmod path
 This is the path used for DIRED mode to change file protection, e.g., the
 Unix command "chmod".
-#
+
 Setting this to an empty string will let lynx use a built-in version.
-**** compress path
+***** compress path
 This is the path used for DIRED mode and web connections to compress a file
 to ".Z", e.g., the Unix command "compress".
-**** copy path
+***** copy path
 This is the path used for DIRED mode to copy a file, e.g., the
 Unix command "cp".
-#
+
 Setting this to an empty string will let lynx use a built-in version.
-**** gzip path
+***** gzip path
 This is the path used for DIRED mode and web connections to compress a file
 to ".gz", e.g., the Unix command "gzip".
-**** inflate path
+***** inflate path
 This is the path used for web connections to compress a file using "inflate"
 compression.
-**** install path
+***** install path
 This is the path used for DIRED mode to install files, e.g., the
 Unix command "install".
-**** mkdir path
+***** mkdir path
 This is the path used for DIRED mode to create a directory, e.g., the
 Unix command "mkdir".
-#
+
 Setting this to an empty string will let lynx use a built-in version.
-**** mv path
+***** mv path
 This is the path used for DIRED mode to move a file, e.g., the
 Unix command "mv".
-#
+
 Setting this to an empty string will let lynx use a built-in version.
-**** rlogin path
+***** rlogin path
 This is the path used for DIRED mode to login remotely, e.g., the
 Unix command "rlogin".
-**** rmdir path
+***** rmdir path
 This is the path used for DIRED mode to remove a directory, e.g., the
 Unix command "rmdir".
-#
+
 Setting this to an empty string will let lynx use a built-in version.
-**** rm path
+***** rm path
 This is the path used for DIRED mode to remove a file, e.g., the
 Unix command "rm".
-#
+
 Setting this to an empty string will let lynx use a built-in version.
-**** setfont path
+***** setfont path
 This is the path used for a command which can be used to load a console font
 for the experimental font-switch feature, e.g., the program "setfont".
-**** tar path
+***** tar path
 This is the path used for DIRED mode to create a tar archive from one or more
 files.
-**** telnet path
+***** telnet path
 This is the path for a program which can be used to make a "telnet" connection
 to a remote host.
-**** tn3270 path
+***** tn3270 path
 This is the path for a program which can be used to make an "IBM 3270"
 connection to a remote host.
-**** touch path
+***** touch path
 This is the path used for DIRED mode to update the modification time of a
 file to the current time,, e.g., the Unix command "touch".
-#
+
 Setting this to an empty string will let lynx use a built-in version.
-**** uncompress path
+***** uncompress path
 This is the path used for DIRED mode and web connections to decompress a file
 with ".Z" suffix, e.g., the Unix command "uncompress".
-**** unzip path
+***** unzip path
 This is the path used for DIRED mode to extract files from a zip-archive the
 program "unzip".
-**** uudecode path
+***** uudecode path
 This is the path used for DIRED mode to extract files from uuencoded files
 e.g., the program "uudecode".
-**** zcat path
+***** zcat path
 This is the path used for DIRED mode to decompress files, writing the result
 to a pipe as part of a shell command, e.g., the program "zcat".
-**** zip path
+***** zip path
 This is the path used for DIRED mode to create a zip-archive from one or more
 files, e.g., the program "unzip".
-*** syslog requested URLs
+**** syslog requested URLs
 Log the requested URLs using the syslog interface.
-SYSLOG_REQUESTED_URLS:FALSE
-*** syslog text
+: SYSLOG_REQUESTED_URLS:FALSE
+**** syslog text
 Add the given text to calls made to syslog, to distinguish Lynx from other
 applications which use that interface.
-#SYSLOG_TEXT:
-*** wait viewer termination
+: SYSLOG_TEXT:
+**** wait viewer termination
 The WAIT_VIEWER_TERMINATION is used in the Windows environment to tell Lynx
 to wait until a viewer has terminated.
-#WAIT_VIEWER_TERMINATION:FALSE
-** Proxy
-*** HTTP/HTTPS/FTP/GOPHER/NEWSPOST/NEWSREPLY/NEWS/NNTP/SNEWSPOST/SNEWSREPLY/SNEWS/WAIS/FINGER/CSO proxy
+: WAIT_VIEWER_TERMINATION:FALSE
+*** Proxy
+**** HTTP/HTTPS/FTP/GOPHER/NEWSPOST/NEWSREPLY/NEWS/NNTP/SNEWSPOST/SNEWSREPLY/SNEWS/WAIS/FINGER/CSO proxy
 Lynx version 2.2 and beyond supports the use of proxy servers that can act as
 firewall gateways and caching servers.  They are preferable to the older
 gateway servers.  Each protocol used by Lynx can be mapped separately using
@@ -3456,71 +3472,57 @@ They will not override external settings.  The no_proxy variable can be used
 to inhibit proxying to selected regions of the Web (see below).  Note that on
 VMS these proxy variables are set as process logicals rather than symbols, to
 preserve lowercasing, and will outlive the Lynx image.
-#
-.ex 15
-#http_proxy:http://some.server.dom:port/
-#https_proxy:http://some.server.dom:port/
-#ftp_proxy:http://some.server.dom:port/
-#gopher_proxy:http://some.server.dom:port/
-#news_proxy:http://some.server.dom:port/
-#newspost_proxy:http://some.server.dom:port/
-#newsreply_proxy:http://some.server.dom:port/
-#snews_proxy:http://some.server.dom:port/
-#snewspost_proxy:http://some.server.dom:port/
-#snewsreply_proxy:http://some.server.dom:port/
-#nntp_proxy:http://some.server.dom:port/
-#wais_proxy:http://some.server.dom:port/
-#finger_proxy:http://some.server.dom:port/
-#cso_proxy:http://some.server.dom:port/
-#no_proxy:host.domain.dom
-*** no proxy
+
+
+: http_proxy:http://some.server.dom:port/
+: https_proxy:http://some.server.dom:port/
+: ftp_proxy:http://some.server.dom:port/
+: gopher_proxy:http://some.server.dom:port/
+: news_proxy:http://some.server.dom:port/
+: newspost_proxy:http://some.server.dom:port/
+: newsreply_proxy:http://some.server.dom:port/
+: snews_proxy:http://some.server.dom:port/
+: snewspost_proxy:http://some.server.dom:port/
+: snewsreply_proxy:http://some.server.dom:port/
+: nntp_proxy:http://some.server.dom:port/
+: wais_proxy:http://some.server.dom:port/
+: finger_proxy:http://some.server.dom:port/
+: cso_proxy:http://some.server.dom:port/
+: no_proxy:host.domain.dom
+**** no proxy
 The no_proxy variable can be a comma-separated list of strings defining
 no-proxy zones in the DNS domain name space.  If a tail substring of the
 domain-path for a host matches one of these strings, transactions with that
 node will not be proxied.
-.ex
-#
+
 A single asterisk as an entry will override all proxy variables and no
 transactions will be proxied.
-.ex
-#no_proxy:*
+
+: no_proxy:*
 This is the only allowed use of * in no_proxy.
-#
+
 Warning:  Note that setting 'il' as an entry in this list will block proxying
 for the .mil domain as well as the .il domain.  If the entry is '.il' this
 will not happen.
-** Dump/crawl
-*** listonly
+*** Dump/crawl
+**** listonly
 For -dump, show only the list of links.
-#LISTONLY:FALSE
-*** list inline
+: LISTONLY:FALSE
+**** list inline
 For -dump, show the links inline with the text.
-#LIST_INLINE:FALSE
-*** localhost
+: LIST_INLINE:FALSE
+**** localhost
 When true, this disables URLs that point to remote hosts.
-#LOCALHOST:FALSE
-*** with backspaces
+: LOCALHOST:FALSE
+**** with backspaces
 Emit backspaces in output if -dump'ing or -crawl'ing (like 'man' does).
-#WITH_BACKSPACES:FALSE
+: WITH_BACKSPACES:FALSE
 * LYNX LSS
 :PROPERTIES:
-:header-args: :tangle .lynx.lss
+:header-args: :tangle lynx.lss
 :END:
-#+begin_src conf
-Setting the normal and default types lets us keep (almost) the same colors
-whether the terminal's default colors are white-on-black or black-on-white.
-It is not exact since the default "white" is not necessarily the same color
-as the ANSI lightgray, but is as close as we can get in a standard way.
-#
-If you really want the terminal's default colors, and if lynx is built using
-ncurses' default-color support, remove these two lines:
-#normal:		normal:			lightgray:black
-#default:	normal:			white:black
-
-Normal type styles correspond to HTML tags.
-#
-The next line (beginning with "em") means:  use bold if mono, otherwise
-brightblue on <defaultbackground>
+** Source code
+#+begin_src lss
 em:		bold:			brightblue
 strong:		bold:			brightred
 b:		bold:			red
@@ -3551,21 +3553,11 @@ tr:		bold:			brown
 td:		normal:			default
 br:		normal:			default
 
-Special styles - not corresponding directly to HTML tags
-#	alert	- status bar, when message begins "Alert".
-#	alink	- active link
-#	normal	- default attributes
-#	status	- status bar
-#	whereis	- whereis search target
-#
-#normal:normal:default:blue
 alink:		reverse:		yellow:		black
 status:		reverse:		cyan:		default
 alert:		bold:			yellow:		red
-#whereis:	reverse+underline:	magenta:	cyan
+
 whereis:	bold+reverse:	black: yellow
-currently not used
-#value:normal:green
 
 menu.bg:	normal:			black:		lightgray
 menu.frame:	normal:			black:		lightgray
@@ -3577,7 +3569,6 @@ menu.sb:	normal:			brightred:	lightgray
 forwbackw.arrow:reverse
 hot.paste:	normal:			brightred:	gray
 
-Styles with classes - <ul class=red> etc.
 ul.red:		underline:		brightred
 ul.blue:	bold:			brightblue
 li.red:		reverse:		red:		yellow
@@ -3592,8 +3583,127 @@ input.submit:	normal:			cyan
 tr.baone:	bold:			yellow
 tr.batwo:	bold:			green
 tr.bathree:	bold:			red
-#
+
+link:		normal:			white
+link.green:	bold:			brightgreen
+link.red:	bold:			black:		red
+link.blue:	bold:			white:		blue
+link.toc:	bold:			black:		white
+
+link.red.next:	bold:			red
+link.red.prev:	bold:			yellow:		red
+link.blue.prev:	bold:			yellow:		blue
+link.blue.next:	bold:			blue
+link.green.toc:	bold:			white:		green
+
+span.htmlsrc_comment:normal:		white
+span.htmlsrc_tag:normal:		white
+
+span.htmlsrc_attrib:normal:		cyan
+span.htmlsrc_attrval:normal:		magenta
+span.htmlsrc_abracket:normal:		white
+span.htmlsrc_entity:normal:		white
+
+span.htmlsrc_badseq:normal:		red
+span.htmlsrc_badtag:normal:		red
+span.htmlsrc_badattr:normal:		red
+span.htmlsrc_sgmlspecial:normal:	yellow
+#+end_src
+** Man
+Setting the normal and default types lets us keep (almost) the same colors
+whether the terminal's default colors are white-on-black or black-on-white.
+It is not exact since the default "white" is not necessarily the same color
+as the ANSI lightgray, but is as close as we can get in a standard way.
+
+If you really want the terminal's default colors, and if lynx is built using
+ncurses' default-color support, remove these two lines:
+: normal:		normal:			lightgray:black
+: default:	normal:			white:black
+
+Normal type styles correspond to HTML tags.
+
+The next line (beginning with "em") means:  use bold if mono, otherwise
+brightblue on <defaultbackground>
+#+begin_example
+em:		bold:			brightblue
+strong:		bold:			brightred
+b:		bold:			red
+i:		bold:			brightblue
+a:		bold:			green
+img:		dim:			brown
+fig:		normal:			gray
+caption:	reverse:		brown
+hr:		normal:			yellow
+blockquote:	normal:			brightblue
+ul:		normal:			brown
+address:	normal:			magenta
+title:		normal:			magenta
+tt:		dim:			brightmagenta:	black
+h1:		bold:			white:		blue
+label:		normal:			magenta
+q:		normal:			yellow:		magenta
+small:		dim:			default
+big:		bold:			yellow
+sup:		bold:			yellow
+sub:		dim:			gray
+li:		normal:			magenta
+code:		normal:			cyan
+cite:		normal:			cyan
+
+table:		normal:			brightcyan
+tr:		bold:			brown
+td:		normal:			default
+br:		normal:			default
+#+end_example
+
+Special styles - not corresponding directly to HTML tags
+#+begin_example
+	alert	- status bar, when message begins "Alert".
+	alink	- active link
+	normal	- default attributes
+	status	- status bar
+	whereis	- whereis search target
+
+normal:normal:default:blue
+alink:		reverse:		yellow:		black
+status:		reverse:		cyan:		default
+alert:		bold:			yellow:		red
+#whereis:	reverse+underline:	magenta:	cyan
+whereis:	bold+reverse:	black: yellow
+currently not used
+value:normal:green
+
+menu.bg:	normal:			black:		lightgray
+menu.frame:	normal:			black:		lightgray
+menu.entry:	normal:			lightgray:	black
+menu.n:		normal:			red:		gray
+menu.active:	normal:			yellow:		black
+menu.sb:	normal:			brightred:	lightgray
+
+forwbackw.arrow:reverse
+hot.paste:	normal:			brightred:	gray
+#+end_example
+
+Styles with classes - <ul class=red> etc.
+#+begin_example
+ul.red:		underline:		brightred
+ul.blue:	bold:			brightblue
+li.red:		reverse:		red:		yellow
+li.blue:	bold:			blue
+strong.a:	bold:			black:		red
+em.a:		reverse:		black:		blue
+strong.b:	bold:			white:		red
+em.b:		reverse:		white:		blue
+strong.debug:	reverse:		green
+font.letter:	normal:			white:		blue
+input.submit:	normal:			cyan
+tr.baone:	bold:			yellow
+tr.batwo:	bold:			green
+tr.bathree:	bold:			red
+#+end_example
+
 Special handling for link.
+#+begin_example
 link:		normal:			white
 link.green:	bold:			brightgreen
 link.red:	bold:			black:		red
@@ -3606,21 +3716,25 @@ link.red.prev:	bold:			yellow:		red
 link.blue.prev:	bold:			yellow:		blue
 link.blue.next:	bold:			blue
 link.green.toc:	bold:			white:		green
-#
+#+end_example
+
 Define styles that will be used when syntax highlighting is requested
 (commandline option -prettysrc).
+#+begin_example
 span.htmlsrc_comment:normal:		white
 span.htmlsrc_tag:normal:		white
-#If you don't like that the tag name and attribute name are displayed
-#in different colors, comment the following line.
+If you don't like that the tag name and attribute name are displayed
+in different colors, comment the following line.
 span.htmlsrc_attrib:normal:		cyan
 span.htmlsrc_attrval:normal:		magenta
 span.htmlsrc_abracket:normal:		white
 span.htmlsrc_entity:normal:		white
-##span.htmlsrc_href:
-##span.htmlsrc_entire:
+span.htmlsrc_href:
+span.htmlsrc_entire:
 span.htmlsrc_badseq:normal:		red
 span.htmlsrc_badtag:normal:		red
 span.htmlsrc_badattr:normal:		red
 span.htmlsrc_sgmlspecial:normal:	yellow
-#+end_src
+#+end_example
+
+* Source
