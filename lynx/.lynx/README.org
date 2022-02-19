@@ -17,7 +17,7 @@
 :END:
 ** Source code
 #+begin_src conf
-STARTFILE:https://rwx.gg
+STARTFILE:https://duckduckgo.com/lite
 HELPFILE:https://lynx.invisible-island.net/lynx_help/lynx_help_main.html
 DEFAULT_INDEX_FILE:https://duckduckgo.com/lite
 CHARACTER_SET:iso-8859-1
@@ -3523,6 +3523,20 @@ Emit backspaces in output if -dump'ing or -crawl'ing (like 'man' does).
 :END:
 ** Source code
 #+begin_src lss
+# Setting the normal and default types lets us keep (almost) the same colors
+# whether the terminal's default colors are white-on-black or black-on-white.
+# It is not exact since the default "white" is not necessarily the same color
+# as the ANSI lightgray, but is as close as we can get in a standard way.
+#
+# If you really want the terminal's default colors, and if lynx is built using
+# ncurses' default-color support, remove these two lines:
+#normal:		normal:			lightgray:black
+#default:	normal:			white:black
+
+# Normal type styles correspond to HTML tags.
+#
+# The next line (beginning with "em") means:  use bold if mono, otherwise
+# brightblue on <defaultbackground>
 em:		bold:			brightblue
 strong:		bold:			brightred
 b:		bold:			red
@@ -3537,7 +3551,7 @@ ul:		normal:			brown
 address:	normal:			magenta
 title:		normal:			magenta
 tt:		dim:			brightmagenta:	black
-h1:		bold:			white:		blue
+h1:		bold:			yellow:		blue
 label:		normal:			magenta
 q:		normal:			yellow:		magenta
 small:		dim:			default
@@ -3553,11 +3567,20 @@ tr:		bold:			brown
 td:		normal:			default
 br:		normal:			default
 
+# Special styles - not corresponding directly to HTML tags
+#	alert	- status bar, when message begins "Alert".
+#	alink	- active link
+#	normal	- default attributes
+#	status	- status bar
+#	whereis	- whereis search target
+#
+#normal:normal:default:blue
 alink:		reverse:		yellow:		black
-status:		reverse:		cyan:		default
+status:		reverse:		yellow:		blue
 alert:		bold:			yellow:		red
-
-whereis:	bold+reverse:	black: yellow
+whereis:	reverse+underline:	magenta:	cyan
+# currently not used
+#value:normal:green
 
 menu.bg:	normal:			black:		lightgray
 menu.frame:	normal:			black:		lightgray
@@ -3569,6 +3592,7 @@ menu.sb:	normal:			brightred:	lightgray
 forwbackw.arrow:reverse
 hot.paste:	normal:			brightred:	gray
 
+# Styles with classes - <ul class=red> etc.
 ul.red:		underline:		brightred
 ul.blue:	bold:			brightblue
 li.red:		reverse:		red:		yellow
@@ -3583,27 +3607,33 @@ input.submit:	normal:			cyan
 tr.baone:	bold:			yellow
 tr.batwo:	bold:			green
 tr.bathree:	bold:			red
-
+#
+# Special handling for link.
 link:		normal:			white
 link.green:	bold:			brightgreen
 link.red:	bold:			black:		red
 link.blue:	bold:			white:		blue
 link.toc:	bold:			black:		white
-
+# Special cases for link - the rel or title is appended after the class.
+# <link rel=next class=red href="1">
 link.red.next:	bold:			red
 link.red.prev:	bold:			yellow:		red
 link.blue.prev:	bold:			yellow:		blue
 link.blue.next:	bold:			blue
 link.green.toc:	bold:			white:		green
-
+#
+# Define styles that will be used when syntax highlighting is requested
+# (commandline option -prettysrc).
 span.htmlsrc_comment:normal:		white
 span.htmlsrc_tag:normal:		white
-
+#If you don't like that the tag name and attribute name are displayed
+#in different colors, comment the following line.
 span.htmlsrc_attrib:normal:		cyan
 span.htmlsrc_attrval:normal:		magenta
 span.htmlsrc_abracket:normal:		white
 span.htmlsrc_entity:normal:		white
-
+##span.htmlsrc_href:
+##span.htmlsrc_entire:
 span.htmlsrc_badseq:normal:		red
 span.htmlsrc_badtag:normal:		red
 span.htmlsrc_badattr:normal:		red
