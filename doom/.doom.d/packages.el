@@ -68,3 +68,5 @@
 (package! ox-gemini)
 (package! peep-dired)
 (package! rainbow-mode)
+(package! xressources-theme
+  :recipe (:host github :repo "martenlienen/xresources-theme"))
