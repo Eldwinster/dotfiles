@@ -181,6 +181,7 @@ Dired is the file manager within Emacs.  Below, I setup keybindings for image pr
                               ("jpg" . "sxiv")
                               ("png" . "sxiv")
                               ("mkv" . "mpv")
+                              ;; ("pdf" . "zathura")
                               ("mp4" . "mpv")))
 #+end_src
 
