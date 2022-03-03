@@ -1,7 +1,6 @@
 #+TITLE: Eldwinster Doom Emacs Config
 #+AUTHOR: Eldwin Elminster (Eldwinster)
 #+DESCRIPTION: Eldwinster personal Doom Emacs config.
-#+STARTUP: showstars
 
 * TABLE OF CONTENTS :toc:
 - [[#bookmarks-and-buffers][BOOKMARKS AND BUFFERS]]
@@ -11,6 +10,7 @@
 - [[#dired][DIRED]]
   - [[#keybindings-to-open-dired][Keybindings To Open Dired]]
   - [[#keybindings-within-dired][Keybindings Within Dired]]
+  - [[#code-block][Code block]]
   - [[#keybindings-within-dired-with-peep-dired-mode-enabled][Keybindings Within Dired With Peep-Dired-Mode Enabled]]
   - [[#making-deleted-files-go-to-trash-can][Making deleted files go to trash can]]
 - [[#doom-theme][DOOM THEME]]
@@ -27,12 +27,11 @@
 - [[#magit][MAGIT]]
 - [[#mouse-support][MOUSE SUPPORT]]
 - [[#neotree][NEOTREE]]
-- [[#open-specific-files][OPEN SPECIFIC FILES]]
+- [[#open-specific-filesfolders][OPEN SPECIFIC FILES/FOLDERS]]
 - [[#org-mode][ORG MODE]]
   - [[#set-font-sizes-for-each-header-level-in-org][Set font sizes for each header level in Org]]
   - [[#org-export][Org-export]]
   - [[#org-journal][Org-journal]]
-  - [[#org-publish][Org-publish]]
   - [[#org-roam][Org-roam]]
 - [[#perspective][PERSPECTIVE]]
 - [[#rainbow-mode][RAINBOW MODE]]
@@ -140,7 +139,7 @@ Dired is the file manager within Emacs.  Below, I setup keybindings for image pr
 | dired-do-chmod  | Change the mode of marked files  | M          |
 | dired-do-chown  | Change the owner of marked files | O          |
 | dired-do-rename | Rename file or all marked files  | R          |
-
+** Code block
 #+begin_src emacs-lisp
 (map! :leader
       (:prefix ("d" . "dired")
@@ -474,7 +473,7 @@ Neotree is a file tree viewer.  When you open neotree, it jumps to the current f
       :desc "Open directory in neotree" "d n" #'neotree-dir)
 #+END_SRC
 
-* OPEN SPECIFIC FILES/FOLDERs
+* OPEN SPECIFIC FILES/FOLDERS
 Keybindings to open files or folders that I work with all the time using the find-file command, which is the interactive file search that opens with 'C-x C-f' in GNU Emacs or 'SPC f f' in Doom Emacs.  These keybindings use find-file non-interactively since we specify exactly what file to open.  The format I use for these bindings is 'SPC =' plus 'key' since Doom Emacs does not use these keybindings.
 
 | PATH TO FILE                         | DESCRIPTION           | KEYBINDING |
