@@ -395,18 +395,20 @@ myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
 myKeys :: [(String, X ())]
 myKeys =
     -- KB_GROUP Xmonad
-        [ ("M-C-r", spawn "xmonad --recompile")      -- Recompiles xmonad
-        , ("M-S-r", spawn "xmonad --restart")        -- Restarts xmonad
+        [ ("M-r c", spawn "xmonad --recompile")      -- Recompiles xmonad
+        , ("M-r t", spawn "xmonad --restart")        -- Restarts xmonad
         , ("M-S-q", io exitSuccess)                  -- Quits xmonad
 
     -- KB_GROUP Get Help
-        , ("M-S-/", spawn "~/.xmonad/xmonad_keys.sh") -- Get list of keybindings
+        , ("M-/ x", spawn "xmonad_keys.sh") -- Get list of keybindings
+        , ("M-/ l", spawn "tex_snippet.sh") -- Get list of tex snippets
 
     -- KB_GROUP Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn myTerminal)
         , ("M-w", spawn (myBrowser))
-        , ("M-b", spawn (term ++ " -n bashtop -e bashtop"))
-        , ("M-n", spawn (term ++ " -n ncdu -e ncdu"))
+        , ("M-a w", spawn (myGUIBrowser))
+        , ("M-a b", spawn (term ++ " -n bashtop -e bashtop"))
+        , ("M-a n", spawn (term ++ " -n ncdu -e ncdu"))
         , ("M1-u", spawn (myTerminal ++ " -e matrix.sh"))
         , ("M-v", spawn (myTerminal ++ " -e sh ./.config/vifm/scripts/vifmrun ~/ ~/"))
 
