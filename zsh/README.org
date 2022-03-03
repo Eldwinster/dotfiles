@@ -64,7 +64,7 @@ choose only one of these!
 
 Set VI mode
 Comment this line out to enable default emacs-like bindings
-#+begin_src bash
+#+begin_src shell
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 bindkey -v
@@ -166,12 +166,12 @@ You can set one of the optional three formats:
 "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 or set a custom format using the strftime function format specifications,
 see 'man strftime' for details.
-#+begin_src bash
+#+begin_src shell
 HIST_STAMPS="dd/mm/yyyy"
 #+end_src
 
 Would you like to use another custom folder than $ZSH/custom?
-#+#+begin_example bash
+#+#+begin_example shell
 ZSH_CUSTOM=/path/to/new-custom-folder
 #+#+end_example
 
@@ -180,17 +180,17 @@ Standard plugins can be found in $ZSH/plugins/
 Custom plugins may be added to $ZSH_CUSTOM/plugins/
 Example format: plugins=(rails git textmate ruby lighthouse)
 Add wisely, as too many plugins slow down shell startup.
-#+begin_src bash
+#+begin_src shell
 plugins=(git)
 #+end_src
 
 Compilation flags
-#+begin_src bash
+#+begin_src shell
 export ARCHFLAGS="-arch x86_64"
 #+end_src
-* Source
+* SOURCE
 ** Oh my zsh
-#+begin_src bash
+#+begin_src shell
 source $ZSH/oh-my-zsh.sh
 #+end_src
 
@@ -201,25 +201,25 @@ Import colorscheme from 'wal' asynchronously
 & Run the process in the background.
 () # Hide shell job control messages.
 
-#+begin_src bash
+#+begin_src shell
 (cat ~/.cache/wal/sequences &)
 #+end_src
 To add support for TTs this line can be optionally added.
 
-#+begin_src bash
+#+begin_src shell
 source ~/.cache/wal/colors-tty.sh
 #+end_src
 * SSH-AGENT
 keychain keeps track of ssh-agents
 
-#+begin_example bash
+#+begin_example shell
 [ -f $HOME/.keychain/$HOSTNAME-sh ] \
     && . $HOME/.keychain/$HOSTNAME-sh
 #+end_example
 * EDITOR LOCAL AND REMOTE
 Preferred editor for local and remote sessions
 
-#+begin_src bash
+#+begin_src shell
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
@@ -268,7 +268,7 @@ esac
 * FUNCTIONS
 ** Function extract for common file formats
 
-#+begin_src bash
+#+begin_src shell
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
@@ -316,7 +316,7 @@ Other way to extract
 ex - archive extractor
 usage: ex <file>
 
-#+begin_example bash
+#+begin_example shell
  ex()
  {
    if [ -f $1 ] ; then
@@ -343,7 +343,7 @@ usage: ex <file>
 ** SSH
 start an ssh and if no tmux session exist create a session called ssh_tmux if a session already exist exist it attach it. NOT WORKING
 
-#+begin_example bash
+#+begin_example shell
  sshtmux()
  {
     # A name for the session
@@ -358,7 +358,7 @@ start an ssh and if no tmux session exist create a session called ssh_tmux if a 
 }
 #+end_example
 
-#+begin_example bash
+#+begin_example shell
 sshtmux()
 {
     if [[ ! -z $1 && $2 ]]; then
@@ -370,7 +370,7 @@ sshtmux()
 }
 #+end_example
 
-#+begin_example bash
+#+begin_example shell
 tmuxattach()
 {
     if [ ! -z $1 ]; then
@@ -387,7 +387,7 @@ plugins, and themes. Aliases can be placed here, though oh-my-zsh
 users are encouraged to define aliases within the ZSH_CUSTOM folder.
 For a full list of active aliases, run `alias`.
 ** root privileges
-#+begin_src bash
+#+begin_src shell
 alias doas="doas --"
 alias pacman='doas pacman'
 alias mount='doas mount'
@@ -395,7 +395,7 @@ alias umount='doas umount'
 #+end_src
 
 ** navigation
-#+begin_src bash
+#+begin_src shell
 up () {
   local d=""
   local limit="$1"
@@ -417,8 +417,8 @@ up () {
 #+end_src
 
 ** vim and emacs
-#+begin_src bash
-alias vim="nvim"
+#+begin_src shell
+alias vim="vim"
 alias em="/usr/bin/emacs -nw"
 alias emacs="emacsclient -c -a 'emacs'"
 alias doomsync="~/.emacs.d/bin/doom sync"
@@ -428,7 +428,7 @@ alias doompurge="~/.emacs.d/bin/doom purge"
 #+end_src
 
 ** Changing "ls" to "exa"
-#+begin_src bash
+#+begin_src shell
 alias ls='exa -al --color=always --group-directories-first' # my preferred listing
 alias la='exa -a --color=always --group-directories-first'  # all files and dirs
 alias ll='exa -l --color=always --group-directories-first'  # long format
@@ -437,7 +437,7 @@ alias l.='exa -a | egrep "^\."'
 #+end_src
 
 ** pacman, yay, paru and pikaur
-#+begin_src bash
+#+begin_src shell
 # alias pacup='yes | pacman -Syu'
 alias pacsyu='doas pacman -Syu'                     # update only standard pkgs
 alias pacsyyu='doas pacman -Syyu'                   # Refresh pkglist & update standard pkgs
@@ -453,15 +453,15 @@ alias cleanup='doas pacman -Rns (pacman -Qtdq)'     # remove orphaned packages
 #+end_src
 
 *** get fastest mirrors
-#+begin_src bash
+#+begin_src shell
 alias mirror="sudo reflector -f 30 -l 30 --number 10 --verbose --save /etc/pacman.d/mirrorlist"
 alias mirrord="sudo reflector --latest 50 --number 20 --sort delay --save /etc/pacman.d/mirrorlist"
 alias mirrors="sudo reflector --latest 50 --number 20 --sort score --save /etc/pacman.d/mirrorlist"
 alias mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pacman.d/mirrorlist"
 #+end_src
 
-** TASKBOOK
-#+begin_example bash
+** Taskbook
+#+begin_example shell
 alias tb='taskbook'
 alias tbcreate='tb --task'
 alias tbnote='tb --note'
@@ -484,21 +484,21 @@ alias cctime='clear && tbtime'
 alias ccarchive='clear && tbarchive'
 #+end_example
 ** Colorize grep output (good for log files)
-#+begin_src bash
+#+begin_src shell
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 #+end_src
 
 ** confirm before overwriting something
-#+begin_src bash
+#+begin_src shell
 alias cp="cp -iv"
 alias mv='mv -iv'
 alias rm='rm -iv'
 #+end_src
 
 ** adding flags
-#+begin_src bash
+#+begin_src shell
 alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB
 alias lynx='lynx -cfg=~/.lynx/lynx.cfg -lss=~/.lynx/lynx.lss -vikeys'
@@ -508,7 +508,7 @@ alias mocp='mocp -M "$XDG_CONFIG_HOME"/moc -O MOCDir="$XDG_CONFIG_HOME"/moc'
 #+end_src
 
 ** ps
-#+begin_src bash
+#+begin_src shell
 alias psa="ps auxf"
 alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
 alias psmem='ps auxf | sort -nr -k 4'
@@ -516,25 +516,25 @@ alias pscpu='ps auxf | sort -nr -k 3'
 #+end_src
 
 ** get error messages from journalctl
-#+begin_src bash
+#+begin_src shell
 alias jctl="journalctl -p 3 -xb"
 #+end_src
 
 ** gpg encryption
 verify signature for isos
 
-#+begin_src bash
+#+begin_src shell
 alias gpg-check="gpg2 --keyserver-options auto-key-retrieve --verify"
 #+end_src
 
 receive the key of a developer
 
-#+begin_src bash
+#+begin_src shell
 alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
 #+end_src
 
 ** youtube-dl
-#+begin_src bash
+#+begin_src shell
 alias yta-aac="youtube-dl --extract-audio --audio-format aac "
 alias yta-best="youtube-dl --extract-audio --audio-format best "
 alias yta-flac="youtube-dl --extract-audio --audio-format flac "
