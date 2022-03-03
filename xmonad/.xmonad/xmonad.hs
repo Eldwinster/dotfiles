@@ -120,15 +120,13 @@ myStartupHook = do
           spawnOnce "picom &"
           spawnOnce "xbanish &"
           spawnOnce "/usr/bin/emacs --daemon &"
-          spawnOnce "picom &"
-          spawnOnce "xbanish &"
+          -- spawnOnce "emacsclient -e '(my-load-xresources)'"
           -- spawnOnce "clight &"
           -- spawnOnce "inkscape-figures watch"
           -- spawnOnce "python3 ~/.scripts/inkscape-shortcut-manager/main.py &"
           spawnOnce "setxkbmap us qwerty-fr &"
-          spawnOnce "wallpaper.sh random auto 60m &"
-          -- spawnOnce "~/.config/polybar/launch.sh &"
-          spawn "$HOME/.config/polybar/polybar-restart"
+          spawnOnce "wallpaper.sh random auto 10m &"
+          spawnOnce "polybar-restart &"
           setWMName "LG3D"
 
 -- Select only =ONE= of the following four ways to set the wallpaper.
