@@ -504,8 +504,8 @@ I wrapped most of this block in (after! org).  Without this, my settings might b
 (map! :leader
       :desc "Org babel tangle" "m B" #'org-babel-tangle)
 (after! org
-  (setq org-directory "~/nc/Org/"
-        org-agenda-files '("~/nc/Org/agenda.org")
+  (setq org-directory "~/.org/Org/"
+        org-agenda-files '("~/.org/Org/agenda.org")
         org-default-notes-file (expand-file-name "notes.org" org-directory)
         org-ellipsis " ▼ "
         org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
@@ -522,10 +522,7 @@ I wrapped most of this block in (after! org).  Without this, my settings might b
         org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
           '((sequence
              "TODO(t)"           ; A task that is ready to be tackled
-             "BLOG(b)"           ; Blog writing assignments
-             "GYM(g)"            ; Things to accomplish at the gym
              "PROJ(p)"           ; A project that contains other tasks
-             "VIDEO(v)"          ; Video assignments
              "WAIT(w)"           ; Something is holding up this task
              "|"                 ; The pipe necessary to separate "active" states and "inactive" states
              "DONE(d)"           ; Task has been completed
@@ -556,35 +553,11 @@ We need ox-man for "Org eXporting" to manpage format and ox-gemini for exporting
 
 ** Org-journal
 #+begin_src emacs-lisp
-(setq org-journal-dir "~/nc/Org/journal/"
+(setq org-journal-dir "~/.org/Org/journal/"
       org-journal-date-prefix "* "
       org-journal-time-prefix "** "
       org-journal-date-format "%B %d, %Y (%A) "
       org-journal-file-format "%Y-%m-%d.org")
-#+end_src
-
-** Org-publish
-#+begin_src emacs-lisp
-(setq org-publish-use-timestamps-flag nil)
-(setq org-export-with-broken-links t)
-(setq org-publish-project-alist
-      '(("distro.tube"
-         :base-directory "~/nc/gitlab-repos/distro.tube/"
-         :base-extension "org"
-         :publishing-directory "~/nc/gitlab-repos/distro.tube/html/"
-         :recursive t
-         :exclude "org-html-themes/.*"
-         :publishing-function org-html-publish-to-html
-         :headline-levels 4             ; Just the default for this project.
-         :auto-preamble t)
-         ("org-static"
-         :base-directory "~/Org/website"
-         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-         :publishing-directory "~/public_html/"
-         :recursive t
-         :exclude ".*/org-html-themes/.*"
-         :publishing-function org-publish-attachment)
-      ))
 #+end_src
 
 ** Org-roam
@@ -599,7 +572,7 @@ We need ox-man for "Org eXporting" to manpage format and ox-gemini for exporting
 
 #+begin_src emacs-lisp
 (after! org-roam
-  (setq org-roam-directory "~/nc/Roam"))
+  (setq org-roam-directory "~/.org/Roam"))
 #+end_src
 
 * PERSPECTIVE
