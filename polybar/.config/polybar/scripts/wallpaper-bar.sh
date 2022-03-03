@@ -19,7 +19,7 @@ clickDoubleLeft() {
 }
 
 clickDoubleRight() {
-  $(dirname $0)/wallpaper.sh random auto 30m
+  $(dirname $0)/wallpaper.sh random auto 10m
 }
 
 scrollUp() {
