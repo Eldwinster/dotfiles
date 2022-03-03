@@ -473,26 +473,44 @@ Neotree is a file tree viewer.  When you open neotree, it jumps to the current f
       :desc "Open directory in neotree" "d n" #'neotree-dir)
 #+END_SRC
 
-* OPEN SPECIFIC FILES
-Keybindings to open files that I work with all the time using the find-file command, which is the interactive file search that opens with 'C-x C-f' in GNU Emacs or 'SPC f f' in Doom Emacs.  These keybindings use find-file non-interactively since we specify exactly what file to open.  The format I use for these bindings is 'SPC -' plus 'key' since Doom Emacs does not use these keybindings.
+* OPEN SPECIFIC FILES/FOLDERs
+Keybindings to open files or folders that I work with all the time using the find-file command, which is the interactive file search that opens with 'C-x C-f' in GNU Emacs or 'SPC f f' in Doom Emacs.  These keybindings use find-file non-interactively since we specify exactly what file to open.  The format I use for these bindings is 'SPC =' plus 'key' since Doom Emacs does not use these keybindings.
 
-| PATH TO FILE                   | DESCRIPTION           | KEYBINDING |
-|--------------------------------+-----------------------+------------|
-| ~/Org/agenda.org               | /Edit agenda file/      | SPC - a    |
-| ~/.config/doom/config.org"     | /Edit doom config.org/  | SPC - c    |
-| ~/.config/doom/eshell/aliases" | /Edit eshell aliases/   | SPC - e a  |
-| ~/.config/doom/eshell/profile" | /Edit eshell profile/   | SPC - e p  |
-| ~/.config/doom/init.el"        | /Edit doom init.el/     | SPC - i    |
-| ~/.config/doom/packages.el"    | /Edit doom packages.el/ | SPC - p    |
+| PATH TO FILE                         | DESCRIPTION           | KEYBINDING |
+|--------------------------------------+-----------------------+------------|
+| =~/Org/agenda.org=                     | /Edit agenda file/      | SPC = o a  |
+| =~/.doom.d/config.org"=                | /Edit doom config.org/  | SPC = d c  |
+| =~/.doom.d/init.el=                    | /Edit doom init.el/     | SPC = d i  |
+| =~/.doom.d/packages.el=                | /Edit doom packages.el/ | SPC = d p  |
+| =~/.doom.d/eshell/aliases=               | /Edit eshell aliases/   | SPC = e a  |
+| =~/.doom.d/eshell/profile=               | /Edit eshell profile/   | SPC = e p  |
+| =~/.xmonad/README.org=                 | Edit xmonad config    | SPC = c x  |
+| =~/.dotfiles/zsh/README.org=             | Edit zsh config       | SPC = c z  |
+| =~/.dotfiles/vim/README.org=             | Edit vim config       | SPC = c v  |
+| =~/.dotfiles/starship/.config/README.org= | Edit starship config  | SPC = c s  |
+| =~/.lynx/README.org=                   | Edit lynx config      | SPC = c l  |
+| =~/.config/polybar=                    | Open polybar folder   | SPC = c p  |
+| =~/.dotfiles=                          | Open dotfiles folder  | SPC = .    |
+| =~/mygit=                              | Open mygit folder     | SPC = f m  |
+| =~/github=                             | Open github folder    | SPC = f g  |
 
 #+BEGIN_SRC emacs-lisp
 (map! :leader
-      (:prefix ("-" . "open file")
-       :desc "Edit agenda file" "a" #'(lambda () (interactive) (find-file "~/Org/agenda.org"))
-       :desc "Edit doom config.org" "c" #'(lambda () (interactive) (find-file "~/.doom.d/config.org"))
+      (:prefix ("=" . "open file")
+       :desc "Edit agenda file" "o a" #'(lambda () (interactive) (find-file "~/Org/agenda.org"))
+       :desc "Edit doom config.org" "d c" #'(lambda () (interactive) (find-file "~/.doom.d/config.org"))
        :desc "Edit eshell aliases" "e a" #'(lambda () (interactive) (find-file "~/.doom.d/eshell/aliases"))
-       :desc "Edit doom init.el" "i" #'(lambda () (interactive) (find-file "~/.doom.d/init.el"))
-       :desc "Edit doom packages.el" "p" #'(lambda () (interactive) (find-file "~/.doom.d/packages.el"))))
+       :desc "Edit doom init.el" "d i" #'(lambda () (interactive) (find-file "~/.doom.d/init.el"))
+       :desc "Edit doom packages.el" "d p" #'(lambda () (interactive) (find-file "~/.doom.d/packages.el"))
+       :desc "Edit xmonad.hs" "c x" #'(lambda () (interactive) (find-file "~/.xmonad/README.org"))
+       :desc "Edit zshrc" "c z" #'(lambda () (interactive) (find-file "~/dotfiles/zsh/README.org"))
+       :desc "Edit vimrc" "c v" #'(lambda () (interactive) (find-file "~/.dotfiles/vim/README.org"))
+       :desc "Edit starship" "c s" #'(lambda () (interactive) (find-file "~/.dotfiles/starship/.config/README.org"))
+       :desc "Edit lynx" "c l" #'(lambda () (interactive) (find-file "~/.lynx/README.org"))
+       :desc "Edit polybar folder" "c p" #'(lambda () (interactive) (find-file "~/.config/polybar"))
+       :desc "Edit dotfiles" "." #'(lambda () (interactive) (find-file "~/.dotfiles"))
+       :desc "Edit mygit" "f m" #'(lambda () (interactive) (find-file "~/mygit"))
+       :desc "Edit github" "f g" #'(lambda () (interactive) (find-file "~/github"))))
 #+END_SRC
 
 * ORG MODE
