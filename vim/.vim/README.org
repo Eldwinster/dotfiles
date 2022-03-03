@@ -179,6 +179,17 @@ endglobal
 
 #+begin_src python
 # START_SNIPPET
+# SNIPPET_GROUP Option
+#* b   Beginning of line
+#* i   In-word expansion
+#* w   Word boundary
+#* r   Regular expression
+#* t   Do not expand tabs
+#* s   Remove whitespace
+#* m   Trim all whitespaces
+#* e   Custom context snippet
+#* A   auto-trigger
+
 # SNIPPET_GROUP Environment
 snippet sympy "sympyblock " w
 sympy $1 sympy$0
