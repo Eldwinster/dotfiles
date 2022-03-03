@@ -557,6 +557,7 @@ defaults = def
     , layoutHook          = smartBorders $ myLayoutHook
     , normalBorderColor   = myNormColor
     , focusedBorderColor  = myFocusColor
+    , focusFollowsMouse    = False
     , manageHook          = myManageHook <+> manageHook def
     , borderWidth         = myBorderWidth
     , startupHook         = myStartupHook
