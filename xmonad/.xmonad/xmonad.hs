@@ -4,7 +4,7 @@ import System.Exit (exitSuccess)
 import qualified XMonad.StackSet as W
 
     -- Actions
-import XMonad.Actions.CopyWindow (kill1, killAllOtherCopies)
+import XMonad.Actions.CopyWindow (copyToAll, kill1, killAllOtherCopies)
 import XMonad.Actions.CycleWS (moveTo, shiftTo, WSType(..), nextScreen, prevScreen)
 import XMonad.Actions.MouseResize
 import XMonad.Actions.Promote
