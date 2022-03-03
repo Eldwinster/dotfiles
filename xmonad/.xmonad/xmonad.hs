@@ -69,8 +69,11 @@ import XMonad.Util.SpawnOnce
 
    -- For polybar
 import qualified DBus as D
-import qualified DBus.Client as D
+import qualified DBus.Client as DC
 import qualified Codec.Binary.UTF8.String as UTF8
+
+  -- For colorscheme
+-- import Colors.wal
 
 myFont :: String
 myFont = "xft:Iosevka:bold:size=9"
@@ -284,7 +287,7 @@ myManageHook = composeAll
      , isFullscreen -->  doFullFloat
      ] <+> namedScratchpadManageHook myScratchPads
 
-myLogHook :: D.Client -> PP
+myLogHook :: DC.Client -> PP
 myLogHook dbus = def
     { ppOutput  = dbusOutput dbus
     , ppCurrent = wrap ("%{F" ++ color4 ++ "} ") "%{F-}"
@@ -521,20 +524,20 @@ myKeys =
 
 main :: IO ()
 main = do
-    dbus <- D.connectSession
+    dbus <- DC.connectSession
     -- Request access to the DBus name
-    D.requestName dbus (D.busName_ "org.xmonad.Log")
-        [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+    DC.requestName dbus (D.busName_ "org.xmonad.Log")
+        [DC.nameAllowReplacement, DC.nameReplaceExisting, DC.nameDoNotQueue]
     -- The xmonad, ya know...what the window manager is named after.
     xmonad $ ewmh $ docks $ defaults { logHook = dynamicLogWithPP (myLogHook dbus) }
 
 -- Emit a DBus signal on log updates
-dbusOutput :: D.Client -> String -> IO ()
+dbusOutput :: DC.Client -> String -> IO ()
 dbusOutput dbus str = do
     let signal = (D.signal objectPath interfaceName memberName) {
             D.signalBody = [D.toVariant $ UTF8.decodeString str]
         }
-    D.emit dbus signal
+    DC.emit dbus signal
   where
     objectPath = D.objectPath_ "/org/xmonad/Log"
     interfaceName = D.interfaceName_ "org.xmonad.Log"
