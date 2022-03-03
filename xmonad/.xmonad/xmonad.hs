@@ -418,8 +418,6 @@ myKeys =
         , ("M-S-a", killAll)                         -- Kill all windows on current workspace
 
     -- KB_GROUP Workspaces
-        -- , ("M-.", nextScreen)  -- Switch focus to next monitor
-        -- , ("M-,", prevScreen)  -- Switch focus to prev monitor
         , ("M-S-<KP_Add>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
         , ("M-S-<KP_Subtract>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
 
@@ -432,15 +430,13 @@ myKeys =
         , ("M-m", windows W.focusMaster)     -- Move focus to the master window
         , ("M-j", windows W.focusDown)       -- Move focus to the next window
         , ("M-k", windows W.focusUp)         -- Move focus to the prev window
-        -- , ("M-S-m", windows W.swapMaster)    -- Swap the focused window and the master window
+        , ("M-S-m", windows W.swapMaster)    -- Swap the focused window and the master window
         , ("M-S-j", windows W.swapDown)      -- Swap focused window with next window
         , ("M-S-k", windows W.swapUp)        -- Swap focused window with prev window
         , ("M-<Backspace>", promote)         -- Moves focused window to master, others maintain order
-        -- , ("M1-S-<Tab>", rotSlavesDown)      -- Rotate all windows except master and keep focus in place
-        -- , ("M1-C-<Tab>", rotAllDown)         -- Rotate all the windows in the current stack
         , ("M1-S-<Space>", rotSlavesDown)      -- Rotate all windows except master and keep focus in place
         , ("M1-C-<Space>", rotAllDown)         -- Rotate all the windows in the current stack
-        -- , ("M-S-s", windows copyToAll)
+        , ("M-S-s", windows copyToAll)
         , ("M-C-s", killAllOtherCopies)
 
         -- KB_GROUP Layouts
@@ -454,7 +450,6 @@ myKeys =
         , ("M-<KP_Divide>", sendMessage (IncMasterN (-1)))  -- Decrease number of clients in master pane
         , ("M-S-<KP_Multiply>", increaseLimit)              -- Increase number of windows
         , ("M-S-<KP_Divide>", decreaseLimit)                -- Decrease number of windows
-
         , ("M-h", sendMessage Shrink)                       -- Shrink horiz window width
         , ("M-l", sendMessage Expand)                       -- Expand horiz window width
         , ("M-C-j", sendMessage MirrorShrink)               -- Shrink vert window width
@@ -511,10 +506,12 @@ myKeys =
         ]
         -- Appending search engine prompts to keybindings list.
         -- Look at "search engines" section of this config for values for "k".
+    -- KB_GROUP Search prompt
         ++ [("M-s " ++ k, S.promptSearch dtXPConfig' f) | (k,f) <- searchList ]
         ++ [("M-S-s " ++ k, S.selectSearch f) | (k,f) <- searchList ]
         -- Appending some extra xprompts to keybindings list.
         -- Look at "xprompt settings" section this of config for values for "k".
+    -- KB_GROUP Shell prompt
         ++ [("M-p " ++ k, f dtXPConfig') | (k,f) <- promptList ]
         ++ [("M-p " ++ k, f dtXPConfig' g) | (k,f,g) <- promptList' ]
         -- The following lines are needed for named scratchpads.
