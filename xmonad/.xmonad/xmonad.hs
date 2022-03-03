@@ -85,9 +85,12 @@ term :: String
 term = "st"
 
 myBrowser :: String
--- myBrowser = myTerminal ++ " -e lynx "  -- Sets lynx as browser for tree select
+myBrowser = "tabbed -r 2 st -w '' lynx.sh"
+-- myBrowser = myTerminal ++ " -e lynx.sh"
 -- myBrowser = "firefox "                 -- Sets firefox as browser for tree select
-myBrowser = "vivaldi-stable"
+
+myGUIBrowser :: String
+myGUIBrowser = "vivaldi-stable"
 
 myEditor :: String
 myEditor = "emacsclient -c -a emacs "  -- Sets emacs as editor for tree select
