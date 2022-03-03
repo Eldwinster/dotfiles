@@ -84,13 +84,13 @@ bindkey -v
 [[ $- != *i* ]] && return
 #+end_src
 
-#+#+begin_example emacs-lisp
+#+begin_example emacs-lisp
 ### "vim" as manpager
 # export MANPAGER='/bin/bash -c "vim -MRn -c \"set buftype=nofile showtabline=0 ft=man ts=8 nomod nolist norelativenumber nonu noma\" -c \"normal L\" -c \"nmap q :qa<CR>\"</dev/tty <(col -b)"'
 
 ### "nvim" as manpager
 # export MANPAGER="nvim -c 'set ft=man' -"
-#+#+end_example
+#+end_example
 
 * ZSH THEME
 Set name of the theme to load --- if set to "random", it will
@@ -107,70 +107,68 @@ Setting this variable when ZSH_THEME=random will cause zsh to load
 a theme from this variable instead of looking in $ZSH/themes/
 If set to an empty array, this variable will have no effect.
 
-#+#+begin_example bash
-ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-#+#+end_example
+: ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 * COMPLETION
 The following line to use case-sensitive completion.
-#+#+begin_example bash
+#+begin_example shell
 CASE_SENSITIVE="true"
-#+#+end_example
+#+end_example
 
 The following line to use hyphen-insensitive completion.
 Case-sensitive completion must be off. _ and - will be interchangeable.
-#+#+begin_example bash
+#+begin_example shell
 HYPHEN_INSENSITIVE="true"
-#+#+end_example
+#+end_example
 
 The following line to display red dots whilst waiting for completion.
-#+#+begin_example bash
+#+begin_example shell
 COMPLETION_WAITING_DOTS="true"
-#+#+end_example
+#+end_example
 
 * UPDATE
 The following line to disable bi-weekly auto-update checks.
-#+#+begin_example bash
+#+begin_example shell
 DISABLE_AUTO_UPDATE="true"
-#+#+end_example
+#+end_example
 
 The following line to automatically update without prompting.
-#+#+begin_example bash
+#+begin_example shell
 DISABLE_UPDATE_PROMPT="true"
-#+#+end_example
+#+end_example
 
 The following line to change how often to auto-update (in days).
-#+#+begin_example bash
+#+begin_example shell
 export UPDATE_ZSH_DAYS=13
-#+#+end_example
+#+end_example
 
 * EXAMPLES
 The following line if pasting URLs and other text is messed up.
-#+#+begin_example bash
+#+begin_example shell
 DISABLE_MAGIC_FUNCTIONS="true"
-#+#+end_example
+#+end_example
 
 The following line to disable colors in ls.
-#+#+begin_example bash
+#+begin_example shell
 DISABLE_LS_COLORS="true"
-#+#+end_example
+#+end_example
 
 The following line to disable auto-setting terminal title.
-#+#+begin_example bash
+#+begin_example shell
 DISABLE_AUTO_TITLE="true"
-#+#+end_example
+#+end_example
 
 The following line to enable command auto-correction.
-#+#+begin_example bash
+#+begin_example shell
 ENABLE_CORRECTION="true"
-#+#+end_example
+#+end_example
 
 The following line if you want to disable marking untracked files
 under VCS as dirty. This makes repository status check for large repositories
 much, much faster.
-#+#+begin_example bash
+#+begin_example shell
 DISABLE_UNTRACKED_FILES_DIRTY="true"
-#+#+end_example
+#+end_example
 
 The following line if you want to change the command execution time
 stamp shown in the history command output.
@@ -183,9 +181,9 @@ HIST_STAMPS="dd/mm/yyyy"
 #+end_src
 
 Would you like to use another custom folder than $ZSH/custom?
-#+#+begin_example shell
+#+begin_example shell
 ZSH_CUSTOM=/path/to/new-custom-folder
-#+#+end_example
+#+end_example
 
 Which plugins would you like to load?
 Standard plugins can be found in $ZSH/plugins/
