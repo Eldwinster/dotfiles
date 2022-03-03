@@ -1,9 +1,4 @@
 export ZSH="/home/yann/.oh-my-zsh"
-export PATH="$HOME/.bin:$PATH"
-export PATH="$HOME/.emacs.d/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.go/bin:$PATH"
-export PATH="$HOME/.scripts/uni:$PATH"
 
 export TERM="xterm-256color"                      # getting proper colors
 export TERMINFO="/bin/zsh"
@@ -28,7 +23,7 @@ bindkey -v
 # if not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-ZSH_THEME="random"
+ZSH_THEME="gallois"
 
 HIST_STAMPS="dd/mm/yyyy"
 
@@ -47,25 +42,6 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='mvim'
 fi
-
-if [ -d "$HOME/.bin" ] ;
-  then PATH="$HOME/.bin:$PATH"
-fi
-
-if [ -d "$HOME/.local/bin" ] ;
-  then PATH="$HOME/.local/bin:$PATH"
-fi
-
-if [ -d "$HOME/.scripts" ] ;
-   then PATH="$HOME/.scripts"
-
-if [ -d "$HOME/.scripts" ] ;
-   then PATH="$HOME/.scripts"
-fi
-
-export PATH="$HOME/.emacs.d/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.go/bin:$PATH"
 
 case ${TERM} in
   xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
@@ -142,7 +118,7 @@ up () {
   fi
 }
 
-alias vim="nvim"
+alias vim="vim"
 alias em="/usr/bin/emacs -nw"
 alias emacs="emacsclient -c -a 'emacs'"
 alias doomsync="~/.emacs.d/bin/doom sync"
@@ -213,4 +189,10 @@ alias ytv-best="youtube-dl -f bestvideo+bestaudio "
 alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
 alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
 
-alias config="/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME"
+# alias config="/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME"
+
+alias getpath="PATH=$(/usr/bin/getconf PATH)"
+
+# eval "$(starship init zsh)"
+
+colorscript random
