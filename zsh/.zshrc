@@ -52,6 +52,11 @@ case ${TERM} in
     ;;
 esac
 
+keyinput ()
+{
+xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
+}
+
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
@@ -95,6 +100,7 @@ fi
 IFS=$SAVEIFS
 
 alias doas="doas --"
+alias docheck='doas -C /etc/doas.conf && echo "config ok" || echo "config error"'
 alias pacman='doas pacman'
 alias mount='doas mount'
 alias umount='doas umount'
@@ -119,6 +125,8 @@ up () {
 }
 
 alias vim="vim"
+alias v="vim"
+alias vi="vim"
 alias em="/usr/bin/emacs -nw"
 alias emacs="emacsclient -c -a 'emacs'"
 alias doomsync="~/.emacs.d/bin/doom sync"
@@ -154,9 +162,9 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
-alias cp="cp -iv"
-alias mv='mv -iv'
-alias rm='rm -iv'
+alias cp="doas cp -iv"
+alias mv='doas mv -iv'
+alias rm='doas rm -iv'
 
 alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB

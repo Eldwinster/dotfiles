@@ -70,3 +70,5 @@
 (package! rainbow-mode)
 (package! xressources-theme
   :recipe (:host github :repo "martenlienen/xresources-theme"))
+(package! orderless
+  :recipe (:host github :repo "oantolin/orderless"))

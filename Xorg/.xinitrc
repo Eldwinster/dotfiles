@@ -7,4 +7,6 @@ xrdb -merge .Xressources
 # exec wallpaper.sh random &
 # exec python3 ~/.scripts/inkscape-shortcut-manager/main.py &
 # exec setxkbmap us qwerty-fr &
+[ -f /etc/xprofile ] && . /etc/xprofile
+[ -f ~/.xprofile ] && . ~/.xprofile
 exec xmonad

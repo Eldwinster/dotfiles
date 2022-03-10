@@ -7,7 +7,6 @@
 #+STARTUP: showstars
 
 * Table of contents :toc:
-- [[#source][Source]]
 - [[#path][PATH]]
 - [[#export][EXPORT]]
 - [[#set-manpager][SET MANPAGER]]
@@ -15,13 +14,14 @@
 - [[#completion][COMPLETION]]
 - [[#update][UPDATE]]
 - [[#examples][EXAMPLES]]
-- [[#source-1][SOURCE]]
+- [[#source][SOURCE]]
   - [[#oh-my-zsh][Oh my zsh]]
   - [[#pywal][Pywal]]
 - [[#ssh-agent][SSH-AGENT]]
 - [[#editor-local-and-remote][EDITOR LOCAL AND REMOTE]]
 - [[#change-title-of-terminals][CHANGE TITLE OF TERMINALS]]
 - [[#functions][FUNCTIONS]]
+  - [[#get-keyboard-input][Get keyboard input]]
   - [[#function-extract-for-common-file-formats][Function extract for common file formats]]
   - [[#ssh][SSH]]
 - [[#aliases][ALIASES]]
@@ -44,9 +44,6 @@
 - [[#starship][STARSHIP]]
 - [[#colorscript][COLORSCRIPT]]
 
-* Source
-- Path:
-  https://askubuntu.com/questions/113419/how-can-i-reset-path-to-its-default-value-in-ubuntu
 * PATH
 #+begin_src shell
 export ZSH="/home/yann/.oh-my-zsh"
@@ -252,6 +249,14 @@ esac
 #+end_src
 
 * FUNCTIONS
+** Get keyboard input
+[[https://wiki.archlinux.org/title/Keyboard_input][How to get keyboard input]]
+#+begin_src shell
+keyinput ()
+{
+xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
+}
+#+end_src
 ** Function extract for common file formats
 
 #+begin_src shell
@@ -375,6 +380,7 @@ For a full list of active aliases, run `alias`.
 ** root privileges
 #+begin_src shell
 alias doas="doas --"
+alias docheck='doas -C /etc/doas.conf && echo "config ok" || echo "config error"'
 alias pacman='doas pacman'
 alias mount='doas mount'
 alias umount='doas umount'
@@ -405,6 +411,8 @@ up () {
 ** vim and emacs
 #+begin_src shell
 alias vim="vim"
+alias v="vim"
+alias vi="vim"
 alias em="/usr/bin/emacs -nw"
 alias emacs="emacsclient -c -a 'emacs'"
 alias doomsync="~/.emacs.d/bin/doom sync"
@@ -478,9 +486,9 @@ alias fgrep='fgrep --color=auto'
 
 ** confirm before overwriting something
 #+begin_src shell
-alias cp="cp -iv"
-alias mv='mv -iv'
-alias rm='rm -iv'
+alias cp="doas cp -iv"
+alias mv='doas mv -iv'
+alias rm='doas rm -iv'
 #+end_src
 
 ** adding flags
@@ -545,6 +553,7 @@ alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
 #+end_src
 
 ** reset $PATH
+[[https://askubuntu.com/questions/113419/how-can-i-reset-path-to-its-default-value-in-ubuntu][how can i reset path to its default value]]
 #+begin_src shell
 alias getpath="PATH=$(/usr/bin/getconf PATH)"
 #+end_src

@@ -18,6 +18,18 @@
 - [[#layouts][Layouts]]
 - [[#scratchpads][Scratchpads]]
 - [[#keybindings][Keybindings]]
+  - [[#xmonad][Xmonad]]
+  - [[#help][Help]]
+  - [[#useful-programs][Useful programs]]
+  - [[#windows][Windows]]
+  - [[#workspace--layouts][Workspace & Layouts]]
+  - [[#scratchpads-1][Scratchpads]]
+  - [[#emacs][Emacs]]
+  - [[#rofi][Rofi]]
+  - [[#application][Application]]
+  - [[#university-setup][University setup]]
+  - [[#multimedia][Multimedia]]
+  - [[#prompt][Prompt]]
 - [[#main][Main]]
 
 * About This Config
@@ -181,7 +193,7 @@ myStartupHook = do
           -- spawnOnce "inkscape-figures watch"
           -- spawnOnce "python3 ~/.scripts/inkscape-shortcut-manager/main.py &"
           spawnOnce "setxkbmap us qwerty-fr &"
-          spawnOnce "wallpaper.sh random auto 10m &"
+          spawnOnce "wallpaper.sh random auto 120m &"
           spawnOnce "polybar-restart &"
           setWMName "LG3D"
 
@@ -343,6 +355,8 @@ myWorkspaces = ["dev", "www", "sys", "doc", "ssh", "chat", "mus", "vid", "gfx"]
  Forcing programs to a certain workspace with a doShift requires xdotool
  if you are using clickable workspaces. You need the className or title
  of the program. Use xprop to get this info.
+
+ Use xprop to get className, resource, etc.
 #+BEGIN_SRC haskell
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
@@ -363,8 +377,10 @@ myManageHook = composeAll
      , className =? "Yad"             --> doCenterFloat
      , className =? "Vivaldi-stable"  --> doShift ( myWorkspaces !! 1 )
      , className =? "discord"            --> doShift ( myWorkspaces !! 5 )
+     -- , className =? "slock"            --> doShift ( myWorkspaces !! 7 )
      , resource =? "bashtop"             --> doShift ( myWorkspaces !! 8 )
      , resource =? "ncdu"                --> doShift ( myWorkspaces !! 8 )
+     , resource =? "slock"                --> doShift ( myWorkspaces !! 7 )
      , resource =? "ssh"                 --> doShift ( myWorkspaces !! 4 )
      , isFullscreen -->  doFullFloat
      ] <+> namedScratchpadManageHook myScratchPads
@@ -451,14 +467,14 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
              where
                -- I've commented out the layouts I don't use.
-               myDefaultLayout =     tall
-                                 ||| magnify
-                                 ||| noBorders monocle
-                                 ||| floats
+               myDefaultLayout =     grid
+                                 ||| threeCol
                                  ||| noBorders tabs
-                                 ||| grid
+                                 ||| tall
+                                 ||| noBorders monocle
+                                 -- ||| floats
+                                 -- ||| magnify
                                  -- ||| spirals
-                                 -- ||| threeCol
                                  -- ||| threeRow
 #+END_SRC
 
@@ -498,45 +514,38 @@ I am using the Xmonad.Util.EZConfig module which allows keybindings to be writte
 | A FEW KEYBINDINGS       | ASSOCIATED ACTION                                            |
 |-------------------------+--------------------------------------------------------------|
 | MODKEY + RETURN         | opens terminal (alacritty)                                   |
-
+** Xmonad
 #+BEGIN_SRC haskell
 -- START_KEYS
 myKeys :: [(String, X ())]
 myKeys =
     -- KB_GROUP Xmonad
-        [ ("M-r c", spawn "xmonad --recompile")      -- Recompiles xmonad
-        , ("M-r t", spawn "xmonad --restart")        -- Restarts xmonad
+        [ ("M-x c", spawn "xmonad --recompile")      -- Recompiles xmonad
+        , ("M-x t", spawn "xmonad --restart")        -- Restarts xmonad
         , ("M-S-q", io exitSuccess)                  -- Quits xmonad
-
+#+END_SRC
+** Help
+#+BEGIN_SRC haskell
     -- KB_GROUP Get Help
         , ("M-/ x", spawn "xmonad_keys.sh") -- Get list of keybindings
         , ("M-/ l", spawn "tex_snippet.sh") -- Get list of tex snippets
-
+#+END_SRC
+** Useful programs
+#+BEGIN_SRC haskell
     -- KB_GROUP Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn myTerminal)
         , ("M-w", spawn (myBrowser))
-        , ("M-a w", spawn (myGUIBrowser))
-        , ("M-a b", spawn (term ++ " -n bashtop -e bashtop"))
-        , ("M-a n", spawn (term ++ " -n ncdu -e ncdu"))
-        , ("M1-u", spawn (myTerminal ++ " -e matrix.sh"))
         , ("M-v", spawn (myTerminal ++ " -e sh ./.config/vifm/scripts/vifmrun ~/ ~/"))
-
-    -- KB_GROUP Run Prompt
-        , ("M-S-<Return>", shellPrompt dtXPConfig)   -- Shell Prompt
-
+#+END_SRC
+** Windows
+#+BEGIN_SRC haskell
     -- KB_GROUP Kill windows
         , ("M-c", kill1)                           -- Kill the currently focused client
         , ("M-S-a", killAll)                         -- Kill all windows on current workspace
-
-    -- KB_GROUP Workspaces
-        , ("M-S-<KP_Add>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
-        , ("M-S-<KP_Subtract>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
-
     -- KB_GROUP Floating windows
         , ("M-f", sendMessage (T.Toggle "floats"))       -- Toggles my 'floats' layout
         , ("M-<Delete>", withFocused $ windows . W.sink) -- Push floating window back to tile
         , ("M-S-<Delete>", sinkAll)                      -- Push ALL floating windows to tile
-
     -- KB_GROUP Windows navigation
         , ("M-m", windows W.focusMaster)     -- Move focus to the master window
         , ("M-j", windows W.focusDown)       -- Move focus to the next window
@@ -549,7 +558,12 @@ myKeys =
         , ("M1-C-<Space>", rotAllDown)         -- Rotate all the windows in the current stack
         , ("M-S-s", windows copyToAll)
         , ("M-C-s", killAllOtherCopies)
-
+#+END_SRC
+** Workspace & Layouts
+#+BEGIN_SRC haskell
+    -- KB_GROUP Workspaces
+        , ("M-S-<KP_Add>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
+        , ("M-S-<KP_Subtract>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
         -- KB_GROUP Layouts
         , ("M-<Tab>", sendMessage NextLayout)                -- Switch to next layout
         , ("M-C-M1-<Up>", sendMessage Arrange)
@@ -565,27 +579,40 @@ myKeys =
         , ("M-l", sendMessage Expand)                       -- Expand horiz window width
         , ("M-C-j", sendMessage MirrorShrink)               -- Shrink vert window width
         , ("M-C-k", sendMessage MirrorExpand)               -- Exoand vert window width
-
+#+END_SRC
+** Scratchpads
+#+BEGIN_SRC haskell
     -- KB_GROUP Scratchpads
         , ("M-C-<Return>", namedScratchpadAction myScratchPads "terminal")
         , ("M-C-c", namedScratchpadAction myScratchPads "mocp")
-
+#+END_SRC
+** Emacs
+#+BEGIN_SRC haskell
     -- KB_GROUP Emacs (CTRL-e followed by a key)
         , ("M-e e", spawn "emacsclient -c -a '' --eval '(my-load-xresources)'")                            -- start emacs and wal on the fly
         , ("M-e b", spawn "emacsclient -c -a '' --eval '(ibuffer)'")         -- list emacs buffers
         , ("M-e d", spawn "emacsclient -c -a '' --eval '(dired nil)'")       -- dired emacs file manager
         , ("M-e m", spawn "emacsclient -c -a '' --eval '(mu4e)'")            -- mu4e emacs email client
         , ("M-e n", spawn "emacsclient -c -a '' --eval '(elfeed)'")          -- elfeed emacs rss client
-        , ("M-e s", spawn "emacsclient -c -a '' --eval '(eshell)'")          -- eshell within emacs
-        , ("M-e t", spawn "emacsclient -c -a '' --eval '(+vterm/here nil)'") -- eshell within emacs
-
+        -- , ("M-e l", spawn "emacsclient -c -a '' --eval '(eshell)'")          -- eshell within emacs
+        , ("M-e s", spawn "emacsclient -c -a '' --eval '(+vterm/here nil)'") -- eshell within emacs
+#+END_SRC
+** Rofi
+#+BEGIN_SRC haskell
     -- KB_GROUP Rofi
         , ("M-r", spawn ("rofi -show run -switchers 'run,window' -no-levenshtein-sort"))
         , ("M-S-r", spawn ("rofi -show window -switchers 'run,window' -no-levenshtein-sort"))
-
+#+END_SRC
+** Application
+#+BEGIN_SRC haskell
     -- KB_GROUP My Applications (Super+Alt+Key)
-        , ("M-d", spawn "discord")
-
+        -- , ("M-a d", spawn "discord")
+        , ("M-a w", spawn (myGUIBrowser))                               -- launch vivaldi
+        , ("M-a b", spawn (term ++ " -n bashtop -e bashtop"))           -- launch bashtop
+        , ("M-a n", spawn (term ++ " -n ncdu -e ncdu"))                 -- launch ncdu
+#+END_SRC
+** University setup
+#+BEGIN_SRC haskell
     -- KB_GROUP University setup
         , ("M1-l s", spawn ("rofi-courses.py"))
         -- , ("M1-S-s", spawn ("rofi-courses-tds.py"))
@@ -600,9 +627,13 @@ myKeys =
         -- , ("M1-j", spawn (term ++ " --working-directory ~/university/current_course"))
         -- , ("M1-m", spawn (term ++ " -e vim ~/university/current_course/master.tex"))
         -- , ("M1-t", spawn (term ++ " -e vim ~/university/current_course/UltiSnips/tex.snippets"))
-
+#+END_SRC
+** Multimedia
+#+BEGIN_SRC haskell
     -- KB_GROUP Multimedia Keys
-        , ("<XF86ScreenSaver>", spawn (myTerminal ++ " -e unimatrix.sh"))
+        , ("M1-u", spawn (myTerminal ++ " --class slock -e matrix.sh"))
+        , ("<XF86ScreenSaver>", spawn (myTerminal ++ " --class slock -e unimatrix.sh"))
+        , ("<XF86Display>", spawn "xset dpms force off")
         , ("<Pause>", spawn (myTerminal ++ " -e doas systemctl hibernate"))
         , ("<XF86MonBrightnessUp>", spawn "xbacklight -inc 5 -time 100")
         , ("<XF86MonBrightnessDown>", spawn "xbacklight -dec 5 -time 100")
@@ -614,6 +645,11 @@ myKeys =
         , ("<XF86Calculator>", runOrRaise "gcalctool" (resource =? "gcalctool"))
         , ("<XF86Eject>", spawn "toggleeject")
         , ("<Print>", spawn "scrotd 0")
+#+END_SRC
+** Prompt
+#+BEGIN_SRC haskell
+    -- KB_GROUP Run Prompt
+        , ("M-S-<Return>", shellPrompt dtXPConfig)   -- Shell Prompt
         ]
         -- Appending search engine prompts to keybindings list.
         -- Look at "search engines" section of this config for values for "k".

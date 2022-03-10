@@ -128,7 +128,7 @@ myStartupHook = do
           -- spawnOnce "inkscape-figures watch"
           -- spawnOnce "python3 ~/.scripts/inkscape-shortcut-manager/main.py &"
           spawnOnce "setxkbmap us qwerty-fr &"
-          spawnOnce "wallpaper.sh random auto 10m &"
+          spawnOnce "wallpaper.sh random auto 120m &"
           spawnOnce "polybar-restart &"
           setWMName "LG3D"
 
@@ -281,8 +281,10 @@ myManageHook = composeAll
      , className =? "Yad"             --> doCenterFloat
      , className =? "Vivaldi-stable"  --> doShift ( myWorkspaces !! 1 )
      , className =? "discord"            --> doShift ( myWorkspaces !! 5 )
+     -- , className =? "slock"            --> doShift ( myWorkspaces !! 7 )
      , resource =? "bashtop"             --> doShift ( myWorkspaces !! 8 )
      , resource =? "ncdu"                --> doShift ( myWorkspaces !! 8 )
+     , resource =? "slock"                --> doShift ( myWorkspaces !! 7 )
      , resource =? "ssh"                 --> doShift ( myWorkspaces !! 4 )
      , isFullscreen -->  doFullFloat
      ] <+> namedScratchpadManageHook myScratchPads
@@ -360,14 +362,14 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
              where
                -- I've commented out the layouts I don't use.
-               myDefaultLayout =     tall
-                                 ||| magnify
-                                 ||| noBorders monocle
-                                 ||| floats
+               myDefaultLayout =     grid
+                                 ||| threeCol
                                  ||| noBorders tabs
-                                 ||| grid
+                                 ||| tall
+                                 ||| noBorders monocle
+                                 -- ||| floats
+                                 -- ||| magnify
                                  -- ||| spirals
-                                 -- ||| threeCol
                                  -- ||| threeRow
 
 myScratchPads :: [NamedScratchpad]
@@ -396,8 +398,8 @@ myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
 myKeys :: [(String, X ())]
 myKeys =
     -- KB_GROUP Xmonad
-        [ ("M-r c", spawn "xmonad --recompile")      -- Recompiles xmonad
-        , ("M-r t", spawn "xmonad --restart")        -- Restarts xmonad
+        [ ("M-x c", spawn "xmonad --recompile")      -- Recompiles xmonad
+        , ("M-x t", spawn "xmonad --restart")        -- Restarts xmonad
         , ("M-S-q", io exitSuccess)                  -- Quits xmonad
 
     -- KB_GROUP Get Help
@@ -407,28 +409,15 @@ myKeys =
     -- KB_GROUP Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn myTerminal)
         , ("M-w", spawn (myBrowser))
-        , ("M-a w", spawn (myGUIBrowser))
-        , ("M-a b", spawn (term ++ " -n bashtop -e bashtop"))
-        , ("M-a n", spawn (term ++ " -n ncdu -e ncdu"))
-        , ("M1-u", spawn (myTerminal ++ " -e matrix.sh"))
         , ("M-v", spawn (myTerminal ++ " -e sh ./.config/vifm/scripts/vifmrun ~/ ~/"))
-
-    -- KB_GROUP Run Prompt
-        , ("M-S-<Return>", shellPrompt dtXPConfig)   -- Shell Prompt
 
     -- KB_GROUP Kill windows
         , ("M-c", kill1)                           -- Kill the currently focused client
         , ("M-S-a", killAll)                         -- Kill all windows on current workspace
-
-    -- KB_GROUP Workspaces
-        , ("M-S-<KP_Add>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
-        , ("M-S-<KP_Subtract>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
-
     -- KB_GROUP Floating windows
         , ("M-f", sendMessage (T.Toggle "floats"))       -- Toggles my 'floats' layout
         , ("M-<Delete>", withFocused $ windows . W.sink) -- Push floating window back to tile
         , ("M-S-<Delete>", sinkAll)                      -- Push ALL floating windows to tile
-
     -- KB_GROUP Windows navigation
         , ("M-m", windows W.focusMaster)     -- Move focus to the master window
         , ("M-j", windows W.focusDown)       -- Move focus to the next window
@@ -442,6 +431,9 @@ myKeys =
         , ("M-S-s", windows copyToAll)
         , ("M-C-s", killAllOtherCopies)
 
+    -- KB_GROUP Workspaces
+        , ("M-S-<KP_Add>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
+        , ("M-S-<KP_Subtract>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
         -- KB_GROUP Layouts
         , ("M-<Tab>", sendMessage NextLayout)                -- Switch to next layout
         , ("M-C-M1-<Up>", sendMessage Arrange)
@@ -468,15 +460,18 @@ myKeys =
         , ("M-e d", spawn "emacsclient -c -a '' --eval '(dired nil)'")       -- dired emacs file manager
         , ("M-e m", spawn "emacsclient -c -a '' --eval '(mu4e)'")            -- mu4e emacs email client
         , ("M-e n", spawn "emacsclient -c -a '' --eval '(elfeed)'")          -- elfeed emacs rss client
-        , ("M-e s", spawn "emacsclient -c -a '' --eval '(eshell)'")          -- eshell within emacs
-        , ("M-e t", spawn "emacsclient -c -a '' --eval '(+vterm/here nil)'") -- eshell within emacs
+        -- , ("M-e l", spawn "emacsclient -c -a '' --eval '(eshell)'")          -- eshell within emacs
+        , ("M-e s", spawn "emacsclient -c -a '' --eval '(+vterm/here nil)'") -- eshell within emacs
 
     -- KB_GROUP Rofi
         , ("M-r", spawn ("rofi -show run -switchers 'run,window' -no-levenshtein-sort"))
         , ("M-S-r", spawn ("rofi -show window -switchers 'run,window' -no-levenshtein-sort"))
 
     -- KB_GROUP My Applications (Super+Alt+Key)
-        , ("M-d", spawn "discord")
+        -- , ("M-a d", spawn "discord")
+        , ("M-a w", spawn (myGUIBrowser))                               -- launch vivaldi
+        , ("M-a b", spawn (term ++ " -n bashtop -e bashtop"))           -- launch bashtop
+        , ("M-a n", spawn (term ++ " -n ncdu -e ncdu"))                 -- launch ncdu
 
     -- KB_GROUP University setup
         , ("M1-l s", spawn ("rofi-courses.py"))
@@ -494,7 +489,9 @@ myKeys =
         -- , ("M1-t", spawn (term ++ " -e vim ~/university/current_course/UltiSnips/tex.snippets"))
 
     -- KB_GROUP Multimedia Keys
-        , ("<XF86ScreenSaver>", spawn (myTerminal ++ " -e unimatrix.sh"))
+        , ("M1-u", spawn (myTerminal ++ " --class slock -e matrix.sh"))
+        , ("<XF86ScreenSaver>", spawn (myTerminal ++ " --class slock -e unimatrix.sh"))
+        , ("<XF86Display>", spawn "xset dpms force off")
         , ("<Pause>", spawn (myTerminal ++ " -e doas systemctl hibernate"))
         , ("<XF86MonBrightnessUp>", spawn "xbacklight -inc 5 -time 100")
         , ("<XF86MonBrightnessDown>", spawn "xbacklight -dec 5 -time 100")
@@ -506,6 +503,9 @@ myKeys =
         , ("<XF86Calculator>", runOrRaise "gcalctool" (resource =? "gcalctool"))
         , ("<XF86Eject>", spawn "toggleeject")
         , ("<Print>", spawn "scrotd 0")
+
+    -- KB_GROUP Run Prompt
+        , ("M-S-<Return>", shellPrompt dtXPConfig)   -- Shell Prompt
         ]
         -- Appending search engine prompts to keybindings list.
         -- Look at "search engines" section of this config for values for "k".
