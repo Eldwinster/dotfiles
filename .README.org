@@ -1,0 +1,11 @@
+#+TITLE: My dotfiles
+This is my dotfiles, which are heavily inspired by dwt of [[https://www.youtube.com/c/DistroTube][DistroTube]] channel.
+I set it up with stow.
+I tried as much as I could to implement [[https://github.com/dylanaraps/pywal][pywal]] in every tool that I use. That perhaps the only value of these dotfiles.
+
+* Sources
+- [[https://www.stevenrbaker.com/tech/managing-dotfiles-with-gnu-stow.html]]
+- [[https://www.gnu.org/software/stow/manual/stow.html#Ignore-Lists]]
+- https://www.youtube.com/c/DistroTube
+
+I named this file .README.org because when I =stow *= it tell me that org isn't a directory or something I need to find some workaround.
