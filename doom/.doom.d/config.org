@@ -557,20 +557,10 @@ I wrapped most of this block in (after! org).  Without this, my settings might b
           ("ddg" . "https://duckduckgo.com/?q=")
           ("wiki" . "https://en.wikipedia.org/wiki/"))
         org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
-        '((sequence
-           "TODO(t)"
-           "STARTED(s)"
-           "PROJ(p)"
-           "WAIT(w)"
-           "REPORT(r)"
-           "BUG(b)"
-           "KNOWCAUSE(k)"
-           "|"
-           "DONE(d)"
-           "FAILED"
-           "FIXED(f)"
-           "CANCELLED(c)" ))))
-           #+END_SRC
+        '((sequence "TODO(t)" "DOING(i!)" "WAIT(w@)" "|" "DONE(d!)")
+          (sequence "PROJ(p)" "STARTED(s!)" "DELAYED(y@)" "|" "ACCOMPLISHED(a@)")
+          (sequence "|" "CANCELLED(c@)" "FAILED(f@)"))))
+#+END_SRC
 
 ** Set font sizes for each header level in Org
 You can set the Org heading levels to be different font sizes.  So I choose to have level 1 headings to be 140% in height, level 2 to be 130%, etc.  Other interesting things you could play with include adding :foreground color and/or :background color if you want to override the theme colors.
