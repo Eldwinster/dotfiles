@@ -400,7 +400,8 @@ By default, Doom Emacs does not use 'SPC v', so the format I use for these bindi
 * KEYBINDS
 ** ispell
 #+begin_src emacs-lisp
-(map! :i "M-c" #'ispell-word)
+(map! :i "M-c" #'ispell-word
+      :i "C-M-c" #'ispell)
 #+end_src
 * KEYCHAIN
 
