@@ -9,4 +9,5 @@ xrdb -merge .Xressources
 # exec setxkbmap us qwerty-fr &
 [ -f /etc/xprofile ] && . /etc/xprofile
 [ -f ~/.xprofile ] && . ~/.xprofile
+xset s off -dpms
 exec xmonad
