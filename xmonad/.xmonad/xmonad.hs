@@ -335,7 +335,7 @@ spirals  = renamed [Replace "spirals"]
 threeCol = renamed [Replace "threeCol"]
            $ limitWindows 7
            $ mySpacing' 4
-           $ ThreeCol 1 (3/100) (1/2)
+           $ ThreeColMid 1 (3/100) (3/4)
 threeRow = renamed [Replace "threeRow"]
            $ limitWindows 7
            $ mySpacing' 4
