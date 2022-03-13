@@ -649,9 +649,10 @@ This is an example to how you can setup template choice when you use a two lette
   ;;    ("d" "default" plain
   ;;     (file "~/.org/roam/templates/DefaultTemplate.org")
   ;;     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-  ;;     ("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO task1\n\n* Dates\n\n* Resources\n\n"
-  ;;      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
-  ;;      :unnarrowed t)     :unnarrowed t)
+  ;;     :unnarrowed t)
+  ;;    ("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO task1\n\n* Dates\n\n* Resources\n\n"
+  ;;     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+  ;;     :unnarrowed t)
   ;;    ))
   (org-roam-dailies-capture-templates
    '(("d" "default" entry "* %<%d/%m/%Y %H:%M:%Ss>: %?"
