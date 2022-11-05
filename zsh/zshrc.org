@@ -172,8 +172,9 @@ Import colorscheme from 'wal' asynchronously
 () # Hide shell job control messages.
 
 #+begin_src shell
-(cat ~/.cache/wal/sequences &)
+# (cat ~/.cache/wal/sequences &)
 #+end_src
+
 To add support for TTs this line can be optionally added.
 
 #+begin_src shell

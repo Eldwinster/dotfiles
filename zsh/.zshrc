@@ -50,7 +50,7 @@ source $ZSH/oh-my-zsh.sh
 # Oh my zsh:1 ends here
 
 # [[file:zshrc.org::*Pywal][Pywal:1]]
-(cat ~/.cache/wal/sequences &)
+# (cat ~/.cache/wal/sequences &)
 # Pywal:1 ends here
 
 # [[file:zshrc.org::*Pywal][Pywal:2]]
