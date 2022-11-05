@@ -5,6 +5,7 @@ from libqtile.lazy import lazy
 alac = "alacritty"
 st = "st"
 shelter = "emacsclient -c -a ''"
+nuclear_shelter = alac + " -t tmux -e tmux"
 vterm = shelter + " --eval '(+vterm/here nil)'"
 eshell = shelter + " --eval '(eshell)'"
 fileManager = shelter + " --eval '(dired nil)'"
@@ -86,7 +87,7 @@ keys = [
     Key("M-<space>", lazy.window.toggle_fullscreen()),
     Key("M-S-<space>", lazy.window.toggle_minimize()),
 
-    Key("M-S-<Return>", lazy.spawn(vterm)),
+    Key("M-S-<Return>", lazy.spawn(nuclear_shelter)),
     Key("M-C-<Return>", lazy.spawn(eshell)),
     Key("M-<Return>", lazy.spawn(alac)),
 
@@ -108,6 +109,7 @@ keys = [
         Key("l", lazy.spawn("anydesk")),
         Key("d", lazy.spawn("discord")),
     ]),
+
     Key("<XF86ScreenSaver>", lazy.spawn(alac + " --class slock -e unimatrix.sh")),
     Key("<XF86Display>", lazy.spawn("xset dpms force off")),
     Key("<Pause>", lazy.spawn("systemctl hibernate")),
