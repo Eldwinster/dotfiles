@@ -1,21 +1,17 @@
 #+title: zshrc
 #+description: This is my zshrc file
 #+created: [2022-11-04 Fri 22:44]
-#+last_modified: [2022-11-04 Fri 23:14]
+#+last_modified: [2022-11-05 Sat 00:26]
 
 * .zshrc
 :PROPERTIES:
 :header-args: :tangle ~/.dotfiles/zsh/.zshrc :mkdirp yes
 :END:
-** ZSH PATH
-#+begin_src shell
-export ZSH="/home/yann/.oh-my-zsh"
-#+end_src
 ** EXPORT
 
 #+begin_src shell
 export TERM="xterm-256color"                      # getting proper colors
-export TERMINFO="/bin/zsh"
+export TERMINFO="/usr/bin/env zsh"
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|doas reboot|history|cd -|cd ..)"
 # export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
 # export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
@@ -141,7 +137,7 @@ You can set one of the optional three formats:
 or set a custom format using the strftime function format specifications,
 see 'man strftime' for details.
 #+begin_src shell
-HIST_STAMPS="dd/mm/yyyy"
+HIST_STAMPS="$(date +'%Y%m%d$H$M$S')"
 #+end_src
 
 Would you like to use another custom folder than $ZSH/custom?
@@ -199,19 +195,6 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='mvim'
 fi
-#+end_src
-
-** CHANGE TITLE OF TERMINALS
-
-#+begin_src shell
-case ${TERM} in
-  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
-        ;;
-  screen*)
-    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
-    ;;
-esac
 #+end_src
 
 ** FUNCTIONS
@@ -480,11 +463,6 @@ alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
 [[https://askubuntu.com/questions/113419/how-can-i-reset-path-to-its-default-value-in-ubuntu][how can i reset path to its default value]]
 #+begin_src shell
 alias getpath="PATH=$(/usr/bin/getconf PATH)"
-#+end_src
-
-** STARSHIP
-#+begin_src shell
-# eval "$(starship init zsh)"
 #+end_src
 
 ** COLORSCRIPT

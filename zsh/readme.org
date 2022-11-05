@@ -1,5 +1,0 @@
-#+title: Read Me
-#+description:  description
-#+created: [2022-11-04 Fri 22:42]
-#+last_modified: [2022-11-04 Fri 22:46]
-This is a readme?

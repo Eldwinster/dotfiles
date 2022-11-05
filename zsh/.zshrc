@@ -1,10 +1,6 @@
-# [[file:zshrc.org::*ZSH PATH][ZSH PATH:1]]
-export ZSH="/home/yann/.oh-my-zsh"
-# ZSH PATH:1 ends here
-
 # [[file:zshrc.org::*EXPORT][EXPORT:1]]
 export TERM="xterm-256color"                      # getting proper colors
-export TERMINFO="/bin/zsh"
+export TERMINFO="/usr/bin/env zsh"
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|doas reboot|history|cd -|cd ..)"
 # export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
 # export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
@@ -38,7 +34,7 @@ ZSH_THEME="gallois"
 # ZSH THEME:1 ends here
 
 # [[file:zshrc.org::*EXAMPLES][EXAMPLES:1]]
-HIST_STAMPS="dd/mm/yyyy"
+HIST_STAMPS="$(date +'%Y%m%d$H$M$S')"
 # EXAMPLES:1 ends here
 
 # [[file:zshrc.org::*EXAMPLES][EXAMPLES:2]]
@@ -68,17 +64,6 @@ else
   export EDITOR='mvim'
 fi
 # EDITOR LOCAL AND REMOTE:1 ends here
-
-# [[file:zshrc.org::*CHANGE TITLE OF TERMINALS][CHANGE TITLE OF TERMINALS:1]]
-case ${TERM} in
-  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
-        ;;
-  screen*)
-    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
-    ;;
-esac
-# CHANGE TITLE OF TERMINALS:1 ends here
 
 # [[file:zshrc.org::*Get keyboard input][Get keyboard input:1]]
 keyinput ()
@@ -264,10 +249,6 @@ alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
 # [[file:zshrc.org::*reset $PATH][reset $PATH:1]]
 alias getpath="PATH=$(/usr/bin/getconf PATH)"
 # reset $PATH:1 ends here
-
-# [[file:zshrc.org::*STARSHIP][STARSHIP:1]]
-# eval "$(starship init zsh)"
-# STARSHIP:1 ends here
 
 # [[file:zshrc.org::*COLORSCRIPT][COLORSCRIPT:1]]
 colorscript random
