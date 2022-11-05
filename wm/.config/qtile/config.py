@@ -13,7 +13,7 @@ dotGit = shelter + " --eval '(me/magit-status-dotfiles)'"
 orgGit = shelter + " --eval '(me/magit-status-org)'"
 Magit = shelter + " --eval '(me/magit-status)'"
 screenshot = "flameshot gui"
-# vifm = "vifm.sh"
+# vifm = alac + " -e ./$HOME/.config/vifm/scripts/vifmrun"
 
 bufferManager = shelter + " --eval '(ibuffer)'"
 forLife = "emacsclient --eval '(emacs-everywhere)'"
@@ -22,6 +22,7 @@ utilityViewer = st + " -n bottom -e sudo btm"
 diskSpace = st + " -n ncdu -e sudo ncdu"
 browser = "firefox"
 mod = "mod4"
+
 keys = [
     KeyChord([mod], "q", [
         Key("c", lazy.reload_config()),
