@@ -1,0 +1,20 @@
+#+title: Mouse Cursor
+#+description: Cool mouse cursor
+#+created: [2022-11-05 Sat 01:37]
+#+last_modified: [2022-11-05 Sat 01:41]
+
+* Configuration
+** User specific
+Create or edit ~~/.icons/default/index.theme~ and add the following lines:
+
+#+begin_src shell
+[icon theme]
+Inherits=cursor_theme_name
+#+end_src
+
+The mouse cursor theme folder should be place in the ~~/.icons~ folder.
+
+When done just restart your X11 session.
+* source
+- https://wiki.archlinux.org/title/Cursor_themes
+- https://schlomp.space/tastytea/gentoo-xcursors
