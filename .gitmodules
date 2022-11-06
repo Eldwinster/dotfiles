@@ -1,3 +1,0 @@
-[submodule "oh_my_zsh"]
-	path = tmux
-	url = git@github.com:Eldwinster/.tmux.git
