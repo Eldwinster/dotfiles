@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+LOG_PATH="$HOME/.session"
+TIMESTAMP="$(date +"%Y%m%dT%H%M%S")"
+LOG_NAME="$LOG_PATH/$SESSION_NAME-$TIMESTAMP.log"
+SCRIPT_NAME="$LOG_PATH/$SESSION_NAME-$TIMESTAMP.txt"
+SESSION_NAME=$1
+
+ZJ_SESSIONS=$(zellij list-sessions)
+NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
+
+usage() {
+    cat <<EOF
+    Usage: $0 [list|continue|session_name]
+EOF
+}
+
+
+list_session() {
+    if [ "${NO_SESSIONS}" -ge 1 ]; then
+        zellij attach \
+        "$(echo "${ZJ_SESSIONS}" | sk)"
+    fi
+}
+
+logger() {
+    script --t="$LOG_NAME" "$SCRIPT_NAME"
+}
+
+# replay() {
+#     list_log="$(ls $LOG_PATH | rg -e '.*\.log')"
+#     list_script="$(ls $LOG_PATH | rg -e '.*\.log')"
+#     scriptreplay --t=""
+# }
+
+multiplexer() {
+    zellij -s "$SESSION_NAME"
+}
+
+if [[ -z "$ZELLIJ" ]]; then
+    if [[ $# -eq 0 ]]; then
+        usage
+    elif [[ $SESSION_NAME == "list" ]]; then
+        list_session
+    elif [[ $SESSION_NAME == "continue" ]]; then
+        logger
+        list_session
+    elif [[ -n $SESSION_NAME ]]; then
+        logger
+        multiplexer
+    else
+       exit 1
+    fi
+else
+   # SESSION_NAME="$ZELLIJ_SESSION_NAME"
+   echo "$SESSION_NAME is already a zellij session"
+   exit 1
+fi
