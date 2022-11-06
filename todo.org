@@ -1,4 +1,8 @@
 * Inbox
+** TODO add continue
+Add the possibility to continue from a certain log file and script file
+
+[[file:~/.dotfiles/script/.bin/session_log][file:~/.dotfiles/script/.bin/session_log]]
 ** TODO add replay
 Use ripgrep, uniq, skim and maybe other thing.
 
