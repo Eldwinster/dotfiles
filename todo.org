@@ -1,0 +1,16 @@
+* Inbox
+** TODO add replay
+Use ripgrep, uniq, skim and maybe other thing.
+
+The idea would be to have a list of all timestamp entries.
+Then when a particular timestamp is selected use it to be the timing and script
+file.
+
+Options to choose the speed of the replay
+ [[file:~/.dotfiles/script/.bin/session_log][file:~/.dotfiles/script/.bin/session_log]]
+** TODO add list and view log
+list the log
+open in editor
+or less, bat, cat the file.
+
+ [[file:~/.dotfiles/script/.bin/session_log][file:~/.dotfiles/script/.bin/session_log]]
