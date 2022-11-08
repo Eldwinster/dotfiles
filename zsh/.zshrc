@@ -4,8 +4,8 @@ export TERMINFO="/usr/bin/env zsh"
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|doas reboot|history|cd -|cd ..)"
 # export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
 # export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
-export VISUAL="vim"
-export EDITOR="vim"
+export VISUAL="/usr/bin/vim"
+export EDITOR="/usr/bin/vim"
 export ZSH="$HOME/.oh-my-zsh"
 
 export TZ="Europe/Paris"
@@ -38,7 +38,7 @@ HIST_STAMPS="$(date +'%Y%m%d$H$M$S')"
 # EXAMPLES:1 ends here
 
 # [[file:zshrc.org::*EXAMPLES][EXAMPLES:2]]
-plugins=(git)
+plugins=(git zsh-autosuggestions)
 # EXAMPLES:2 ends here
 
 # [[file:zshrc.org::*EXAMPLES][EXAMPLES:3]]
@@ -134,19 +134,6 @@ sshtmux()
 }
 # SSH:2 ends here
 
-# [[file:zshrc.org::*root privileges][root privileges:1]]
-alias pacman='sudo pacman'
-alias mount='sudo mount'
-alias umount='sudo umount'
-# root privileges:1 ends here
-
-# [[file:zshrc.org::*hack][hack:1]]
-alias listener="rlwrap nc -lnvp"
-alias htpd="python -m http.server 7777"
-alias nping="nmap -sn -n --disable-arp-ping"
-alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
-# hack:1 ends here
-
 # [[file:zshrc.org::*navigation][navigation:1]]
 up () {
   local d=""
@@ -168,10 +155,68 @@ up () {
 }
 # navigation:1 ends here
 
+# [[file:zshrc.org::*Zellij][Zellij:1]]
+zjs() {
+    ZJ_SESSIONS=$(zellij list-sessions)
+    zellij attach \
+    "$(echo "${ZJ_SESSIONS}" | sk)"
+}
+
+zjl() {
+    ZJ_LAYOUT_DIR=$(zellij setup --check \
+        | grep "LAYOUT DIR" - \
+        | grep -o '".*"' - | tr -d '"')
+
+    if [[ -d "${ZJ_LAYOUT_DIR}" ]];then
+            ZJ_LAYOUT="$(fd --type file . "${ZJ_LAYOUT_DIR}" \
+            | sed 's|.*/||' \
+            | sk \
+            || exit)"
+        zellij --layout "${ZJ_LAYOUT}"
+    fi
+}
+
+zj() {
+    if [[ -z "$ZELLIJ" ]]; then
+        zellij -s "$1" || zellij a "$1"
+    elif [[ -n "$ZELLIJ" ]]; then
+        echo "Nest is bad, right?"
+    fi
+}
+# Zellij:1 ends here
+
+# [[file:zshrc.org::*hack][hack:1]]
+alias listener="rlwrap nc -lnvp"
+alias htpd="python -m http.server 7777"
+alias nping="nmap -sn -n --disable-arp-ping"
+# alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
+# hack:1 ends here
+
+# [[file:zshrc.org::*root privileges][root privileges:1]]
+alias pacman='sudo pacman'
+alias mount='sudo mount'
+alias umount='sudo umount'
+# root privileges:1 ends here
+
+# [[file:zshrc.org::*source file][source file:1]]
+alias sz="source ~/.zshrc"
+alias sv="source ~/.vimrc"
+# source file:1 ends here
+
+# [[file:zshrc.org::*hack][hack:1]]
+alias listener="rlwrap nc -lnvp"
+alias htpd="python -m http.server 7777"
+alias nping="nmap -sn -n --disable-arp-ping"
+# alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
+alias zz="zellij"
+alias zr="zellij run --"
+# hack:1 ends here
+
 # [[file:zshrc.org::*vim and emacs][vim and emacs:1]]
-alias vim="vim"
 alias v="vim"
 alias vi="vim"
+alias e="emacsclient -nw"
+alias em="emacsclient -nw"
 # vim and emacs:1 ends here
 
 # [[file:zshrc.org::*Changing "cat" to "bat"][Changing "cat" to "bat":1]]
@@ -179,7 +224,7 @@ alias cat='bat --style=plain'
 # Changing "cat" to "bat":1 ends here
 
 # [[file:zshrc.org::*Changing "ls" to "exa"][Changing "ls" to "exa":1]]
-alias ls='exa --color=always --group-directories-first' # my preferred listing
+alias ls='exa' # my preferred listing
 alias la='exa -a --color=always --group-directories-first'  # all files and dirs
 alias ll='exa -l --color=always --group-directories-first'  # long format
 alias lt='exa -aT --color=always --group-directories-first' # tree listing
@@ -253,3 +298,10 @@ alias getpath="PATH=$(/usr/bin/getconf PATH)"
 # [[file:zshrc.org::*COLORSCRIPT][COLORSCRIPT:1]]
 colorscript random
 # COLORSCRIPT:1 ends here
+
+# [[file:zshrc.org::*zellij (multiplexer)][zellij (multiplexer):1]]
+# export ZELLIJ_AUTO_ATTACH=true
+# export ZELLIJ_AUTO_EXIT=true
+# eval "$(zellij setup --generate-auto-start zsh)"
+# eval "$(zellij.sh)"
+# zellij (multiplexer):1 ends here

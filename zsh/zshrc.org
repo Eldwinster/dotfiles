@@ -1,7 +1,7 @@
 #+title: zshrc
 #+description: This is my zshrc file
 #+created: [2022-11-04 Fri 22:44]
-#+last_modified: [2022-11-05 Sat 00:26]
+#+last_modified: [2022-11-08 Tue 03:04]
 
 * .zshrc
 :PROPERTIES:
@@ -15,8 +15,8 @@ export TERMINFO="/usr/bin/env zsh"
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|doas reboot|history|cd -|cd ..)"
 # export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
 # export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
-export VISUAL="vim"
-export EDITOR="vim"
+export VISUAL="/usr/bin/vim"
+export EDITOR="/usr/bin/vim"
 export ZSH="$HOME/.oh-my-zsh"
 
 export TZ="Europe/Paris"
@@ -151,7 +151,7 @@ Custom plugins may be added to $ZSH_CUSTOM/plugins/
 Example format: plugins=(rails git textmate ruby lighthouse)
 Add wisely, as too many plugins slow down shell startup.
 #+begin_src shell
-plugins=(git)
+plugins=(git zsh-autosuggestions)
 #+end_src
 
 Compilation flags
@@ -328,24 +328,6 @@ tmuxattach()
     fi
 }
 #+end_src
-** ALIASES
-Set personal aliases, overriding those provided by oh-my-zsh libs,
-plugins, and themes. Aliases can be placed here, though oh-my-zsh
-users are encouraged to define aliases within the ZSH_CUSTOM folder.
-For a full list of active aliases, run `alias`.
-*** root privileges
-#+begin_src shell
-alias pacman='sudo pacman'
-alias mount='sudo mount'
-alias umount='sudo umount'
-#+end_src
-*** hack
-#+begin_src shell
-alias listener="rlwrap nc -lnvp"
-alias htpd="python -m http.server 7777"
-alias nping="nmap -sn -n --disable-arp-ping"
-alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
-#+end_src
 *** navigation
 #+begin_src shell
 up () {
@@ -368,11 +350,74 @@ up () {
 }
 #+end_src
 
+*** Zellij
+#+begin_src shell
+zjs() {
+    ZJ_SESSIONS=$(zellij list-sessions)
+    zellij attach \
+    "$(echo "${ZJ_SESSIONS}" | sk)"
+}
+
+zjl() {
+    ZJ_LAYOUT_DIR=$(zellij setup --check \
+        | grep "LAYOUT DIR" - \
+        | grep -o '".*"' - | tr -d '"')
+
+    if [[ -d "${ZJ_LAYOUT_DIR}" ]];then
+            ZJ_LAYOUT="$(fd --type file . "${ZJ_LAYOUT_DIR}" \
+            | sed 's|.*/||' \
+            | sk \
+            || exit)"
+        zellij --layout "${ZJ_LAYOUT}"
+    fi
+}
+
+zj() {
+    if [[ -z "$ZELLIJ" ]]; then
+        zellij -s "$1" || zellij a "$1"
+    elif [[ -n "$ZELLIJ" ]]; then
+        echo "Nest is bad, right?"
+    fi
+}
+#+end_src
+*** hack
+#+begin_src shell
+alias listener="rlwrap nc -lnvp"
+alias htpd="python -m http.server 7777"
+alias nping="nmap -sn -n --disable-arp-ping"
+# alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
+#+end_src
+** ALIASES
+Set personal aliases, overriding those provided by oh-my-zsh libs,
+plugins, and themes. Aliases can be placed here, though oh-my-zsh
+users are encouraged to define aliases within the ZSH_CUSTOM folder.
+For a full list of active aliases, run `alias`.
+*** root privileges
+#+begin_src shell
+alias pacman='sudo pacman'
+alias mount='sudo mount'
+alias umount='sudo umount'
+#+end_src
+*** source file
+#+begin_src shell
+alias sz="source ~/.zshrc"
+alias sv="source ~/.vimrc"
+#+end_src
+*** hack
+#+begin_src shell
+alias listener="rlwrap nc -lnvp"
+alias htpd="python -m http.server 7777"
+alias nping="nmap -sn -n --disable-arp-ping"
+# alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
+alias zz="zellij"
+alias zr="zellij run --"
+#+end_src
 *** vim and emacs
 #+begin_src shell
-alias vim="vim"
 alias v="vim"
 alias vi="vim"
+alias e="emacsclient -nw"
+alias em="emacsclient -nw"
 #+end_src
 *** Changing "cat" to "bat"
 #+begin_src shell
@@ -380,7 +425,7 @@ alias cat='bat --style=plain'
 #+end_src
 *** Changing "ls" to "exa"
 #+begin_src shell
-alias ls='exa --color=always --group-directories-first' # my preferred listing
+alias ls='exa' # my preferred listing
 alias la='exa -a --color=always --group-directories-first'  # all files and dirs
 alias ll='exa -l --color=always --group-directories-first'  # long format
 alias lt='exa -aT --color=always --group-directories-first' # tree listing
@@ -469,4 +514,12 @@ alias getpath="PATH=$(/usr/bin/getconf PATH)"
 ** COLORSCRIPT
 #+begin_src shell
 colorscript random
+#+end_src
+** zellij (multiplexer)
+Autostart on shell creation
+#+begin_src shell
+# export ZELLIJ_AUTO_ATTACH=true
+# export ZELLIJ_AUTO_EXIT=true
+# eval "$(zellij setup --generate-auto-start zsh)"
+# eval "$(zellij.sh)"
 #+end_src
