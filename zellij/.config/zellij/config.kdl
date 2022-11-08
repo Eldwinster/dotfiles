@@ -4,6 +4,7 @@ keybinds {
         // uncomment this and adjust key if using copy_on_select=false
         // bind "Alt c" { Copy; }
         // bind "Alt s" { Run "zellij-session.sh" }
+        bind "Ctrl d" { Detach; }
     }
     locked {
         bind "Ctrl g" { SwitchToMode "Normal"; }
@@ -178,7 +179,7 @@ plugins {
 //   - detach (Default)
 //   - quit
 //
-// on_force_close "quit"
+on_force_close "detach"
 
 //  Send a request for a simplified ui (without arrow fonts) to plugins
 //  Options:
@@ -190,7 +191,7 @@ plugins {
 // Choose the path to the default shell that zellij will use for opening new panes
 // Default: $SHELL
 //
- default_shell "zsh"
+default_shell "/usr/bin/zsh"
 
 // Toggle between having pane frames around the panes
 // Options:
@@ -249,7 +250,7 @@ plugins {
 // Valid values: positive integers
 // Default value: 10000
 //
- scroll_buffer_size 50000
+scroll_buffer_size 50000
 
 // Provide a command to execute when copying text. The text will be piped to
 // the stdin of the program to perform the copy. This can be used with
@@ -278,7 +279,7 @@ plugins {
 // Path to the default editor to use to edit pane scrollbuffer
 // Default: $EDITOR or $VISUAL
 //
- scrollback_editor "/usr/bin/vim"
+scrollback_editor "/usr/bin/vim"
 
 // When attaching to an existing session with other users,
 // should the session be mirrored (true)
@@ -289,7 +290,7 @@ plugins {
 
 // The folder in which Zellij will look for layouts
 //
- layout_dir "~/.config/zellij/layout"
+layout_dir "~/.config/zellij/layout"
 
 // The folder in which Zellij will look for themes
 //
