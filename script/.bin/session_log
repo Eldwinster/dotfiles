@@ -1,58 +1,81 @@
 #!/usr/bin/env bash
+# mapfile -t zellij_sessions < <(zellij list-sessions)
+set -euo pipefail
 
-LOG_PATH="$HOME/.session"
-TIMESTAMP="$(date +"%Y%m%dT%H%M%S")"
-LOG_NAME="$LOG_PATH/$SESSION_NAME-$TIMESTAMP.log"
-SCRIPT_NAME="$LOG_PATH/$SESSION_NAME-$TIMESTAMP.txt"
 SESSION_NAME=$1
-
-ZJ_SESSIONS=$(zellij list-sessions)
-NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
+SHELL_SESSION_LOG="$HOME/.sessions"
+# TIMESTAMP="$(date +"%Y%m%dT%H%M%S")"
+LOG_NAME="$SHELL_SESSION_LOG/$SESSION_NAME.log"
+SCRIPT_NAME="$SHELL_SESSION_LOG/$SESSION_NAME.txt"
 
 usage() {
     cat <<EOF
-    Usage: $0 [list|continue|session_name]
+USAGE:
+     $0 [options] [session_name]
+
+OPTIONS:
+    -h, --help
+        Prints this message
+
+    -r, --restart-session
+        Choose a session to restart from
 EOF
 }
 
-
-list_session() {
-    if [ "${NO_SESSIONS}" -ge 1 ]; then
-        zellij attach \
-        "$(echo "${ZJ_SESSIONS}" | sk)"
-    fi
-}
+# list entries
 
 logger() {
     script --t="$LOG_NAME" "$SCRIPT_NAME"
 }
 
-# replay() {
-#     list_log="$(ls $LOG_PATH | rg -e '.*\.log')"
-#     list_script="$(ls $LOG_PATH | rg -e '.*\.log')"
-#     scriptreplay --t=""
-# }
-
-multiplexer() {
-    zellij -s "$SESSION_NAME"
+restart-session() {
+    # SELECT_LOG_ENTRY="$(ls .sessions | cut -d'.' -f1 | sort -u | sk)"
+    script -a --t="$SESSION_ENTRY.log" "$SESSION_ENTRY.txt"
 }
 
-if [[ -z "$ZELLIJ" ]]; then
-    if [[ $# -eq 0 ]]; then
-        usage
-    elif [[ $SESSION_NAME == "list" ]]; then
-        list_session
-    elif [[ $SESSION_NAME == "continue" ]]; then
-        logger
-        list_session
-    elif [[ -n $SESSION_NAME ]]; then
-        logger
-        multiplexer
+test-session() {
+    ZJ_SESSIONS=$(zellij list-sessions)
+    NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
+    COUNT_SESSION=$(echo "${ZJ_SESSIONS}" | rg -e $SESSION_NAME | wc -l)
+    if [[ $NO_SESSIONS -eq 0 ]]; then
+        test_session=1
+    elif [[ $NO_SESSIONS -ge 1 ]]; then
+        if [[ $COUNT_SESSION -eq 0 ]]; then
+            test_session=1
+        elif [[ $COUNT_SESSION -eq 1 ]]; then
+            SESSION_ENTRY="$(echo "${ZJ_SESSIONS}"} | rg -e $SESSION_NAME)"
+            test_session=0
+        fi
     else
-       exit 1
+        exit 2
     fi
-else
-   # SESSION_NAME="$ZELLIJ_SESSION_NAME"
-   echo "$SESSION_NAME is already a zellij session"
-   exit 1
+}
+
+test-log() {
+    COUNT_LOG="$(fd -e log $SESSION_NAME $SHELL_SESSION_LOG | sort -u | wc -l)"
+    if [[ $COUNT_LOG -eq 0 ]]; then
+       test_log=1
+    elif [[ $COUNT_LOG -eq 1 ]]; then
+        test_log=0
+    else
+        exit 2
+    fi
+}
+
+
+if [[ $# -eq 0 ]]; then
+    usage
+elif [[ $# -eq 1 ]]; then
+    test-session && test-log
+    if [[ $test_session -eq 1 && $test_log -eq 1 ]]; then
+       logger
+    elif [[ $test_session -eq 1 && $test_log -eq 0 ]]; then
+        echo "no session but log exist"
+    elif [[ $test_session -eq 0 && $test_log -eq 1 ]]; then
+        echo "no log but session exist"
+    elif [[ $test_session -eq 0 && $test_log -eq 0 ]]; then
+        restart-session
+    else
+        exit 2
+    fi
 fi
