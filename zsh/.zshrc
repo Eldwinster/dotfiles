@@ -223,12 +223,6 @@ zj() {
 }
 # Zellij attach or start session:1 ends here
 
-# [[file:zshrc.org::*hack][hack:1]]
-alias listener="rlwrap nc -lnvp"
-alias htpd="python -m http.server 7777"
-alias nping="nmap -sn -n --disable-arp-ping"
-# alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
-# hack:1 ends here
 
 # [[file:zshrc.org::*root privileges][root privileges:1]]
 alias pacman='sudo pacman'
