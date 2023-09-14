@@ -223,6 +223,12 @@ zj() {
 }
 # Zellij attach or start session:1 ends here
 
+# [[file:zshrc.org::*Convert][Convert:1]]
+png2ico () {
+    local i="${1}" o="${2:-${1:r}.ico}" s="${png2ico_size:-256}"
+    convert -resize x${s} -gravity center -crop ${s}x${s}+0+0 "$i" -flatten -colors 256 -background transparent "$o"
+}
+# Convert:1 ends here
 
 # [[file:zshrc.org::*root privileges][root privileges:1]]
 alias pacman='sudo pacman'
