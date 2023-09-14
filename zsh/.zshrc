@@ -262,7 +262,7 @@ alias em="emacsclient -nw"
 # vim and emacs:1 ends here
 
 # [[file:zshrc.org::*Changing "cat" to "bat"][Changing "cat" to "bat":1]]
-alias cat='bat --style=plain'
+alias cat='bat'
 # Changing "cat" to "bat":1 ends here
 
 # [[file:zshrc.org::*Changing "ls" to "exa"][Changing "ls" to "exa":1]]
