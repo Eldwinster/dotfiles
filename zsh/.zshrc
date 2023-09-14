@@ -1,14 +1,16 @@
 # [[file:zshrc.org::*EXPORT][EXPORT:1]]
+export PATH="$PATH:$HOME/tools"
 export TERM="xterm-256color"                      # getting proper colors
 export TERMINFO="/usr/bin/env zsh"
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|doas reboot|history|cd -|cd ..)"
-# export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
-# export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
-export VISUAL="/usr/bin/vim"
-export EDITOR="/usr/bin/vim"
+export EDITOR="emacsclient -nw"              # $EDITOR use Emacs in terminal
+export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
+# export VISUAL="/usr/bin/vim"
+# export EDITOR="/usr/bin/vim"
 export ZSH="$HOME/.oh-my-zsh"
 
 export TZ="Europe/Paris"
+# EXPORT:1 ends here
 
 # You may need to manually set your language environment
 # export LANG=C
