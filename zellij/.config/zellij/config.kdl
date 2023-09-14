@@ -130,9 +130,33 @@ keybinds {
         bind "d" { Detach; }
     }
     shared_except "locked" {
+        bind "F1" {
+             LaunchOrFocusPlugin "file:~/.config/zellij/plugins/monocle.wasm" {
+             floating true;
+             }
+        }
+        // bind "F2" {
+        //      NewTab {
+        //         layout "test"
+        //      }
+        // }
         bind "Ctrl g" { SwitchToMode "Locked"; }
         bind "Ctrl q" { Quit; }
         bind "Alt n" { NewPane; }
+        bind "Alt f" { ToggleFloatingPanes; }
+        bind "Alt s" { ToggleFocusFullscreen; }
+        bind "Alt e" { TogglePaneEmbedOrFloating; }
+        bind "Alt c" { CloseFocus; }
+        bind "Alt d" { Detach; }
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+        bind "Alt 6" { GoToTab 6; }
+        bind "Alt 7" { GoToTab 7; }
+        bind "Alt 8" { GoToTab 8; }
+        bind "Alt 9" { GoToTab 9; }
         bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
         bind "Alt l" "Alt Right" { MoveFocusOrTab "Right"; }
         bind "Alt j" "Alt Down" { MoveFocus "Down"; }
