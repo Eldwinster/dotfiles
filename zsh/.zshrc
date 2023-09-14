@@ -20,6 +20,11 @@ export LC_CTYPE=en_US.utf8
 # [[file:zshrc.org::*Dotbare variable][Dotbare variable:1]]
 # export DOTBARE_DIR="~/.dotfiles/.git"
 # export DOTBARE_TREE="~/.dotfiles"
+# Dotbare variable:1 ends here
+
+# [[file:zshrc.org::*HISTORY TIMESTAMPS][HISTORY TIMESTAMPS:1]]
+HIST_STAMPS="Executed the $(date +'%Y/%m/%d at %H:%mm%Ss')"
+# HISTORY TIMESTAMPS:1 ends here
 
 # [[file:zshrc.org::*SET MANPAGER][SET MANPAGER:1]]
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
