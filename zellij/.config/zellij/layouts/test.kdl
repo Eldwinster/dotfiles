@@ -1,0 +1,14 @@
+layout {
+       pane_template name="basic_template" {
+        pane split_direction="vertical" {
+            pane
+            pane
+        }
+        pane split_direction="vertical" {
+            pane
+            pane
+        }
+       }
+
+       basic_template
+}

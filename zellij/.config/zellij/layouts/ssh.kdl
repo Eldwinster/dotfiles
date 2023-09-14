@@ -1,0 +1,141 @@
+layout {
+        default_tab_template {
+            pane size=1 borderless=true {
+                plugin location="zellij:tab-bar"
+            }
+            children
+            pane size=2 borderless=true {
+                plugin location="zellij:status-bar"
+            }
+        }
+        tab name="WhiteHole" focus=true {
+            pane split_direction="vertical" {
+                pane split_direction="horizontal" {
+                    pane {
+                         name "bash"
+                         command "$HOME/.bin/ssh-tmux"
+                         args "whitebox" "bash"
+                    }
+                    pane {
+                         name "ctop"
+                         command "$HOME/.bin/ssh-tmux"
+                         args "whitebox" "ctop"
+                    }
+                }
+                pane split_direction="vertical" {
+                    pane stacked=true {
+                        pane {
+                             name "vifm"
+                             command "$HOME/.bin/ssh-tmux"
+                             args "whitebox" "vifm"
+                        }
+                        pane {
+                             name "sudo vifm"
+                             command "$HOME/.bin/ssh-tmux"
+                             args "whitebox" "sudo"
+                        }
+                        pane {
+                             name "ansible-tower"
+                             expanded true
+                             cwd "~/mygit/devnull"
+                        }
+                    }
+                }
+            }
+            floating_panes {
+                           pane {
+                                name "secret vars"
+                                command "cat"
+                                args "./vars/vault.yaml"
+                                cwd "$HOME/mygit/devnull"
+                                x "80%"
+                                y 0
+                                width 59
+                                height 15
+                            }
+                           pane {
+                                name "run.yaml"
+                                edit "run.yaml"
+                                cwd "$HOME/mygit/devnull"
+                                x "50%"
+                                y 0
+                                width 59
+                                height 15
+                            }
+                           pane {
+                                name "makefile"
+                                edit "makefile"
+                                cwd "$HOME/mygit/devnull"
+                                x "50%"
+                                y 15
+                                width 120
+                                height 15
+                            }
+            }
+        }
+tab name="BlackHole" focus=false {
+            pane split_direction="vertical" {
+                pane split_direction="horizontal" {
+                    pane {
+                         name "bash"
+                         command "$HOME/.bin/ssh-tmux"
+                         args "devnull" "bash"
+                    }
+                    pane {
+                         name "ctop"
+                         command "$HOME/.bin/ssh-tmux"
+                         args "devnull" "ctop"
+                    }
+                }
+                pane split_direction="vertical" {
+                    pane stacked=true {
+                        pane {
+                             name "vifm"
+                             command "$HOME/.bin/ssh-tmux"
+                             args "devnull" "vifm"
+                        }
+                        pane {
+                             name "sudo vifm"
+                             command "$HOME/.bin/ssh-tmux"
+                             args "devnull" "sudo"
+                        }
+                        pane {
+                             name "ansible-tower"
+                             expanded true
+                             cwd "~/mygit/devnull"
+                        }
+                    }
+                }
+            }
+            floating_panes {
+                           pane {
+                                name "secret vars"
+                                command "cat"
+                                args "./vars/vault.yaml"
+                                cwd "$HOME/mygit/devnull"
+                                x "80%"
+                                y 0
+                                width 59
+                                height 15
+                            }
+                           pane {
+                                name "run.yaml"
+                                edit "run.yaml"
+                                cwd "$HOME/mygit/devnull"
+                                x "50%"
+                                y 0
+                                width 59
+                                height 15
+                            }
+                           pane {
+                                name "makefile"
+                                edit "makefile"
+                                cwd "$HOME/mygit/devnull"
+                                x "50%"
+                                y 15
+                                width 120
+                                height 15
+                            }
+            }
+        }
+}
