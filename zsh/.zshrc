@@ -241,6 +241,10 @@ alias sz="source ~/.zshrc"
 alias sv="source ~/.vimrc"
 # source file:1 ends here
 
+# [[file:zshrc.org::*dotfiles gitbare][dotfiles gitbare:1]]
+alias dotfiles="git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME/.dotfiles"
+# dotfiles gitbare:1 ends here
+
 # [[file:zshrc.org::*hack][hack:1]]
 alias listener="rlwrap nc -lnvp"
 alias htpd="python -m http.server 7777"
