@@ -181,35 +181,47 @@ up () {
 }
 # navigation:1 ends here
 
-# [[file:zshrc.org::*Zellij][Zellij:1]]
+# [[file:zshrc.org::*Zellij sessions][Zellij sessions:1]]
 zjs() {
     ZJ_SESSIONS=$(zellij list-sessions)
     zellij attach \
     "$(echo "${ZJ_SESSIONS}" | sk)"
 }
+# Zellij sessions:1 ends here
 
+# [[file:zshrc.org::*Zellij select layout][Zellij select layout:1]]
 zjl() {
     ZJ_LAYOUT_DIR=$(zellij setup --check \
         | grep "LAYOUT DIR" - \
         | grep -o '".*"' - | tr -d '"')
 
-    if [[ -d "${ZJ_LAYOUT_DIR}" ]];then
+    if [[ "$#" -eq 1 ]]; then
+        if [[ -d "${ZJ_LAYOUT_DIR}" ]];then
             ZJ_LAYOUT="$(fd --type file . "${ZJ_LAYOUT_DIR}" \
             | sed 's|.*/||' \
             | sk \
             || exit)"
-        zellij --layout "${ZJ_LAYOUT}"
+              zellij --layout "${ZJ_LAYOUT}" --session "$1"
+            fi
+    else
+        echo "Usage: $0 [zellij-session-name]"
     fi
 }
+# Zellij select layout:1 ends here
 
+# [[file:zshrc.org::*Zellij attach or start session][Zellij attach or start session:1]]
 zj() {
-    if [[ -z "$ZELLIJ" ]]; then
-        zellij -s "$1" || zellij a "$1"
-    elif [[ -n "$ZELLIJ" ]]; then
-        echo "Nest is bad, right?"
+    if [[ $# -eq 1 ]]; then
+        if [[ -z "$ZELLIJ" ]]; then
+            zellij -s "$1" || zellij a "$1"
+        elif [[ -n "$ZELLIJ" ]]; then
+            echo "Nest is bad, right?"
+        fi
+    else
+        echo "Usage: $0 [zellij-session-name]"
     fi
 }
-# Zellij:1 ends here
+# Zellij attach or start session:1 ends here
 
 # [[file:zshrc.org::*hack][hack:1]]
 alias listener="rlwrap nc -lnvp"
