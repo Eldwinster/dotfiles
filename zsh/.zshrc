@@ -70,6 +70,7 @@ export UPDATE_ZSH_DAYS=15
 # UPDATE:3 ends here
 
 # [[file:zshrc.org::*Oh my zsh][Oh my zsh:1]]
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 source $ZSH/oh-my-zsh.sh
 # Oh my zsh:1 ends here
 
