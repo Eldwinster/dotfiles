@@ -27,12 +27,19 @@ HIST_STAMPS="Executed the $(date +'%Y/%m/%d at %H:%mm%Ss')"
 # HISTORY TIMESTAMPS:1 ends here
 
 # [[file:zshrc.org::*SET MANPAGER][SET MANPAGER:1]]
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-
-bindkey -v
-# if not running interactively, don't do anything
-[[ $- != *i* ]] && return
+# broken
+# export MANPAGER="sh -c 'col -b | bat -l man -p'"
+# default
+export MANPAGER="less"
 # SET MANPAGER:1 ends here
+
+# [[file:zshrc.org::*SET MANPAGER][SET MANPAGER:2]]
+bindkey -v
+# # if not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+autoload -U run-help
+# SET MANPAGER:2 ends here
 
 # [[file:zshrc.org::*ZSH THEME][ZSH THEME:1]]
 ZSH_THEME="gallois"
