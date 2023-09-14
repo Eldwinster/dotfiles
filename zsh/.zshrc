@@ -78,6 +78,10 @@ source $ZSH/oh-my-zsh.sh
 # source ~/.cache/wal/colors-tty.sh
 # Obsolete:1 ends here
 
+# [[file:zshrc.org::*SSH-AGENT][SSH-AGENT:1]]
+[ -f $HOME/.keychain/$HOSTNAME-sh ] \
+    && . $HOME/.keychain/$HOSTNAME-sh
+# SSH-AGENT:1 ends here
 
 # [[file:zshrc.org::*EDITOR LOCAL AND REMOTE][EDITOR LOCAL AND REMOTE:1]]
 if [[ -n $SSH_CONNECTION ]]; then
