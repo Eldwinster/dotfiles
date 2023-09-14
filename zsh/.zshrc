@@ -266,11 +266,11 @@ alias cat='bat'
 # Changing "cat" to "bat":1 ends here
 
 # [[file:zshrc.org::*Changing "ls" to "exa"][Changing "ls" to "exa":1]]
-alias ls='exa' # my preferred listing
-alias la='exa -a --color=always --group-directories-first'  # all files and dirs
-alias ll='exa -l --color=always --group-directories-first'  # long format
-alias lt='exa -aT --color=always --group-directories-first' # tree listing
-alias l.='exa -a | rg "^\."'
+alias ls='eza' # my preferred listing
+alias la='eza -a --color=always --group-directories-first'  # all files and dirs
+alias ll='eza -l --color=always --group-directories-first'  # long format
+alias lt='eza -aT --color=always --group-directories-first' # tree listing
+alias l.='eza -a | rg "^\."'
 # Changing "ls" to "exa":1 ends here
 
 # [[file:zshrc.org::*pacman, yay, paru and pikaur][pacman, yay, paru and pikaur:1]]
