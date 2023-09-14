@@ -45,17 +45,29 @@ autoload -U run-help
 ZSH_THEME="gallois"
 # ZSH THEME:1 ends here
 
-# [[file:zshrc.org::*EXAMPLES][EXAMPLES:1]]
-HIST_STAMPS="$(date +'%Y%m%d$H$M$S')"
-# EXAMPLES:1 ends here
+# [[file:zshrc.org::*COMPLETION][COMPLETION:1]]
+CASE_SENSITIVE="false"
+# COMPLETION:1 ends here
 
-# [[file:zshrc.org::*EXAMPLES][EXAMPLES:2]]
-plugins=(git zsh-autosuggestions)
-# EXAMPLES:2 ends here
+# [[file:zshrc.org::*COMPLETION][COMPLETION:2]]
+HYPHEN_INSENSITIVE="false"
+# COMPLETION:2 ends here
 
-# [[file:zshrc.org::*EXAMPLES][EXAMPLES:3]]
-export ARCHFLAGS="-arch x86_64"
-# EXAMPLES:3 ends here
+# [[file:zshrc.org::*COMPLETION][COMPLETION:3]]
+COMPLETION_WAITING_DOTS="true"
+# COMPLETION:3 ends here
+
+# [[file:zshrc.org::*UPDATE][UPDATE:1]]
+DISABLE_AUTO_UPDATE="false"
+# UPDATE:1 ends here
+
+# [[file:zshrc.org::*UPDATE][UPDATE:2]]
+DISABLE_UPDATE_PROMPT="true"
+# UPDATE:2 ends here
+
+# [[file:zshrc.org::*UPDATE][UPDATE:3]]
+export UPDATE_ZSH_DAYS=15
+# UPDATE:3 ends here
 
 # [[file:zshrc.org::*Oh my zsh][Oh my zsh:1]]
 source $ZSH/oh-my-zsh.sh
