@@ -1,57 +1,78 @@
 #+title: zshrc
 #+description: This is my zshrc file
 #+created: [2022-11-04 Fri 22:44]
-#+last_modified: [2022-11-08 Tue 03:04]
+#+last_modified: [2023-09-14 Thu 23:44]
 
 * .zshrc
 :PROPERTIES:
 :header-args: :tangle ~/.dotfiles/zsh/.zshrc :mkdirp yes
 :END:
 ** EXPORT
+Here is all the export variable that I use during any zsh shell session.
 
 #+begin_src shell
+export PATH="$PATH:$HOME/tools"
 export TERM="xterm-256color"                      # getting proper colors
 export TERMINFO="/usr/bin/env zsh"
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|doas reboot|history|cd -|cd ..)"
-# export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
-# export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
-export VISUAL="/usr/bin/vim"
-export EDITOR="/usr/bin/vim"
+export EDITOR="emacsclient -nw"              # $EDITOR use Emacs in terminal
+export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
+# export VISUAL="/usr/bin/vim"
+# export EDITOR="/usr/bin/vim"
 export ZSH="$HOME/.oh-my-zsh"
 
 export TZ="Europe/Paris"
+#+end_src
 
-# You may need to manually set your language environment
-# export LANG=C
+*** Umatrix
+You may need to manually set your language environment
+This is the solution I found to solve my problem where umatrix wasn't printing out the latin characters.
+
+#+begin_src shell
 export LANG=en_US.utf8
 export LC_CTYPE=en_US.utf8
-export JORMUNGANDR="192.168.1.75"
-export EPSILON="172.29.252.202"
+#+end_src
 
+*** Dotbare variable
+I just use magit and setup an alias for now.
+More info there [[https://www.atlassian.com/git/tutorials/dotfiles][How to Store Dotfiles - A Bare Git Repository | Atlassian Git Tutorial]].
+
+However dotbare seems reliable as a first setup as it hangles checkouts if I
+remember correctly.
+
+#+begin_src shell
 # export DOTBARE_DIR="~/.dotfiles/.git"
 # export DOTBARE_TREE="~/.dotfiles"
 #+end_src
-** SET MANPAGER
-choose only one of these!
-"bat" as manpager
 
-Set VI mode
-Comment this line out to enable default emacs-like bindings
+** QUALITY OF LIFE
+This section is where you can find anything that can be classify as quality of
+life settings.
+
+*** HISTORY TIMESTAMPS
+
 #+begin_src shell
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-
-bindkey -v
-# if not running interactively, don't do anything
-[[ $- != *i* ]] && return
+HIST_STAMPS="Executed the $(date +'%Y/%m/%d at %H:%mm%Ss')"
 #+end_src
 
-#+begin_example emacs-lisp
-### "vim" as manpager
-# export MANPAGER='/bin/bash -c "vim -MRn -c \"set buftype=nofile showtabline=0 ft=man ts=8 nomod nolist norelativenumber nonu noma\" -c \"normal L\" -c \"nmap q :qa<CR>\"</dev/tty <(col -b)"'
+*** SET MANPAGER
 
-### "nvim" as manpager
-# export MANPAGER="nvim -c 'set ft=man' -"
-#+end_example
+#+begin_src shell
+# broken
+# export MANPAGER="sh -c 'col -b | bat -l man -p'"
+# default
+export MANPAGER="less"
+#+end_src
+
+I don't know why this is here..
+#+begin_src shell
+bindkey -v
+# # if not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+autoload -U run-help
+#+end_src
+
 ** ZSH THEME
 Set name of the theme to load --- if set to "random", it will
 load a random theme each time oh-my-zsh is loaded, in which case,
@@ -71,79 +92,72 @@ If set to an empty array, this variable will have no effect.
 
 ** COMPLETION
 The following line to use case-sensitive completion.
-#+begin_example shell
-CASE_SENSITIVE="true"
-#+end_example
+#+begin_src shell
+CASE_SENSITIVE="false"
+#+end_src
 
 The following line to use hyphen-insensitive completion.
 Case-sensitive completion must be off. _ and - will be interchangeable.
-#+begin_example shell
-HYPHEN_INSENSITIVE="true"
-#+end_example
+#+begin_src shell
+HYPHEN_INSENSITIVE="false"
+#+end_src
 
 The following line to display red dots whilst waiting for completion.
-#+begin_example shell
+#+begin_src shell
 COMPLETION_WAITING_DOTS="true"
-#+end_example
+#+end_src
 
 ** UPDATE
 The following line to disable bi-weekly auto-update checks.
-#+begin_example shell
-DISABLE_AUTO_UPDATE="true"
-#+end_example
+#+begin_src shell
+DISABLE_AUTO_UPDATE="false"
+#+end_src
 
 The following line to automatically update without prompting.
-#+begin_example shell
+#+begin_src shell
 DISABLE_UPDATE_PROMPT="true"
-#+end_example
+#+end_src
 
 The following line to change how often to auto-update (in days).
-#+begin_example shell
-export UPDATE_ZSH_DAYS=13
-#+end_example
+#+begin_src shell
+export UPDATE_ZSH_DAYS=15
+#+end_src
 
 ** EXAMPLES
+:PROPERTIES:
+:header-args: tangle no
+:END:
 The following line if pasting URLs and other text is messed up.
-#+begin_example shell
+#+begin_src shell
 DISABLE_MAGIC_FUNCTIONS="true"
-#+end_example
+#+end_src
 
 The following line to disable colors in ls.
-#+begin_example shell
+#+begin_src shell
 DISABLE_LS_COLORS="true"
-#+end_example
+#+end_src
 
 The following line to disable auto-setting terminal title.
-#+begin_example shell
+#+begin_src shell
 DISABLE_AUTO_TITLE="true"
-#+end_example
+#+end_src
 
 The following line to enable command auto-correction.
-#+begin_example shell
+#+begin_src shell
 ENABLE_CORRECTION="true"
-#+end_example
+#+end_src
 
 The following line if you want to disable marking untracked files
 under VCS as dirty. This makes repository status check for large repositories
 much, much faster.
-#+begin_example shell
-DISABLE_UNTRACKED_FILES_DIRTY="true"
-#+end_example
-
-The following line if you want to change the command execution time
-stamp shown in the history command output.
-You can set one of the optional three formats:
-"mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-or set a custom format using the strftime function format specifications,
-see 'man strftime' for details.
 #+begin_src shell
-HIST_STAMPS="$(date +'%Y%m%d$H$M$S')"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 #+end_src
 
 Would you like to use another custom folder than $ZSH/custom?
-#+begin_example shell
+#+begin_src shell
 ZSH_CUSTOM=/path/to/new-custom-folder
-#+end_example
+#+end_src
 
 Which plugins would you like to load?
 Standard plugins can be found in $ZSH/plugins/
@@ -158,36 +172,49 @@ Compilation flags
 #+begin_src shell
 export ARCHFLAGS="-arch x86_64"
 #+end_src
+
 ** SOURCE
 *** Oh my zsh
+See oh my zsh github page.
+
 #+begin_src shell
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 source $ZSH/oh-my-zsh.sh
 #+end_src
 
+[[https://github.com/zsh-users/zsh-completions][GitHub - zsh-users/zsh-completions: Additional completion definitions for Zsh.]]
+
 *** Pywal
 
-pywal applying the theme to the new terminals
-Import colorscheme from 'wal' asynchronously
-& Run the process in the background.
-() # Hide shell job control messages.
+**** Obsolete
 
-#+begin_src shell
-# (cat ~/.cache/wal/sequences &)
-#+end_src
-
+This was for alacritty.
 To add support for TTs this line can be optionally added.
 
 #+begin_src shell
-source ~/.cache/wal/colors-tty.sh
+# source ~/.cache/wal/colors-tty.sh
 #+end_src
-** SSH-AGENT
-keychain keeps track of ssh-agents
 
-#+begin_example shell
+pywal applying the theme to the new terminals
+Import colorscheme from 'wal' asynchronously & Run the process in the background.
+() Hide shell job control messages.
+
+#+begin_src shell :tangle no
+# (cat ~/.cache/wal/sequences &)
+#+end_src
+
+** SSH-AGENT
+
+keychain keeps track of ssh-agents.
+
+#+begin_src shell
 [ -f $HOME/.keychain/$HOSTNAME-sh ] \
     && . $HOME/.keychain/$HOSTNAME-sh
-#+end_example
+#+end_src
+
 ** EDITOR LOCAL AND REMOTE
+I don't know what this is...
+
 Preferred editor for local and remote sessions
 
 #+begin_src shell
@@ -199,21 +226,35 @@ fi
 #+end_src
 
 ** FUNCTIONS
-*** Get keyboard input
+*** Useful for Window Managers
+**** Get keyboard input
+
 [[https://wiki.archlinux.org/title/Keyboard_input][How to get keyboard input]]
+
+Let's you identify any keybind on your keyboard. Useful when you'are configuring
+you Window Manager setup.
+
 #+begin_src shell
 keyinput ()
 {
 xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
 }
 #+end_src
-*** Get wm_class
+
+**** Get wm_class
+Print out the properties of any windows. This function give the wm_class
+property.
+Useful when you set your layout rules for your application windows treatment.
+
 #+begin_src shell
 wmclass () {
 xprop | rg -ie "wm_class" | awk '{print $4}'
 }
 #+end_src
+
 *** Function extract for common file formats
+This function should extract any type of archive. However, you might need the
+according program to extract such as 7z, zip, etc...
 
 #+begin_src shell
 SAVEIFS=$IFS
@@ -263,7 +304,7 @@ Other way to extract
 ex - archive extractor
 usage: ex <file>
 
-#+begin_example shell
+#+begin_src shell :tangle no
  ex()
  {
    if [ -f $1 ] ; then
@@ -285,10 +326,17 @@ usage: ex <file>
      echo "'$1' is not a valid file"
    fi
 }
-#+end_example
+#+end_src
 
 *** SSH
-start an ssh and if no tmux session exist create a session called ssh_tmux if a session already exist exist it attach it. NOT WORKING
+This is an attempt to have a tmux session launched after a ssh connection has been estabished.
+
+The idea here is that if I'm not wrong if you launch your tmux session before
+connecting through ssh. In case the ssh connection is lost you would lose what
+you were doing on the connected machine. Therefore I had the idea to write those
+snippet.
+
+start an ssh and if no tmux session exist create a session called ssh_tmux if a session already exist it attach it. NOT WORKING
 
 #+begin_src shell :tangle no
 sshtmux()
@@ -328,7 +376,10 @@ tmuxattach()
     fi
 }
 #+end_src
+
 *** navigation
+up 2 <-> cd ../../
+
 #+begin_src shell
 up () {
   local d=""
@@ -351,88 +402,153 @@ up () {
 #+end_src
 
 *** Zellij
+I need to make those scripts so that I can use them with my WM.
+Change their alias name so that it doesn't conflict with the scripts
+
+**** Zellij sessions
+List all ~zellij~ session and let you select one.
+
 #+begin_src shell
 zjs() {
     ZJ_SESSIONS=$(zellij list-sessions)
     zellij attach \
     "$(echo "${ZJ_SESSIONS}" | sk)"
 }
+#+end_src
 
+**** Zellij select layout
+
+List all of my personal for ~zellij~ and apply it to the lauched session.
+
+#+begin_src shell
 zjl() {
     ZJ_LAYOUT_DIR=$(zellij setup --check \
         | grep "LAYOUT DIR" - \
         | grep -o '".*"' - | tr -d '"')
 
-    if [[ -d "${ZJ_LAYOUT_DIR}" ]];then
+    if [[ "$#" -eq 1 ]]; then
+        if [[ -d "${ZJ_LAYOUT_DIR}" ]];then
             ZJ_LAYOUT="$(fd --type file . "${ZJ_LAYOUT_DIR}" \
             | sed 's|.*/||' \
             | sk \
             || exit)"
-        zellij --layout "${ZJ_LAYOUT}"
+              zellij --layout "${ZJ_LAYOUT}" --session "$1"
+            fi
+    else
+        echo "Usage: $0 [zellij-session-name]"
     fi
 }
+#+end_src
 
+**** Zellij attach or start session
+
+This function take a session name and either start a new session or attach it if
+the session name already exist.
+
+#+begin_src shell
 zj() {
-    if [[ -z "$ZELLIJ" ]]; then
-        zellij -s "$1" || zellij a "$1"
-    elif [[ -n "$ZELLIJ" ]]; then
-        echo "Nest is bad, right?"
+    if [[ $# -eq 1 ]]; then
+        if [[ -z "$ZELLIJ" ]]; then
+            zellij -s "$1" || zellij a "$1"
+        elif [[ -n "$ZELLIJ" ]]; then
+            echo "Nest is bad, right?"
+        fi
+    else
+        echo "Usage: $0 [zellij-session-name]"
     fi
 }
 #+end_src
-*** hack
+
+*** Convert
+function to convert png to ico.
+
+https://askubuntu.com/questions/867567/convert-jpg-or-png-to-ico-using-terminal-and-back
+
 #+begin_src shell
-alias listener="rlwrap nc -lnvp"
-alias htpd="python -m http.server 7777"
-alias nping="nmap -sn -n --disable-arp-ping"
-# alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
+png2ico () {
+    local i="${1}" o="${2:-${1:r}.ico}" s="${png2ico_size:-256}"
+    convert -resize x${s} -gravity center -crop ${s}x${s}+0+0 "$i" -flatten -colors 256 -background transparent "$o"
+}
 #+end_src
+
+*** man width
+I'm not sure if I really need that.
+
+source: [[https://wiki.archlinux.org/title/Man_page][man page - ArchWiki]]
+
+#+begin_src shell :tangle no
+man() {
+    local width=$(tput cols)
+    [ $width -gt $MANWIDTH ] && width=$MANWIDTH
+    env MANWIDTH=$width \
+    man "$@"
+}
+#+end_src
+
 ** ALIASES
+
 Set personal aliases, overriding those provided by oh-my-zsh libs,
 plugins, and themes. Aliases can be placed here, though oh-my-zsh
 users are encouraged to define aliases within the ZSH_CUSTOM folder.
 For a full list of active aliases, run `alias`.
+
 *** root privileges
+
 #+begin_src shell
 alias pacman='sudo pacman'
 alias mount='sudo mount'
 alias umount='sudo umount'
 #+end_src
+
 *** source file
+
 #+begin_src shell
 alias sz="source ~/.zshrc"
 alias sv="source ~/.vimrc"
 #+end_src
+
+*** dotfiles gitbare
+See [[https://www.atlassian.com/git/tutorials/dotfiles][How to Store Dotfiles - A Bare Git Repository | Atlassian Git Tutorial]] for
+more informations.
+
+#+begin_src shell
+alias dotfiles="git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME/.dotfiles"
+#+end_src
+
 *** hack
 #+begin_src shell
 alias listener="rlwrap nc -lnvp"
 alias htpd="python -m http.server 7777"
 alias nping="nmap -sn -n --disable-arp-ping"
+# I need to investigate this or maybe write a plugin for zellij
 # alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
 alias zz="zellij"
-alias zr="zellij run --"
 #+end_src
 *** vim and emacs
+
 #+begin_src shell
 alias v="vim"
 alias vi="vim"
 alias e="emacsclient -nw"
 alias em="emacsclient -nw"
 #+end_src
+
 *** Changing "cat" to "bat"
+
 #+begin_src shell
-alias cat='bat --style=plain'
-#+end_src
-*** Changing "ls" to "exa"
-#+begin_src shell
-alias ls='exa' # my preferred listing
-alias la='exa -a --color=always --group-directories-first'  # all files and dirs
-alias ll='exa -l --color=always --group-directories-first'  # long format
-alias lt='exa -aT --color=always --group-directories-first' # tree listing
-alias l.='exa -a | rg "^\."'
+alias cat='bat'
 #+end_src
 
-*** pacman, yay, paru and pikaur
+*** Changing "ls" to "exa"
+#+begin_src shell
+alias ls='eza' # my preferred listing
+alias la='eza -a --color=always --group-directories-first'  # all files and dirs
+alias ll='eza -l --color=always --group-directories-first'  # long format
+alias lt='eza -aT --color=always --group-directories-first' # tree listing
+alias l.='eza -a | rg "^\."'
+#+end_src
+
+*** pacman, pikaur
 #+begin_src shell
 # alias pacup='yes | pacman -Syu'
 alias pacsyu='pacman -Syu'                     # update only standard pkgs
@@ -441,7 +557,7 @@ alias paclog='vim /var/log/pacman.log'              # look for pacman logs
 alias piksua='pikaur -Sua --noconfirm'              # update only AUR pkgs (pikaur)
 alias piksyu='pikaur -Syu --noconfirm'              # update standard pkgs and AUR pkgs (pikaur)
 alias unlock='rm /var/lib/pacman/db.lck'       # remove pacman lock
-alias cleanup='pacman -Rns (pacman -Qtdq)'     # remove orphaned packages
+alias cleanup='pacman -Rns $(pacman -Qtdq)'     # remove orphaned packages
 #+end_src
 
 **** get fastest mirrors
@@ -452,27 +568,30 @@ alias mirrors="sudo reflector --latest 50 --number 20 --sort score --save /etc/p
 alias mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pacman.d/mirrorlist"
 #+end_src
 
-*** Colorize grep output (good for log files)
+*** Changing grep for ripgrep
+Remember to ~/usr/bin/grep~ if you want to use grep.
+
 #+begin_src shell
 alias grep='rg'
 #+end_src
-*** confirm before overwriting something
-#+begin_src shell
-alias cp="cp -iv"
-alias mv="mv -iv"
-alias rm="rm -iv"
-#+end_src
 
 *** adding flags
+???
+
 #+begin_src shell
 alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB
-alias vifm='./.config/vifm/scripts/vifmrun'
+# alias vifm='./.config/vifm/scripts/vifmrun'
+#+end_src
+
+I forgot what this was about I might have take that somewhere...
+#+begin_src shell
 alias ncmpcpp='ncmpcpp ncmpcpp_directory=$HOME/.config/ncmpcpp/'
 alias mocp='mocp -M "$XDG_CONFIG_HOME"/moc -O MOCDir="$XDG_CONFIG_HOME"/moc'
 #+end_src
 
 *** ps
+
 #+begin_src shell
 alias psa="ps auxf"
 alias psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
@@ -481,6 +600,7 @@ alias pscpu='ps auxf | sort -nr -k 3'
 #+end_src
 
 *** get error messages from journalctl
+
 #+begin_src shell
 alias jctl="journalctl -p 3 -xb"
 #+end_src
@@ -499,24 +619,38 @@ alias gpg-retrieve="gpg2 --keyserver-options auto-key-retrieve --receive-keys"
 #+end_src
 
 *** switch between shells
-I do not recommend switching default SHELL from bash.
+Nice to have around.
+
 #+begin_src shell
 alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
 alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
 #+end_src
 
 *** reset $PATH
-[[https://askubuntu.com/questions/113419/how-can-i-reset-path-to-its-default-value-in-ubuntu][how can i reset path to its default value]]
+I made some mistake with my ~PATH~ so this is nice to be able to reset it to
+factory parameters.
+
+[[https://askubuntu.com/questions/113419/how-can-i-reset-path-to-its-default-value-in-ubuntu][command line - How can I reset $PATH to its default value in Ubuntu? - Ask Ub...]]
+
 #+begin_src shell
 alias getpath="PATH=$(/usr/bin/getconf PATH)"
 #+end_src
 
 ** COLORSCRIPT
+This print some image when you start your terminal.
+
 #+begin_src shell
 colorscript random
 #+end_src
+
 ** zellij (multiplexer)
 Autostart on shell creation
+
+Failed attempt at making zellij and script working togeter but as they are both
+interactive I haven't been able to make them work yet. Maybe check tmux as there
+is a plugin for that. Perhaps, there might be some command in the source code that are
+worth checking.
+
 #+begin_src shell
 # export ZELLIJ_AUTO_ATTACH=true
 # export ZELLIJ_AUTO_EXIT=true
