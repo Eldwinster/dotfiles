@@ -249,9 +249,9 @@ alias dotfiles="git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME/.dotfiles"
 alias listener="rlwrap nc -lnvp"
 alias htpd="python -m http.server 7777"
 alias nping="nmap -sn -n --disable-arp-ping"
+# I need to investigate this or maybe write a plugin for zellij
 # alias logger="script -a $HOME/.sessions/$(date +"%Y-%m-%dT%H:%M:%S")-typescript.out"
 alias zz="zellij"
-alias zr="zellij run --"
 # hack:1 ends here
 
 # [[file:zshrc.org::*vim and emacs][vim and emacs:1]]
@@ -273,7 +273,7 @@ alias lt='eza -aT --color=always --group-directories-first' # tree listing
 alias l.='eza -a | rg "^\."'
 # Changing "ls" to "exa":1 ends here
 
-# [[file:zshrc.org::*pacman, yay, paru and pikaur][pacman, yay, paru and pikaur:1]]
+# [[file:zshrc.org::*pacman, pikaur][pacman, pikaur:1]]
 # alias pacup='yes | pacman -Syu'
 alias pacsyu='pacman -Syu'                     # update only standard pkgs
 alias pacsyyu='pacman -Syyu'                   # Refresh pkglist & update standard pkgs
@@ -281,8 +281,8 @@ alias paclog='vim /var/log/pacman.log'              # look for pacman logs
 alias piksua='pikaur -Sua --noconfirm'              # update only AUR pkgs (pikaur)
 alias piksyu='pikaur -Syu --noconfirm'              # update standard pkgs and AUR pkgs (pikaur)
 alias unlock='rm /var/lib/pacman/db.lck'       # remove pacman lock
-alias cleanup='pacman -Rns (pacman -Qtdq)'     # remove orphaned packages
-# pacman, yay, paru and pikaur:1 ends here
+alias cleanup='pacman -Rns $(pacman -Qtdq)'     # remove orphaned packages
+# pacman, pikaur:1 ends here
 
 # [[file:zshrc.org::*get fastest mirrors][get fastest mirrors:1]]
 alias mirror="sudo reflector -f 30 -l 30 --number 10 --verbose --save /etc/pacman.d/mirrorlist"
@@ -291,23 +291,20 @@ alias mirrors="sudo reflector --latest 50 --number 20 --sort score --save /etc/p
 alias mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pacman.d/mirrorlist"
 # get fastest mirrors:1 ends here
 
-# [[file:zshrc.org::*Colorize grep output (good for log files)][Colorize grep output (good for log files):1]]
+# [[file:zshrc.org::*Changing grep for ripgrep][Changing grep for ripgrep:1]]
 alias grep='rg'
-# Colorize grep output (good for log files):1 ends here
-
-# [[file:zshrc.org::*confirm before overwriting something][confirm before overwriting something:1]]
-alias cp="cp -iv"
-alias mv="mv -iv"
-alias rm="rm -iv"
-# confirm before overwriting something:1 ends here
+# Changing grep for ripgrep:1 ends here
 
 # [[file:zshrc.org::*adding flags][adding flags:1]]
 alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB
-alias vifm='./.config/vifm/scripts/vifmrun'
+# alias vifm='./.config/vifm/scripts/vifmrun'
+# adding flags:1 ends here
+
+# [[file:zshrc.org::*adding flags][adding flags:2]]
 alias ncmpcpp='ncmpcpp ncmpcpp_directory=$HOME/.config/ncmpcpp/'
 alias mocp='mocp -M "$XDG_CONFIG_HOME"/moc -O MOCDir="$XDG_CONFIG_HOME"/moc'
-# adding flags:1 ends here
+# adding flags:2 ends here
 
 # [[file:zshrc.org::*ps][ps:1]]
 alias psa="ps auxf"
