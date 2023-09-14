@@ -12,16 +12,14 @@ export ZSH="$HOME/.oh-my-zsh"
 export TZ="Europe/Paris"
 # EXPORT:1 ends here
 
-# You may need to manually set your language environment
-# export LANG=C
+# [[file:zshrc.org::*Umatrix][Umatrix:1]]
 export LANG=en_US.utf8
 export LC_CTYPE=en_US.utf8
-export JORMUNGANDR="192.168.1.75"
-export EPSILON="172.29.252.202"
+# Umatrix:1 ends here
 
+# [[file:zshrc.org::*Dotbare variable][Dotbare variable:1]]
 # export DOTBARE_DIR="~/.dotfiles/.git"
 # export DOTBARE_TREE="~/.dotfiles"
-# EXPORT:1 ends here
 
 # [[file:zshrc.org::*SET MANPAGER][SET MANPAGER:1]]
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
