@@ -74,13 +74,10 @@ fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 source $ZSH/oh-my-zsh.sh
 # Oh my zsh:1 ends here
 
-# [[file:zshrc.org::*Pywal][Pywal:1]]
-# (cat ~/.cache/wal/sequences &)
-# Pywal:1 ends here
+# [[file:zshrc.org::*Obsolete][Obsolete:1]]
+# source ~/.cache/wal/colors-tty.sh
+# Obsolete:1 ends here
 
-# [[file:zshrc.org::*Pywal][Pywal:2]]
-source ~/.cache/wal/colors-tty.sh
-# Pywal:2 ends here
 
 # [[file:zshrc.org::*EDITOR LOCAL AND REMOTE][EDITOR LOCAL AND REMOTE:1]]
 if [[ -n $SSH_CONNECTION ]]; then
