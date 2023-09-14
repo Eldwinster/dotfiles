@@ -18,3 +18,5 @@ open in editor
 or less, bat, cat the file.
 
  [[file:~/.dotfiles/script/.bin/session_log][file:~/.dotfiles/script/.bin/session_log]]
+** TODO Add symlink for pywals files
+: ln -s /path/to/file /path/to/symlink
