@@ -73,7 +73,7 @@ layout {
                             }
             }
         }
-tab name="BlackHole" focus=false {
+        tab name="BlackHole" focus=false {
             pane split_direction="vertical" {
                 pane split_direction="horizontal" {
                     pane {
@@ -136,6 +136,13 @@ tab name="BlackHole" focus=false {
                                 width 120
                                 height 15
                             }
+            }
+        }
+        tab name="BlackBox" focus="false" {
+        pane {
+        name "bash"
+        command "$HOME/.bin/ssh-tmux"
+        args "blackbox" "bash"
             }
         }
 }

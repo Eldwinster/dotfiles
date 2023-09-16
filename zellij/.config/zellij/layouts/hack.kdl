@@ -8,30 +8,37 @@ layout {
                 plugin location="zellij:status-bar"
             }
         }
-        tab name="WhiteHole" focus=true {
-            pane split_direction="horizontal" {
-                pane split_direction="vertical" {
-                    pane name="1" {
-                    }
-                    pane name="2" {
-                    }
-                }
-                pane split_direction="vertical" {
-                    pane stacked=true {
-                        pane name="3" {
-                        }
-                        pane name="4" {
-                        }
-                    }
-                     pane name="5" {
-                     }
-                }
+        tab name="Learning" focus=true {
+            pane {
+            name "main"
+            }
+            floating_panes {
+                        pane {
+                                name "academy vpn"
+                                command "selectvpn"
+                                args "academy-regular"
+                                x "60%"
+                                y 0
+                                width 100
+                                height 15
+                                }
+                        pane {
+                                name "watch vpn connection"
+                                x "60%"
+                                y 15
+                                width 100
+                                height 15
+                                }
             }
         }
-        tab name="BlackHole" focus=false {
-            pane
+        tab name="hack HTB" focus=false {
+            pane {
+            name "main"
+            }
         }
-        tab name="BlackBox" {
-            pane
+        tab name="hack THM" focus=false {
+            pane {
+            name "main"
+            }
         }
 }
