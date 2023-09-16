@@ -197,7 +197,7 @@ mouse = [
 ]
 # Mouse:1 ends here
 
-# [[file:configbkp.org::*Colors][Colors:1]]
+# [[file:config.org::*Colors][Colors:1]]
 colors = []
 cache= os.path.expanduser("~/.cache/wal/colors")
 def load_colors(cache):
@@ -209,7 +209,7 @@ def load_colors(cache):
 load_colors(cache)
 # Colors:1 ends here
 
-# [[file:configbkp.org::*Layouts][Layouts:1]]
+# [[file:config.org::*Theme][Theme:1]]
 def init_layout_theme():
     return {
         "margin": 2,
@@ -220,18 +220,30 @@ def init_layout_theme():
         "border_normal_stack": colors[0],
     }
 layout_theme = init_layout_theme()
+# Theme:1 ends here
 
+# [[file:config.org::*Layout settings][Layout settings:1]]
 layouts = [
     # layout.Bsp(**layout_theme),
     layout.Columns(**layout_theme),
+    # layout.Matrix(**layout_theme),
     layout.Max(**layout_theme),
-    # layout.MonadTall(ratio=0.65, **layout_theme),
-    # layout.MonadThreeCol(**layout_theme),
+    layout.MonadTall(ratio=0.65, **layout_theme),
+    layout.MonadThreeCol(**layout_theme),
+    layout.Floating(**layout_theme),
     # layout.MonadWide(**layout_theme),
+    # layout.RatioTileWide(**layout_theme),
+    # layout.Slice(**layout_theme),
+    # layout.Spiral(**layout_theme),
+    # layout.Stack(**layout_theme),
+    # layout.Tile(**layout_theme),
+    # layout.TreeTab(**layout_theme),
+    # layout.VerticalTile(**layout_theme),
+    # layout.Zoomy(**layout_theme),
 ]
-# Layouts:1 ends here
+# Layout settings:1 ends here
 
-# [[file:configbkp.org::*Floating Layouts][Floating Layouts:1]]
+# [[file:config.org::*Floating Layouts][Floating Layouts:1]]
 floating_layout = layout.Floating(float_rules=[
     # Run 'xprop' to see wm class and name of an X client.
     *layout.Floating.default_float_rules,
