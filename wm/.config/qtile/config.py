@@ -365,42 +365,98 @@ k = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 for index, group in enumerate(groups):
     keys.append(Key("M-"+(k[index]), lazy.group[group.name].toscreen(g[index]), lazy.to_screen(g[index])))
     keys.append(Key("M-S-"+(k[index]), lazy.window.togroup(group.name)))
-# Groups:1 ends here
-
-# [[file:configbkp.org::*Groups][Groups:2]]
-# groups.append(ScratchPad("scratchpad", [
-#     DropDown("term", "st -c scratch", width=0.8, height=0.8, x=0.1, y=0.1, opacity=1),
-#     DropDown("term2", "st -c scratch", width=0.8, height=0.8, x=0.1, y=0.1, opacity=1),
-# ]))
-
-# keys.extend([
-#     # Key("M-d", lazy.spawn(fileManager)),
-#     Key("M-n", lazy.group['scratchpad'].dropdown_toggle('term')),
-#     Key("M-S-n", lazy.group['scratchpad'].dropdown_toggle('term2')),
-# ])
 # Groups:2 ends here
 
-# [[file:configbkp.org::*dgroups][dgroups:1]]
+# [[file:config.org::*Windows position][Windows position:1]]
+centerWindow = {
+    'width': 0.8,
+    'height': 0.8,
+    'x': 0.1,
+    'y': 0.1,
+    'opacity': 1,
+}
+
+upperLeftWindow = {
+    'width': 0.5,
+    'height': 0.5,
+    'x': 0,
+    'y': 0,
+    'opacity': 1,
+}
+
+upperRightWindow = {
+    'width': 0.5,
+    'height': 0.5,
+    'x': 0.5,
+    'y': 0,
+    'opacity': 1,
+}
+
+downLeftWindow = {
+    'width': 0.5,
+    'height': 0.5,
+    'x': 0,
+    'y': 0.5,
+    'opacity': 1,
+}
+
+downRightWindow = {
+    'width': 0.5,
+    'height': 0.5,
+    'x': 0.5,
+    'y': 0.5,
+    'opacity': 1,
+}
+# Windows position:1 ends here
+
+# [[file:config.org::*Scratchpad groups][Scratchpad groups:1]]
+groups.append(ScratchPad("scratchpad", [
+    DropDown("vpn",
+             myvpn,
+             # "st -c scratch -n quick-vpn -e myvpn",
+             **upperLeftWindow),
+    DropDown("h4ck",
+             hackSetup,
+             # "st -c scratch -n zellij-hack -e zellij -s hack options --default-layout hack",
+             **centerWindow),
+    DropDown("admin",
+             adminSetup,
+             # "st -c scratch -n zellij-admin -e zellij -s admin options --default-layout admin",
+             **centerWindow),
+]))
+# Scratchpad groups:1 ends here
+
+# [[file:config.org::*Scratchpad keybinds][Scratchpad keybinds:1]]
+keys.extend([
+    Key("M-d", lazy.group['scratchpad'].dropdown_toggle('admin')),
+    Key("M-n", lazy.group['scratchpad'].dropdown_toggle('h4ck')),
+    KeyChord([mod], "s", [
+        Key("p", lazy.group['scratchpad'].dropdown_toggle('vpn')),
+    ]),
+])
+# Scratchpad keybinds:1 ends here
+
+# [[file:config.org::*dgroups][dgroups:1]]
 dgroup_key_binder = None
 # dgroups:1 ends here
 
-# [[file:configbkp.org::*dgroups][dgroups:2]]
+# [[file:config.org::*dgroups][dgroups:2]]
 dgroups_app_rules = [] # type: List
 # dgroups:2 ends here
 
-# [[file:configbkp.org::*Mouse][Mouse:1]]
+# [[file:config.org::*Mouse][Mouse:1]]
 follow_mouse_focus = False
 # Mouse:1 ends here
 
-# [[file:configbkp.org::*Mouse][Mouse:2]]
+# [[file:config.org::*Mouse][Mouse:2]]
 bring_front_click = False
 # Mouse:2 ends here
 
-# [[file:configbkp.org::*Mouse][Mouse:3]]
+# [[file:config.org::*Mouse][Mouse:3]]
 cursor_wrap = False
 # Mouse:3 ends here
 
-# [[file:configbkp.org::*Mouse][Mouse:4]]
+# [[file:config.org::*Mouse][Mouse:4]]
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
@@ -409,7 +465,7 @@ auto_minimize = True
 wmname = "LG3D"
 # Mouse:4 ends here
 
-# [[file:configbkp.org::*Startup][Startup:1]]
+# [[file:config.org::*Startup][Startup:1]]
 @hook.subscribe.startup_once
 def autostart():
     startOnce = os.path.expanduser('~/.config/qtile/autostart.sh')
