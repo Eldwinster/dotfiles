@@ -1,71 +1,222 @@
 #+title: Qtile Configuration
 #+description: This is my qtile config file
 #+created: [2023-09-13 Wed 18:32]
-#+last_modified: [2023-09-14 Thu 16:50]
+#+last_modified: [2023-09-16 Sat 03:03]
+#+startup: fold
 
 * Qtile Configuration
 :PROPERTIES:
 :header-args: :tangle ~/.dotfiles/wm/.config/qtile/config.py :mkdirp yes
 :END:
 
+** "O" for opensource
 #+begin_src python
-import os, subprocess, shlex
+# Copyright (c) 2010 Aldo Cortesi
+# Copyright (c) 2010, 2014 dequis
+# Copyright (c) 2012 Randall Ma
+# Copyright (c) 2012-2014 Tycho Andersen
+# Copyright (c) 2012 Craig Barnes
+# Copyright (c) 2013 horsik
+# Copyright (c) 2013 Tao Sauvage
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#+end_src
+** Imports
+
+#+begin_src python
+import os, subprocess
 from libqtile import layout, hook, bar, widget
-from libqtile.config import EzConfig, EzKey as Key, KeyChord, Group, Match, EzClick as Click, EzDrag as Drag, Screen
+from libqtile.config import EzConfig, EzKey as Key, KeyChord, Group, Match, EzClick as Click, EzDrag as Drag, Screen, ScratchPad, DropDown
 from libqtile.lazy import lazy
 #+end_src
 
+** Variables
+*** Terminal
+This is the basis of my setup. A terminal emulator and an editor.
+
+I switch back to ~st~ because ~alacritty~ is weirdly bugging and ~st~ just
+works. Easy choice.
+
 #+begin_src python
-alac = "alacritty"
+# alac = "alacritty"
 st = "st"
 shelter = "emacsclient -c -a ''"
-nuclear_shelter = alac + " -t tmux -e tmux"
+# I keep this one to do the same with st using scratchpad group.
+# nuclear_shelter = alac + " -t tmux -e tmux new-session -A"
+nuclear_shelter = st + " -c shelter -n nuclear-shelter -e zellij -s main"
 #+end_src
+
+*** Emacs
+Hail The King of 'em all.
+
+Joke aside this is some useful buffer that I use in emacs.
 
 #+begin_src python
 vterm = shelter + " --eval '(+vterm/here nil)'"
 eshell = shelter + " --eval '(eshell)'"
-fileManager = shelter + " --eval '(dired nil)'"
 dotGit = shelter + " --eval '(me/magit-status-dotfiles)'"
 orgGit = shelter + " --eval '(me/magit-status-org)'"
 Magit = shelter + " --eval '(me/magit-status)'"
-screenshot = "flameshot gui"
-# vifm = alac + " -e ./$HOME/.config/vifm/scripts/vifmrun"
-
 bufferManager = shelter + " --eval '(ibuffer)'"
 forLife = "emacsclient --eval '(emacs-everywhere)'"
+# I need to resolve vifm probleme even if dired is better in many ways.
+# As I'm not an expert elips programmer there is some time vifm is just better/simpler.
+# vifm = alac + " -e ./$HOME/.config/vifm/scripts/vifmrun"
+#+end_src
+
+*** General Applications
+I need to list all regular apps here so that if I decide to change anything this
+is where the changes will be made.
+
+#+begin_src python
+fileManager = shelter + " --eval '(dired nil)'"
+screenshot = "flameshot gui"
 refManager = "zotero"
-utilityViewer = st + " -n bottom -e sudo btm"
-diskSpace = st + " -n ncdu -e sudo ncdu"
 browser = "firefox"
+remoteDesktop = "remmina"
+proxyFreemium = "burpsuite"
+proxyOpenSource = "zaproxy"
+networkAnalyser = "sudo wireshark"
+metasploit = st + " -c app -n st-metasploit -e msfconsole"
+helpDeskApp = "anydesk"
+discord = "discord"
+# utilityViewer = st + " -n bottom -e sudo btm"
+# diskSpace = st + " -n ncdu -e sudo ncdu"
+#+end_src
+
+*** Zellij
+I plan to use zellij over tmux even if I have to nest tmux in it remotely.
+
+#+begin_src python
+# TODO script this to attach if session already exists
+adminView = st + " -c zellij -n zellij-admin -e zellij -s admin options --default-layout sys"
+sshView = st + " -c zellij -n zellij-ssh -e zellij -s ssh options --default-layout ssh"
+hackSetup = st + " -c scratch -n zellij-hack -e zellij -s hack options --default-layout hack"
+adminSetup = st + " -c scratch -n zellij-admin -e zellij -s admin options --default-layout admin"
+#+end_src
+*** Script
+
+#+begin_src python
+myvpn = st + " -c scratch -n quick-vpn -e myvpn"
+#+end_src
+
+*** Keys
+Well for now there is only one.. I think by default src_python{mod = "mod1"}.
+Whick is =Atl=, I just replace it by =Super=. (the "Windows" key).
+
+#+begin_src python
 mod = "mod4"
 #+end_src
 
+** Keybinds
+
+See [[https://orgmode.org/manual/Noweb-Reference-Syntax.html][Noweb Reference Syntax (The Org Manual)]]
+
+#+begin_src python :noweb no-export
+keys = [
+<<keys-conf>>
+]
+#+end_src
+
+*** Keybinds Instrcutions
+:PROPERTIES:
+:header-args: python: :tangle no
+:END:
+Beware to use this syntax you need to import the ~EzKey~ module.
+
+**** Basic Keybind syntax
 
 #+begin_src python
-keys = [
+Key("keybind", lazy.method()),
+#+end_src
+
+**** Basic KeyChord syntax
+
+#+begin_src python
+    KeyChord([mod], "Key", [
+        Key("Chord", lazy.method()),
+    ]),
+#+end_src
+
+*** Keybinds configuration
+:PROPERTIES:
+:header-args: python: :tangle no :noweb-ref keys-conf
+:END:
+
+**** Qtile restart, reload, and quit
+Self explanatory.
+
+#+begin_src python
     KeyChord([mod], "q", [
         Key("c", lazy.reload_config()),
         Key("r", lazy.restart()),
         Key("q", lazy.shutdown()),
     ]),
+#+end_src
 
+**** Window Management
+***** Movements between windows
+
+Focus window movements:
+
+#+begin_src python
     Key("M-h", lazy.layout.left()),
     Key("M-j", lazy.layout.down(),),
     Key("M-k", lazy.layout.up()),
     Key("M-l", lazy.layout.right()),
+#+end_src
 
+To be investigate.
+
+#+begin_src python :tangle no
     # Key("M-j", lazy.group.next_window()),
     # Key("M-k", lazy.group.prev_window()),
+#+end_src
 
+Move windows around:
+
+#+begin_src python
     Key("M-S-h", lazy.layout.shuffle_left()),
     Key("M-S-j", lazy.layout.shuffle_down()),
     Key("M-S-k", lazy.layout.shuffle_up()),
     Key("M-S-l", lazy.layout.shuffle_right()),
+#+end_src
 
+Swap entire column stack of windows left and right:
+
+#+begin_src python
+    Key("M-S-C-h", lazy.layout.swap_column_left()),
+    Key("M-S-C-l", lazy.layout.swap_column_right()),
+#+end_src
+
+***** Layouts selection
+
+Switch between layouts:
+
+#+begin_src python
     Key("M-<Tab>", lazy.next_layout()),
     Key("M-S-<Tab>", lazy.prev_layout()),
+#+end_src
 
+***** Resize windows
+
+#+begin_src python
     Key("M-C-h",
         lazy.layout.grow_left(),
         lazy.layout.shrink(),
@@ -91,47 +242,82 @@ keys = [
         lazy.layout.increase_ratio(),
         lazy.layout.delete(),
         ),
+#+end_src
 
+This does nothing that I can notice.
+
+#+begin_src python :tangle no
     Key("M-S-i", lazy.layout.grow()),
     Key("M-S-m", lazy.layout.shrink()),
-    Key("M-<BackSpace>", lazy.layout.normalize()),
     Key("M-o", lazy.layout.maximize()),
+#+end_src
+
+Reset windows size:
+
+#+begin_src python
+    Key("M-<BackSpace>", lazy.layout.normalize()),
+#+end_src
 
 
-    Key("M-S-C-h", lazy.layout.swap_column_left()),
-    Key("M-S-C-l", lazy.layout.swap_column_right()),
-
-    Key("M-<Delete>", lazy.layout.toggle_split()),
-    Key("M-S-<Delete>", lazy.layout.flip()),
-
+#+begin_src python
     Key("M-c", lazy.window.kill()),
+    #+end_src
+
+    #+begin_src python
     Key("M-<space>", lazy.window.toggle_fullscreen()),
     Key("M-S-<space>", lazy.window.toggle_minimize()),
 
+    Key("M-<Delete>", lazy.layout.toggle_split()),
+    Key("M-S-<Delete>", lazy.layout.flip()),
+#+end_src
+
+**** Terminal, programs, and applications
+
+#+begin_src python
+    Key("M-<Return>", lazy.spawn(st)),
     Key("M-S-<Return>", lazy.spawn(nuclear_shelter)),
     Key("M-C-<Return>", lazy.spawn(eshell)),
-    Key("M-<Return>", lazy.spawn(st)),
+#+end_src
 
+#+begin_src python
     Key("M-e", lazy.spawn(shelter)),
-    Key("M-d", lazy.spawn(fileManager)),
-    Key("M-s", lazy.spawn(screenshot)),
+    KeyChord([mod], "m", [
+        Key("d", lazy.spawn(dotGit)),
+        Key("o", lazy.spawn(orgGit)),
+        Key("m", lazy.spawn(Magit)),
+    ]),
+    #+end_src
+
+    #+begin_src python
+    Key("M-f", lazy.spawn(screenshot)),
+    Key("M-w", lazy.spawn(browser)),
     # Key("M-v", lazy.spawn(vifm)),
     KeyChord([mod], "a", [
-        Key("r", lazy.spawn("remmina")),
+        Key("r", lazy.spawn(remoteDesktop)),
         Key("i", lazy.spawn(bufferManager)),
         Key("a", lazy.spawn(forLife)),
-        Key("z", lazy.spawn(refManager)),
-        Key("t", lazy.spawn(utilityViewer)),
-        Key("n", lazy.spawn(diskSpace)),
-        Key("b", lazy.spawn("burpsuite")),
-        Key("w", lazy.spawn("sudo wireshark")),
-        Key("m", lazy.spawn(alac + " --class metasploit -e msfconsole")),
-        Key("c", lazy.spawn("clockify")),
-        Key("l", lazy.spawn("anydesk")),
-        Key("d", lazy.spawn("discord")),
+        Key("o", lazy.spawn(refManager)),
+        # Key("t", lazy.spawn(utilityViewer)),
+        # Key("n", lazy.spawn(diskSpace)),
+        Key("b", lazy.spawn(proxyFreemium)),
+        Key("z", lazy.spawn(proxyOpenSource)),
+        Key("w", lazy.spawn(networkAnalyser)),
+        Key("m", lazy.spawn(metasploit)),
+        Key("l", lazy.spawn(helpDeskApp)),
+        Key("d", lazy.spawn(discord)),
     ]),
+#+end_src
 
-    Key("<XF86ScreenSaver>", lazy.spawn(alac + " --class slock -e unimatrix.sh")),
+#+begin_src python
+    KeyChord([mod], "z", [
+        Key("a", lazy.spawn(adminView)),
+        Key("s", lazy.spawn(sshView)),
+    ]),
+#+end_src
+
+**** System Management
+#+begin_src python
+    Key("<XF86ScreenSaver>", lazy.spawn(st + " -c slock -e unimatrix.sh")),
     Key("<XF86Display>", lazy.spawn("xset dpms force off")),
     Key("<Pause>", lazy.spawn("systemctl hibernate")),
     Key("<XF86MonBrightnessUp>", lazy.spawn("xbacklight -inc 5 -time 100")),
@@ -141,15 +327,22 @@ keys = [
     Key("<XF86AudioMute>", lazy.spawn("amixer set Master toggle")),
     Key("<XF86AudioMicMute>", lazy.spawn("amixer set Capture toggle")),
 
-    Key("M-w", lazy.spawn(browser)),
-    KeyChord([mod], "m", [
-        Key("d", lazy.spawn(dotGit)),
-        Key("o", lazy.spawn(orgGit)),
-        Key("m", lazy.spawn(Magit)),
-    ]),
+#+end_src
 
+** Mouse
+#+begin_src python
+mouse = [
+    Drag("M-1", lazy.window.set_position_floating(),
+         start=lazy.window.get_position()),
+    Drag("M-3", lazy.window.set_size_floating(),
+         start=lazy.window.get_size()),
+    Click("M-2", lazy.window.bring_to_front()),
+    Click("M-S-1", lazy.window.toggle_floating()),
 ]
 #+end_src
+
+** Colors
+I forgot where I found that.
 
 #+begin_src python
 colors = []
@@ -161,7 +354,13 @@ def load_colors(cache):
     colors.append('#ffffff')
     lazy.reload()
 load_colors(cache)
+#+end_src
 
+** Layouts
+*** Theme
+No need to make a function out of it but hey why not.
+
+#+begin_src python
 def init_layout_theme():
     return {
         "margin": 2,
@@ -174,27 +373,65 @@ def init_layout_theme():
 layout_theme = init_layout_theme()
 #+end_src
 
+*** Layout settings
+If there is any specific options for theme put it here.
+
 #+begin_src python
 layouts = [
     # layout.Bsp(**layout_theme),
     layout.Columns(**layout_theme),
+    # layout.Matrix(**layout_theme),
     layout.Max(**layout_theme),
-    # layout.MonadTall(ratio=0.65, **layout_theme),
-    # layout.MonadThreeCol(**layout_theme),
+    layout.MonadTall(ratio=0.65, **layout_theme),
+    layout.MonadThreeCol(**layout_theme),
+    layout.Floating(**layout_theme),
     # layout.MonadWide(**layout_theme),
+    # layout.RatioTileWide(**layout_theme),
+    # layout.Slice(**layout_theme),
+    # layout.Spiral(**layout_theme),
+    # layout.Stack(**layout_theme),
+    # layout.Tile(**layout_theme),
+    # layout.TreeTab(**layout_theme),
+    # layout.VerticalTile(**layout_theme),
+    # layout.Zoomy(**layout_theme),
 ]
 #+end_src
 
+** Floating Layouts
 #+begin_src python
-mouse = [
-    Drag("M-1", lazy.window.set_position_floating(),
-         start=lazy.window.get_position()),
-    Drag("M-3", lazy.window.set_size_floating(),
-         start=lazy.window.get_size()),
-    Click("M-2", lazy.window.bring_to_front()),
-    Click("M-S-1", lazy.window.toggle_floating()),
-]
+floating_layout = layout.Floating(float_rules=[
+    # Run 'xprop' to see wm class and name of an X client.
+    ,*layout.Floating.default_float_rules,
+    Match(wm_class="confirmreset"),  # gitk
+    Match(wm_class="makebranch"),  # gitk
+    Match(wm_class="maketag"),  # gitk
+    Match(wm_class="ssh-askpass"),  # ssh-askpass
+    Match(title="branchdialog"),  # gitk
+    Match(title="pinentry"),  # GPG key password entry
+    Match(role="GtkFileChooserDialog"),
+    ])
+
+floating_types = [
+    "notification",
+    "toolbar",
+    "splash",
+    "dialog"
+    ]
 #+end_src
+
+** Qtile bar
+*** TODO look into that
+
+[[https://qtile-extras.readthedocs.io/en/stable/manual/ref/decorations.html][Decorations — qtile-extras 0.22.2.dev0+gbed30ac.d20220922 documentation]]
+
+[[https://qtile-extras.readthedocs.io/en/stable/manual/ref/widgets.html][Widgets — qtile-extras 0.22.2.dev0+gbed30ac.d20220922 documentation]]
+*** Bar themes
+- Improvement?
+  Instead of general dictionary I could use a function returning a list of all
+  the widegets with their specific options. However I like the easy of change
+  that this setup afford. Perhaps, could mix things a bit and this what happens.
+
+  Is the granularity worth the effort?
 
 #+begin_src python
 barTheme = {
@@ -222,6 +459,10 @@ widgetTheme = {
     'this_screen_border': colors[1],
 }
 
+#+end_src
+
+*** Decorations
+#+begin_src python
 soft_sep = {
     'linewidth': 2,
     'size_percent': 70,
@@ -229,6 +470,8 @@ soft_sep = {
     'padding': 10,
 }
 #+end_src
+
+*** Bar configuration
 
 #+begin_src python
 AGroupBoxTheme = {
@@ -272,75 +515,187 @@ mediaScreen = Screen(top=mediaBar)
 screens = [mainScreen, mediaScreen]
 #+end_src
 
+** Groups
+*** Groups
 #+begin_src python
 groups = [
     Group("h3ck"),
     Group("www", layout="max"),
-    Group("h4ck", layout="max"),
-    Group("term"),
-    Group("doc", spawn="zotero", layout="max"),
-    Group("dir"),
-    Group("misc", spawn="discord"),
-    Group("etc", spawn=[diskSpace, utilityViewer], layout="max"),
-    Group("dev/null"),
+    Group("GUI", layout="floating"),
+    Group("shell"),
+    Group("ssh", spawn=[sshView], layout="max"),
+    Group("fm"),
+    Group("misc", spawn="zotero", layout="max"),
+    Group("etc"),
+    Group("dev/null", spawn=[adminView], layout="max"),
 ]
+#+end_src
+
+#+begin_src python
 # g = [0, 1, 0, 0, 1, 0, 1, 1, 1] # mons -e top
-# g = [1, 0, 1, 1, 0, 1, 0, 0, 0] mons -e left
+# g = [1, 0, 1, 1, 0, 1, 0, 0, 0] # mons -e left
 g = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 # Investigate why after M-3 and M-4 I need to release M otherwise input are broken
 k = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 for index, group in enumerate(groups):
     keys.append(Key("M-"+(k[index]), lazy.group[group.name].toscreen(g[index]), lazy.to_screen(g[index])))
     keys.append(Key("M-S-"+(k[index]), lazy.window.togroup(group.name)))
-
 #+end_src
+
+*** Scratchpad
+
+**** Windows position
+
+#+begin_src python
+centerWindow = {
+    'width': 0.8,
+    'height': 0.8,
+    'x': 0.1,
+    'y': 0.1,
+    'opacity': 1,
+}
+
+upperLeftWindow = {
+    'width': 0.5,
+    'height': 0.5,
+    'x': 0,
+    'y': 0,
+    'opacity': 1,
+}
+
+upperRightWindow = {
+    'width': 0.5,
+    'height': 0.5,
+    'x': 0.5,
+    'y': 0,
+    'opacity': 1,
+}
+
+downLeftWindow = {
+    'width': 0.5,
+    'height': 0.5,
+    'x': 0,
+    'y': 0.5,
+    'opacity': 1,
+}
+
+downRightWindow = {
+    'width': 0.5,
+    'height': 0.5,
+    'x': 0.5,
+    'y': 0.5,
+    'opacity': 1,
+}
+#+end_src
+
+**** Scratchpad groups
+***** TODO inbox, todo, agenda, dev
+
+#+begin_src python
+groups.append(ScratchPad("scratchpad", [
+    DropDown("vpn",
+             myvpn,
+             # "st -c scratch -n quick-vpn -e myvpn",
+             **centerWindow),
+    DropDown("h4ck",
+             hackSetup,
+             # "st -c scratch -n zellij-hack -e zellij -s hack options --default-layout hack",
+             **centerWindow),
+    DropDown("admin",
+             adminSetup,
+             # "st -c scratch -n zellij-admin -e zellij -s admin options --default-layout admin",
+             **centerWindow),
+]))
+#+end_src
+
+**** Scratchpad keybinds
+
+#+begin_src python
+keys.extend([
+    Key("M-d", lazy.group['scratchpad'].dropdown_toggle('admin')),
+    Key("M-n", lazy.group['scratchpad'].dropdown_toggle('h4ck')),
+    KeyChord([mod], "s", [
+        Key("p", lazy.group['scratchpad'].dropdown_toggle('vpn')),
+    ]),
+])
+#+end_src
+
+** Qtile behavior variables
+
+*** dgroups
+#+begin_quote
+A function which generates group binding hotkeys. It takes a single argument,
+the DGroups object, and can use that to set up dynamic key bindings.
+#+end_quote
 
 #+begin_src python
 dgroup_key_binder = None
-dgroups_app_rules = [] # type: List
-follow_mouse_focus = True
-bring_front_click = False
-cursor_wrap = False
 #+end_src
 
+#+begin_quote
+A list of Rule objects which can send windows to various groups based on matching criteria.
+#+end_quote
+
 #+begin_src python
-floating_layout = layout.Floating(float_rules=[
-    # Run 'xprop' to see wm class and name of an X client.
-    ,*layout.Floating.default_float_rules,
-    Match(wm_class="confirmreset"),  # gitk
-    Match(wm_class="makebranch"),  # gitk
-    Match(wm_class="maketag"),  # gitk
-    Match(wm_class="ssh-askpass"),  # ssh-askpass
-    Match(title="branchdialog"),  # gitk
-    Match(title="pinentry"),  # GPG key password entry
-    Match(role="GtkFileChooserDialog"),
-    ])
+dgroups_app_rules = [] # type: List
+#+end_src
+
+*** Mouse
+#+begin_quote
+Controls whether or not focus follows the mouse around as it moves across windows in a layout.
+#+end_quote
+
+#+begin_src python
+follow_mouse_focus = False
+#+end_src
+
+#+begin_quote
+When clicked, should the window be brought to the front or not. If this is set
+to "floating_only", only floating windows will get affected
+#+end_quote
+
+#+begin_src python
+bring_front_click = False
+#+end_src
+
+#+begin_quote
+If true, the cursor follows the focus as directed by the keyboard,
+warping to the center of the focused window. When switching focus
+between screens, If there are no windows in the screen, the cursor
+will warp to the center of the screen.
+#+end_quote
+
+#+begin_src python
+cursor_wrap = False
 #+end_src
 
 #+begin_src python
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
-#+end_src
 
-#+begin_src python
-
-floating_types = [
-    "notification",
-    "toolbar",
-    "splash",
-    "dialog"
-    ]
-#+end_src
-
-#+begin_src python
 auto_minimize = True
 wmname = "LG3D"
 #+end_src
 
+** Startup
 #+begin_src python
 @hook.subscribe.startup_once
 def autostart():
     startOnce = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.call([startOnce])
 #+end_src
+
+* Sources
+
+- [[https://docs.qtile.org/en/stable/index.html][Everything you need to know about Qtile — Qtile]]
+    Qtile documentations.
+
+- [[https://github.com/qtile/qtile-examples][GitHub - qtile/qtile-examples: Example configurations and scripts for Qtile]]
+    Pratical qtile configuration examples.
+
+- [[https://github.com/qtile/qtile/wiki][Home · qtile/qtile Wiki · GitHub]]
+
+- [[https://gitlab.com/dwt1/dotfiles][Derek Taylor / Dotfiles · GitLab]]
+
+- [[https://gitlab.com/thelinuxcast/my-dots][Matthew Weber / My Dots · GitLab]]
