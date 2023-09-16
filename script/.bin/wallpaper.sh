@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# TODO rewrite it
+# TODO sudo it in autostart.sh and make -C $HOME/github/st/ clean intall to change st's colorscheme
 arg1=$1
 arg2=$2
 if [ -z $3 ]; then
