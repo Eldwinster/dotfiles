@@ -264,7 +264,7 @@ floating_types = [
     ]
 # Floating Layouts:1 ends here
 
-# [[file:configbkp.org::*Themes][Themes:1]]
+# [[file:config.org::*Bar themes][Bar themes:1]]
 barTheme = {
     'background': colors[2],
     'opacity': 1,
@@ -289,9 +289,9 @@ widgetTheme = {
     'this_current_screen_border': colors[0],
     'this_screen_border': colors[1],
 }
-# Themes:1 ends here
+# Bar themes:1 ends here
 
-# [[file:configbkp.org::*Decorations][Decorations:1]]
+# [[file:config.org::*Decorations][Decorations:1]]
 soft_sep = {
     'linewidth': 2,
     'size_percent': 70,
@@ -300,7 +300,7 @@ soft_sep = {
 }
 # Decorations:1 ends here
 
-# [[file:configbkp.org::*Bar configuration][Bar configuration:1]]
+# [[file:config.org::*Bar configuration][Bar configuration:1]]
 AGroupBoxTheme = {
 }
 mainBar = bar.Bar(
@@ -342,11 +342,11 @@ mediaScreen = Screen(top=mediaBar)
 screens = [mainScreen, mediaScreen]
 # Bar configuration:1 ends here
 
-# [[file:configbkp.org::*Groups][Groups:1]]
+# [[file:config.org::*Groups][Groups:1]]
 groups = [
     Group("h3ck"),
     Group("www", layout="max"),
-    Group("GUI", layout="max"),
+    Group("GUI", layout="floating"),
     Group("shell"),
     Group("ssh", spawn=[sshView], layout="max"),
     Group("fm"),
@@ -354,6 +354,9 @@ groups = [
     Group("etc"),
     Group("dev/null", spawn=[adminView], layout="max"),
 ]
+# Groups:1 ends here
+
+# [[file:config.org::*Groups][Groups:2]]
 # g = [0, 1, 0, 0, 1, 0, 1, 1, 1] # mons -e top
 # g = [1, 0, 1, 1, 0, 1, 0, 0, 0] # mons -e left
 g = [0, 0, 0, 0, 0, 0, 0, 0, 0]
