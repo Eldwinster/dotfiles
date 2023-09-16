@@ -33,7 +33,6 @@ from libqtile.config import EzConfig, EzKey as Key, KeyChord, Group, Match, EzCl
 from libqtile.lazy import lazy
 # Imports:1 ends here
 
-# [[file:configbkp.org::*Terminal][Terminal:1]]
 # [[file:config.org::*Terminal][Terminal:1]]
 # alac = "alacritty"
 st = "st"
@@ -43,10 +42,9 @@ shelter = "emacsclient -c -a ''"
 nuclear_shelter = st + " -c shelter -n nuclear-shelter -e zellij -s main"
 # Terminal:1 ends here
 
-# [[file:configbkp.org::*Emacs][Emacs:1]]
+# [[file:config.org::*Emacs][Emacs:1]]
 vterm = shelter + " --eval '(+vterm/here nil)'"
 eshell = shelter + " --eval '(eshell)'"
-fileManager = shelter + " --eval '(dired nil)'"
 dotGit = shelter + " --eval '(me/magit-status-dotfiles)'"
 orgGit = shelter + " --eval '(me/magit-status-org)'"
 Magit = shelter + " --eval '(me/magit-status)'"
@@ -57,7 +55,8 @@ forLife = "emacsclient --eval '(emacs-everywhere)'"
 # vifm = alac + " -e ./$HOME/.config/vifm/scripts/vifmrun"
 # Emacs:1 ends here
 
-# [[file:configbkp.org::*General Applications][General Applications:1]]
+# [[file:config.org::*General Applications][General Applications:1]]
+fileManager = shelter + " --eval '(dired nil)'"
 screenshot = "flameshot gui"
 refManager = "zotero"
 browser = "firefox"
@@ -72,118 +71,122 @@ discord = "discord"
 # diskSpace = st + " -n ncdu -e sudo ncdu"
 # General Applications:1 ends here
 
-# [[file:configbkp.org::*Zellij][Zellij:1]]
+# [[file:config.org::*Zellij][Zellij:1]]
 # TODO script this to attach if session already exists
 adminView = st + " -c zellij -n zellij-admin -e zellij -s admin options --default-layout sys"
 sshView = st + " -c zellij -n zellij-ssh -e zellij -s ssh options --default-layout ssh"
-hackSetup = st + " -c zellij -n zellij-hack -e zellij -s hack options --default-layout hack"
+hackSetup = st + " -c scratch -n zellij-hack -e zellij -s hack options --default-layout hack"
+adminSetup = st + " -c scratch -n zellij-admin -e zellij -s admin options --default-layout admin"
 # Zellij:1 ends here
 
-# [[file:configbkp.org::*Keys][Keys:1]]
+# [[file:config.org::*Script][Script:1]]
+myvpn = st + " -c scratch -n quick-vpn -e myvpn"
+# Script:1 ends here
+
+# [[file:config.org::*Keys][Keys:1]]
 mod = "mod4"
 # Keys:1 ends here
 
-# [[file:configbkp.org::*Keybinds][Keybinds:1]]
+# [[file:config.org::*Keybinds][Keybinds:1]]
 keys = [
-        KeyChord([mod], "q", [
-            Key("c", lazy.reload_config()),
-            Key("r", lazy.restart()),
-            Key("q", lazy.shutdown()),
-        ]),
-        Key("M-h", lazy.layout.left()),
-        Key("M-j", lazy.layout.down(),),
-        Key("M-k", lazy.layout.up()),
-        Key("M-l", lazy.layout.right()),
-    
-        # Key("M-j", lazy.group.next_window()),
-        # Key("M-k", lazy.group.prev_window()),
-    
-        Key("M-S-h", lazy.layout.shuffle_left()),
-        Key("M-S-j", lazy.layout.shuffle_down()),
-        Key("M-S-k", lazy.layout.shuffle_up()),
-        Key("M-S-l", lazy.layout.shuffle_right()),
-        Key("M-<Tab>", lazy.next_layout()),
-        Key("M-S-<Tab>", lazy.prev_layout()),
-        Key("M-C-h",
-            lazy.layout.grow_left(),
-            lazy.layout.shrink(),
-            lazy.layout.decrease_ratio(),
-            lazy.layout.add(),
-            ),
-    
-        Key("M-C-j",
-            lazy.layout.grow_down(),
-            lazy.layout.shrink(),
-            lazy.layout.increase_nmaster(),
-            ),
-    
-        Key("M-C-k",
-            lazy.layout.grow_up(),
-            lazy.layout.grow(),
-            lazy.layout.decrease_nmaster(),
-            ),
-    
-        Key("M-C-l",
-            lazy.layout.grow_right(),
-            lazy.layout.grow(),
-            lazy.layout.increase_ratio(),
-            lazy.layout.delete(),
-            ),
-        Key("M-S-i", lazy.layout.grow()),
-        Key("M-S-m", lazy.layout.shrink()),
-        Key("M-<BackSpace>", lazy.layout.normalize()),
-        Key("M-o", lazy.layout.maximize()),
-        Key("M-S-C-h", lazy.layout.swap_column_left()),
-        Key("M-S-C-l", lazy.layout.swap_column_right()),
-    
-        Key("M-<Delete>", lazy.layout.toggle_split()),
-        Key("M-S-<Delete>", lazy.layout.flip()),
-        Key("M-c", lazy.window.kill()),
-        Key("M-<space>", lazy.window.toggle_fullscreen()),
-        Key("M-S-<space>", lazy.window.toggle_minimize()),
-        Key("M-<Return>", lazy.spawn(nuclear_shelter)),
-        Key("M-C-<Return>", lazy.spawn(eshell)),
-        Key("M-e", lazy.spawn(shelter)),
-        KeyChord([mod], "m", [
-            Key("d", lazy.spawn(dotGit)),
-            Key("o", lazy.spawn(orgGit)),
-            Key("m", lazy.spawn(Magit)),
-        ]),
-        Key("M-s", lazy.spawn(screenshot)),
-        Key("M-w", lazy.spawn(browser)),
-        # Key("M-v", lazy.spawn(vifm)),
-        KeyChord([mod], "a", [
-            Key("r", lazy.spawn(remoteDesktop)),
-            Key("i", lazy.spawn(bufferManager)),
-            Key("a", lazy.spawn(forLife)),
-            Key("o", lazy.spawn(refManager)),
-            # Key("t", lazy.spawn(utilityViewer)),
-            # Key("n", lazy.spawn(diskSpace)),
-            Key("b", lazy.spawn(proxyFreemium)),
-            Key("z", lazy.spawn(proxyOpenSource)),
-            Key("w", lazy.spawn(networkAnalyser)),
-            Key("m", lazy.spawn(metasploit)),
-            Key("l", lazy.spawn(helpDeskApp)),
-            Key("d", lazy.spawn(discord)),
-        ]),
-        KeyChord([mod], "z", [
-            Key("a", lazy.spawn(adminView)),
-            Key("s", lazy.spawn(sshView)),
-        ]),
-        Key("<XF86ScreenSaver>", lazy.spawn(st + " -c slock -e unimatrix.sh")),
-        Key("<XF86Display>", lazy.spawn("xset dpms force off")),
-        Key("<Pause>", lazy.spawn("systemctl hibernate")),
-        Key("<XF86MonBrightnessUp>", lazy.spawn("xbacklight -inc 5 -time 100")),
-        Key("<XF86MonBrightnessDown>", lazy.spawn("xbacklight -dec 5 -time 100")),
-        Key("<XF86AudioLowerVolume>", lazy.spawn("amixer set Master 5%- unmute")),
-        Key("<XF86AudioRaiseVolume>", lazy.spawn("amixer set Master 5%+ unmute")),
-        Key("<XF86AudioMute>", lazy.spawn("amixer set Master toggle")),
-        Key("<XF86AudioMicMute>", lazy.spawn("amixer set Capture toggle")),
-    
+    KeyChord([mod], "q", [
+        Key("c", lazy.reload_config()),
+        Key("r", lazy.restart()),
+        Key("q", lazy.shutdown()),
+    ]),
+    Key("M-h", lazy.layout.left()),
+    Key("M-j", lazy.layout.down(),),
+    Key("M-k", lazy.layout.up()),
+    Key("M-l", lazy.layout.right()),
+    # Key("M-j", lazy.group.next_window()),
+    # Key("M-k", lazy.group.prev_window()),
+    Key("M-S-h", lazy.layout.shuffle_left()),
+    Key("M-S-j", lazy.layout.shuffle_down()),
+    Key("M-S-k", lazy.layout.shuffle_up()),
+    Key("M-S-l", lazy.layout.shuffle_right()),
+    Key("M-S-C-h", lazy.layout.swap_column_left()),
+    Key("M-S-C-l", lazy.layout.swap_column_right()),
+    Key("M-<Tab>", lazy.next_layout()),
+    Key("M-S-<Tab>", lazy.prev_layout()),
+    Key("M-C-h",
+        lazy.layout.grow_left(),
+        lazy.layout.shrink(),
+        lazy.layout.decrease_ratio(),
+        lazy.layout.add(),
+        ),
+
+    Key("M-C-j",
+        lazy.layout.grow_down(),
+        lazy.layout.shrink(),
+        lazy.layout.increase_nmaster(),
+        ),
+
+    Key("M-C-k",
+        lazy.layout.grow_up(),
+        lazy.layout.grow(),
+        lazy.layout.decrease_nmaster(),
+        ),
+
+    Key("M-C-l",
+        lazy.layout.grow_right(),
+        lazy.layout.grow(),
+        lazy.layout.increase_ratio(),
+        lazy.layout.delete(),
+        ),
+    Key("M-S-i", lazy.layout.grow()),
+    Key("M-S-m", lazy.layout.shrink()),
+    Key("M-o", lazy.layout.maximize()),
+    Key("M-<BackSpace>", lazy.layout.normalize()),
+    Key("M-c", lazy.window.kill()),
+    Key("M-<space>", lazy.window.toggle_fullscreen()),
+    Key("M-S-<space>", lazy.window.toggle_minimize()),
+
+    Key("M-<Delete>", lazy.layout.toggle_split()),
+    Key("M-S-<Delete>", lazy.layout.flip()),
+    Key("M-<Return>", lazy.spawn(st)),
+    Key("M-S-<Return>", lazy.spawn(nuclear_shelter)),
+    Key("M-C-<Return>", lazy.spawn(eshell)),
+    Key("M-e", lazy.spawn(shelter)),
+    KeyChord([mod], "m", [
+        Key("d", lazy.spawn(dotGit)),
+        Key("o", lazy.spawn(orgGit)),
+        Key("m", lazy.spawn(Magit)),
+    ]),
+    Key("M-f", lazy.spawn(screenshot)),
+    Key("M-w", lazy.spawn(browser)),
+    # Key("M-v", lazy.spawn(vifm)),
+    KeyChord([mod], "a", [
+        Key("r", lazy.spawn(remoteDesktop)),
+        Key("i", lazy.spawn(bufferManager)),
+        Key("a", lazy.spawn(forLife)),
+        Key("o", lazy.spawn(refManager)),
+        # Key("t", lazy.spawn(utilityViewer)),
+        # Key("n", lazy.spawn(diskSpace)),
+        Key("b", lazy.spawn(proxyFreemium)),
+        Key("z", lazy.spawn(proxyOpenSource)),
+        Key("w", lazy.spawn(networkAnalyser)),
+        Key("m", lazy.spawn(metasploit)),
+        Key("l", lazy.spawn(helpDeskApp)),
+        Key("d", lazy.spawn(discord)),
+    ]),
+    KeyChord([mod], "z", [
+        Key("a", lazy.spawn(adminView)),
+        Key("s", lazy.spawn(sshView)),
+    ]),
+    Key("<XF86ScreenSaver>", lazy.spawn(st + " -c slock -e unimatrix.sh")),
+    Key("<XF86Display>", lazy.spawn("xset dpms force off")),
+    Key("<Pause>", lazy.spawn("systemctl hibernate")),
+    Key("<XF86MonBrightnessUp>", lazy.spawn("xbacklight -inc 5 -time 100")),
+    Key("<XF86MonBrightnessDown>", lazy.spawn("xbacklight -dec 5 -time 100")),
+    Key("<XF86AudioLowerVolume>", lazy.spawn("amixer set Master 5%- unmute")),
+    Key("<XF86AudioRaiseVolume>", lazy.spawn("amixer set Master 5%+ unmute")),
+    Key("<XF86AudioMute>", lazy.spawn("amixer set Master toggle")),
+    Key("<XF86AudioMicMute>", lazy.spawn("amixer set Capture toggle")),
+
 ]
 # Keybinds:1 ends here
 
-# [[file:configbkp.org::*Mouse][Mouse:1]]
+# [[file:config.org::*Mouse][Mouse:1]]
 mouse = [
     Drag("M-1", lazy.window.set_position_floating(),
          start=lazy.window.get_position()),
