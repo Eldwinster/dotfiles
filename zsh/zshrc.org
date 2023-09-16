@@ -1,7 +1,7 @@
 #+title: zshrc
 #+description: This is my zshrc file
 #+created: [2022-11-04 Fri 22:44]
-#+last_modified: [2023-09-14 Thu 23:44]
+#+last_modified: [2023-09-15 Fri 23:57]
 
 * .zshrc
 :PROPERTIES:
@@ -405,7 +405,7 @@ up () {
 I need to make those scripts so that I can use them with my WM.
 Change their alias name so that it doesn't conflict with the scripts
 
-**** Zellij sessions
+**** Zellij choose sessions
 List all ~zellij~ session and let you select one.
 
 #+begin_src shell
