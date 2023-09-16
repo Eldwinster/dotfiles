@@ -34,12 +34,13 @@ from libqtile.lazy import lazy
 # Imports:1 ends here
 
 # [[file:configbkp.org::*Terminal][Terminal:1]]
+# [[file:config.org::*Terminal][Terminal:1]]
 # alac = "alacritty"
 st = "st"
 shelter = "emacsclient -c -a ''"
 # I keep this one to do the same with st using scratchpad group.
 # nuclear_shelter = alac + " -t tmux -e tmux new-session -A"
-nuclear_shelter = st
+nuclear_shelter = st + " -c shelter -n nuclear-shelter -e zellij -s main"
 # Terminal:1 ends here
 
 # [[file:configbkp.org::*Emacs][Emacs:1]]
