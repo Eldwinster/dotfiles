@@ -1,7 +1,7 @@
 #+title: zshrc
 #+description: This is my zshrc file
 #+created: [2022-11-04 Fri 22:44]
-#+last_modified: [2023-09-15 Fri 23:57]
+#+last_modified: [2023-09-25 Mon 23:22]
 
 * .zshrc
 :PROPERTIES:
@@ -15,10 +15,10 @@ export PATH="$PATH:$HOME/tools"
 export TERM="xterm-256color"                      # getting proper colors
 export TERMINFO="/usr/bin/env zsh"
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|doas reboot|history|cd -|cd ..)"
-export EDITOR="emacsclient -nw"              # $EDITOR use Emacs in terminal
+# export EDITOR="emacsclient -nw"              # $EDITOR use Emacs in terminal
 export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
 # export VISUAL="/usr/bin/vim"
-# export EDITOR="/usr/bin/vim"
+export EDITOR="/usr/bin/vim"
 export ZSH="$HOME/.oh-my-zsh"
 
 export TZ="Europe/Paris"
@@ -405,10 +405,12 @@ up () {
 I need to make those scripts so that I can use them with my WM.
 Change their alias name so that it doesn't conflict with the scripts
 
+[[https://zellij.dev/documentation/integration.html][Integration - Zellij User Guide]]
+
 **** Zellij choose sessions
 List all ~zellij~ session and let you select one.
 
-#+begin_src shell
+#+begin_src shell :tangle no
 zjs() {
     ZJ_SESSIONS=$(zellij list-sessions)
     zellij attach \
@@ -420,7 +422,7 @@ zjs() {
 
 List all of my personal for ~zellij~ and apply it to the lauched session.
 
-#+begin_src shell
+#+begin_src shell :tangle no
 zjl() {
     ZJ_LAYOUT_DIR=$(zellij setup --check \
         | grep "LAYOUT DIR" - \
@@ -445,7 +447,7 @@ zjl() {
 This function take a session name and either start a new session or attach it if
 the session name already exist.
 
-#+begin_src shell
+#+begin_src shell :tangle no
 zj() {
     if [[ $# -eq 1 ]]; then
         if [[ -z "$ZELLIJ" ]]; then
@@ -572,7 +574,7 @@ alias mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pac
 Remember to ~/usr/bin/grep~ if you want to use grep.
 
 #+begin_src shell
-alias grep='rg'
+# alias grep='rg'
 #+end_src
 
 *** adding flags
