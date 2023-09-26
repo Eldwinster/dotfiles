@@ -42,7 +42,7 @@ preset() {
 
 # if feh does not apply wallpaper add "DISPAY=:0" before feh (may be needed with a cronjob)
 random() {
-    wal -n -i $wallPath
+    wal -s -n -i $wallPath
     feh --bg-fill "$(< "$walpath")"
     pywalfox update
 }
