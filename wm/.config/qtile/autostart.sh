@@ -4,6 +4,6 @@ picom &
 xbanish &
 # mons -a -x "$HOME/.bin/mons.sh" & disown
 emacs --daemon &
-wallpaper.sh random auto 120m &
+wallpaper.sh random auto 6h &
 setxkbmap us qwerty-fr &
 # mons --pr

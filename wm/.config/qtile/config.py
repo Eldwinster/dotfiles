@@ -39,7 +39,7 @@ st = "st"
 shelter = "emacsclient -c -a ''"
 # I keep this one to do the same with st using scratchpad group.
 # nuclear_shelter = alac + " -t tmux -e tmux new-session -A"
-nuclear_shelter = st + " -c shelter -n nuclear-shelter -e zellij -s main"
+nuclear_shelter = st + " -c shelter -n nuclear-shelter -e zellij --layout main"
 # Terminal:1 ends here
 
 # [[file:config.org::*Emacs][Emacs:1]]
@@ -50,13 +50,10 @@ orgGit = shelter + " --eval '(me/magit-status-org)'"
 Magit = shelter + " --eval '(me/magit-status)'"
 bufferManager = shelter + " --eval '(ibuffer)'"
 forLife = "emacsclient --eval '(emacs-everywhere)'"
-# I need to resolve vifm probleme even if dired is better in many ways.
-# As I'm not an expert elips programmer there is some time vifm is just better/simpler.
-# vifm = alac + " -e ./$HOME/.config/vifm/scripts/vifmrun"
 # Emacs:1 ends here
 
 # [[file:config.org::*General Applications][General Applications:1]]
-fileManager = shelter + " --eval '(dired nil)'"
+fileManager = st + " -c scratch -n vifm -e vifm"
 screenshot = "flameshot gui"
 refManager = "zotero"
 browser = "firefox"
@@ -71,17 +68,20 @@ discord = "discord"
 # diskSpace = st + " -n ncdu -e sudo ncdu"
 # General Applications:1 ends here
 
-# [[file:config.org::*Zellij][Zellij:1]]
-# TODO script this to attach if session already exists
-adminView = st + " -c zellij -n zellij-admin -e zellij -s admin options --default-layout sys"
-sshView = st + " -c zellij -n zellij-ssh -e zellij -s ssh options --default-layout ssh"
-hackSetup = st + " -c scratch -n zellij-hack -e zellij -s hack options --default-layout hack"
-adminSetup = st + " -c scratch -n zellij-admin -e zellij -s admin options --default-layout admin"
-# Zellij:1 ends here
+# [[file:config.org::*Org][Org:1]]
+orgCaptureMenu = st + " -c org -n org-capture -e org-capture"
+# orgInbox = "emacs --eval '(my/org-roam-open-inbox)'"
+# complains about dashboard because of the hook at start
+# Org:1 ends here
 
-# [[file:config.org::*Script][Script:1]]
-myvpn = st + " -c scratch -n quick-vpn -e myvpn"
-# Script:1 ends here
+# [[file:config.org::*Zellij][Zellij:1]]
+hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
+monitorView = st + "-c zellij -n zellij-monitor -e zj sys"
+myvpn = st + " -c zellij -n zellij-vpn -e zj vpn"
+notesView = st + " -c scratch -n zellij-notes -e zj notes"
+sshView = st + " -c zellij -n zellij-ssh -e zj ssh"
+vifmSetup = st + " -c scratch -n zellij-vifm -e zj vifm"
+# Zellij:1 ends here
 
 # [[file:config.org::*Keys][Keys:1]]
 mod = "mod4"
@@ -154,7 +154,7 @@ keys = [
     ]),
     Key("M-f", lazy.spawn(screenshot)),
     Key("M-w", lazy.spawn(browser)),
-    # Key("M-v", lazy.spawn(vifm)),
+    Key("M-d", lazy.spawn(fileManager)),
     KeyChord([mod], "a", [
         Key("r", lazy.spawn(remoteDesktop)),
         Key("i", lazy.spawn(bufferManager)),
@@ -170,7 +170,7 @@ keys = [
         Key("d", lazy.spawn(discord)),
     ]),
     KeyChord([mod], "z", [
-        Key("a", lazy.spawn(adminView)),
+        Key("a", lazy.spawn(monitorView)),
         Key("s", lazy.spawn(sshView)),
     ]),
     Key("<XF86ScreenSaver>", lazy.spawn(st + " -c slock -e unimatrix.sh")),
@@ -226,11 +226,11 @@ layout_theme = init_layout_theme()
 layouts = [
     # layout.Bsp(**layout_theme),
     layout.Columns(**layout_theme),
+    # layout.Floating(**layout_theme),
     # layout.Matrix(**layout_theme),
     layout.Max(**layout_theme),
-    layout.MonadTall(ratio=0.65, **layout_theme),
+    layout.MonadTall(**layout_theme),
     layout.MonadThreeCol(**layout_theme),
-    layout.Floating(**layout_theme),
     # layout.MonadWide(**layout_theme),
     # layout.RatioTileWide(**layout_theme),
     # layout.Slice(**layout_theme),
@@ -346,22 +346,25 @@ screens = [mainScreen, mediaScreen]
 groups = [
     Group("h3ck"),
     Group("www", layout="max"),
-    Group("GUI", layout="floating"),
-    Group("shell"),
+    Group("GUI", layout="max"),
+    Group("h4ck", spawn=[shelter]),
+    Group("dot", spawn=[nuclear_shelter], layout="max"),
+    Group("git", spawn=[dotGit, orgGit], layout="max"),
     Group("ssh", spawn=[sshView], layout="max"),
-    Group("fm"),
-    Group("misc", spawn="zotero", layout="max"),
+    Group("misc", spawn=[refManager], layout="max"),
     Group("etc"),
-    Group("dev/null", spawn=[adminView], layout="max"),
+    Group("sys", spawn=[monitorView], layout="max"),
+    Group("irc", spawn=["discord"], layout="max"),
+    Group("/dev/null", spawn=[monitorView], layout="max"),
 ]
 # Groups:1 ends here
 
 # [[file:config.org::*Groups][Groups:2]]
 # g = [0, 1, 0, 0, 1, 0, 1, 1, 1] # mons -e top
 # g = [1, 0, 1, 1, 0, 1, 0, 0, 0] # mons -e left
-g = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+g = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 # Investigate why after M-3 and M-4 I need to release M otherwise input are broken
-k = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+k = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "<Minus>", "<Equal>"]
 for index, group in enumerate(groups):
     keys.append(Key("M-"+(k[index]), lazy.group[group.name].toscreen(g[index]), lazy.to_screen(g[index])))
     keys.append(Key("M-S-"+(k[index]), lazy.window.togroup(group.name)))
@@ -409,27 +412,32 @@ downRightWindow = {
 }
 # Windows position:1 ends here
 
-# [[file:config.org::*Scratchpad groups][Scratchpad groups:1]]
+# [[file:config.org::*inbox, todo, agenda, dev][inbox, todo, agenda, dev:1]]
 groups.append(ScratchPad("scratchpad", [
     DropDown("vpn",
              myvpn,
-             # "st -c scratch -n quick-vpn -e myvpn",
-             **upperLeftWindow),
+             **centerWindow),
     DropDown("h4ck",
              hackSetup,
-             # "st -c scratch -n zellij-hack -e zellij -s hack options --default-layout hack",
              **centerWindow),
-    DropDown("admin",
-             adminSetup,
-             # "st -c scratch -n zellij-admin -e zellij -s admin options --default-layout admin",
+    DropDown("vifm",
+             vifmSetup,
+             **centerWindow),
+    DropDown("org-capture",
+             orgCaptureMenu,
+             **centerWindow),
+    DropDown("inbox",
+             notesView,
              **centerWindow),
 ]))
-# Scratchpad groups:1 ends here
+# inbox, todo, agenda, dev:1 ends here
 
 # [[file:config.org::*Scratchpad keybinds][Scratchpad keybinds:1]]
 keys.extend([
-    Key("M-d", lazy.group['scratchpad'].dropdown_toggle('admin')),
+    Key("M-i", lazy.group['scratchpad'].dropdown_toggle('inbox')),
+    Key("M-v", lazy.group['scratchpad'].dropdown_toggle('vifm')),
     Key("M-n", lazy.group['scratchpad'].dropdown_toggle('h4ck')),
+    Key("M-b", lazy.group['scratchpad'].dropdown_toggle('org-capture')),
     KeyChord([mod], "s", [
         Key("p", lazy.group['scratchpad'].dropdown_toggle('vpn')),
     ]),
@@ -445,7 +453,7 @@ dgroups_app_rules = [] # type: List
 # dgroups:2 ends here
 
 # [[file:config.org::*Mouse][Mouse:1]]
-follow_mouse_focus = False
+follow_mouse_focus = True
 # Mouse:1 ends here
 
 # [[file:config.org::*Mouse][Mouse:2]]
