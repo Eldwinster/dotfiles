@@ -70,7 +70,7 @@ export UPDATE_ZSH_DAYS=15
 # UPDATE:3 ends here
 
 # [[file:zshrc.org::*Oh my zsh][Oh my zsh:1]]
-fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins
 source $ZSH/oh-my-zsh.sh
 # Oh my zsh:1 ends here
 
@@ -181,48 +181,6 @@ up () {
 }
 # navigation:1 ends here
 
-# [[file:zshrc.org::*Zellij sessions][Zellij sessions:1]]
-zjs() {
-    ZJ_SESSIONS=$(zellij list-sessions)
-    zellij attach \
-    "$(echo "${ZJ_SESSIONS}" | sk)"
-}
-# Zellij sessions:1 ends here
-
-# [[file:zshrc.org::*Zellij select layout][Zellij select layout:1]]
-zjl() {
-    ZJ_LAYOUT_DIR=$(zellij setup --check \
-        | grep "LAYOUT DIR" - \
-        | grep -o '".*"' - | tr -d '"')
-
-    if [[ "$#" -eq 1 ]]; then
-        if [[ -d "${ZJ_LAYOUT_DIR}" ]];then
-            ZJ_LAYOUT="$(fd --type file . "${ZJ_LAYOUT_DIR}" \
-            | sed 's|.*/||' \
-            | sk \
-            || exit)"
-              zellij --layout "${ZJ_LAYOUT}" --session "$1"
-            fi
-    else
-        echo "Usage: $0 [zellij-session-name]"
-    fi
-}
-# Zellij select layout:1 ends here
-
-# [[file:zshrc.org::*Zellij attach or start session][Zellij attach or start session:1]]
-zj() {
-    if [[ $# -eq 1 ]]; then
-        if [[ -z "$ZELLIJ" ]]; then
-            zellij -s "$1" || zellij a "$1"
-        elif [[ -n "$ZELLIJ" ]]; then
-            echo "Nest is bad, right?"
-        fi
-    else
-        echo "Usage: $0 [zellij-session-name]"
-    fi
-}
-# Zellij attach or start session:1 ends here
-
 # [[file:zshrc.org::*Convert][Convert:1]]
 png2ico () {
     local i="${1}" o="${2:-${1:r}.ico}" s="${png2ico_size:-256}"
@@ -292,7 +250,7 @@ alias mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pac
 # get fastest mirrors:1 ends here
 
 # [[file:zshrc.org::*Changing grep for ripgrep][Changing grep for ripgrep:1]]
-alias grep='rg'
+# alias grep='rg'
 # Changing grep for ripgrep:1 ends here
 
 # [[file:zshrc.org::*adding flags][adding flags:1]]
