@@ -136,6 +136,15 @@ layout {
                                 width 120
                                 height 15
                             }
+                            pane {
+                            name "hddtemp"
+                            command "$HOME/.bin/ssh-tmux"
+                            args "devnull" "hddtemp"
+                            x "50%"
+                            y 30
+                            width 120
+                            height 15
+                            }
             }
         }
         tab name="BlackBox" focus="false" {

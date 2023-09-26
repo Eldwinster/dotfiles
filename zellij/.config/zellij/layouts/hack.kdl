@@ -1,3 +1,4 @@
+// TODO template floating as matrix grid 4x4
 layout {
         default_tab_template {
             pane size=1 borderless=true {
@@ -8,7 +9,7 @@ layout {
                 plugin location="zellij:status-bar"
             }
         }
-        tab name="Learning" focus=true {
+        tab name="Learning" focus=false {
             pane {
             name "main"
             }
@@ -17,6 +18,7 @@ layout {
                                 name "academy vpn"
                                 command "selectvpn"
                                 args "academy-regular"
+                                start_suspended true
                                 x "60%"
                                 y 0
                                 width 100
@@ -31,9 +33,29 @@ layout {
                                 }
             }
         }
-        tab name="hack HTB" focus=false {
+        cwd "$HOME/hacklab/HTB/starting-point"
+        tab name="HTB starting point" focus=true {
             pane {
-            name "main"
+            name "cli"
+            }
+            floating_panes {
+                        pane {
+                                name "starting point vpn"
+                                command "selectvpn"
+                                args "starting"
+                                start_suspended true
+                                x "60%"
+                                y 0
+                                width 100
+                                height 15
+                                }
+                        pane {
+                                name "watch vpn connection"
+                                x "60%"
+                                y 15
+                                width 100
+                                height 15
+                                }
             }
         }
         tab name="hack THM" focus=false {
