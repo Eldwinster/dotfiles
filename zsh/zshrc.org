@@ -235,7 +235,7 @@ Let's you identify any keybind on your keyboard. Useful when you'are configuring
 you Window Manager setup.
 
 #+begin_src shell
-keyinput ()
+describe-key ()
 {
 xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
 }
