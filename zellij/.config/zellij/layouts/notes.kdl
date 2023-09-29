@@ -1,0 +1,20 @@
+layout {
+        default_tab_template {
+            pane size=1 borderless=true {
+                plugin location="zellij:tab-bar"
+                }
+            children
+            pane size=2 borderless=true {
+                plugin location="zellij:status-bar"
+                }
+        }
+        tab name="notes" focus=true {
+        pane stacked=true {
+             pane {
+                name "inbox"
+                command "emacsclient"
+                args "-nw" "--eval" "(my/org-roam-open-inbox)"
+                }
+             }
+        }
+}

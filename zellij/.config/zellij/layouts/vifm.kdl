@@ -1,0 +1,29 @@
+layout {
+        default_tab_template {
+            pane size=1 borderless=true {
+                plugin location="zellij:tab-bar"
+            }
+            children
+            pane size=2 borderless=true {
+                plugin location="zellij:status-bar"
+            }
+        }
+        tab name="File Manager" focus=true {
+            pane stacked=true {
+                pane {
+                name "dired"
+                command "emacsclient"
+                args "-nw" "--eval" "(dired nil)"
+                }
+                pane {
+                name "backup"
+                command "vifm"
+                }
+                pane {
+                name "backup sudo"
+                command "sudo"
+                args "vifm" "/" "/"
+                }
+            }
+        }
+}

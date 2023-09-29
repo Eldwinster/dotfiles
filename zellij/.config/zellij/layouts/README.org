@@ -1,0 +1,170 @@
+#+title: Templates
+#+description: Here is some template for floating panes
+#+created: [2023-09-26 Tue 13:39]
+#+last_modified: [2023-09-26 Tue 14:04]
+
+| a | b | c | d |
+| e | f | g | h |
+| i | j | k | l |
+| m | n | o | p |
+
+* a
+  #+begin_src kdl
+pane {
+        name "1"
+        x "0%"
+        y "0%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* b
+  #+begin_src kdl
+pane {
+        name "1"
+        x "25%"
+        y "0%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* c
+  #+begin_src kdl
+pane {
+        name "1"
+        x "50%"
+        y "0%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* d
+  #+begin_src kdl
+pane {
+        name "1"
+        x "75%"
+        y "0%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* e
+  #+begin_src kdl
+pane {
+        name "1"
+        x "0%"
+        y "25%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* f
+  #+begin_src kdl
+pane {
+        name "1"
+        x "25%"
+        y "25%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* g
+  #+begin_src kdl
+pane {
+        name "1"
+        x "50%"
+        y "25%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* h
+  #+begin_src kdl
+pane {
+        name "1"
+        x "75%"
+        y "25%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* i
+  #+begin_src kdl
+pane {
+        name "1"
+        x "0%"
+        y "50%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* j
+  #+begin_src kdl
+pane {
+        name "1"
+        x "25%"
+        y "50%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* k
+  #+begin_src kdl
+pane {
+        name "1"
+        x "50%"
+        y "50%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* l
+  #+begin_src kdl
+pane {
+        name "1"
+        x "75%"
+        y "50%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* m
+  #+begin_src kdl
+pane {
+        name "1"
+        x "0%"
+        y "75%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* n
+  #+begin_src kdl
+pane {
+        name "1"
+        x "25%"
+        y "75%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* o
+  #+begin_src kdl
+pane {
+        name "1"
+        x "50%"
+        y "75%"
+        width "25%"
+        height "25%"
+}
+  #+end_src
+* p
+  #+begin_src kdl
+pane {
+        name "1"
+        x "75%"
+        y "75%"
+        width "25%"
+        height "25%"
+}
+  #+end_src

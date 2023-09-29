@@ -40,22 +40,36 @@ layout {
             }
             floating_panes {
                         pane {
-                                name "starting point vpn"
+                                name "starting-point-vpn"
                                 command "selectvpn"
                                 args "starting"
                                 start_suspended true
-                                x "60%"
-                                y 0
-                                width 100
-                                height 15
-                                }
+                                x "0%"
+                                y "0%"
+                                width "25%"
+                                height "25%"
+                        }
                         pane {
-                                name "watch vpn connection"
-                                x "60%"
-                                y 15
-                                width 100
-                                height 15
-                                }
+                                name "watch connection"
+                                x "25%"
+                                y "0%"
+                                width "25%"
+                                height "25%"
+                        }
+                        pane {
+                                name "httpd server"
+                                x "50%"
+                                y "0%"
+                                width "25%"
+                                height "25%"
+                        }
+                        pane {
+                                name "listener"
+                                x "75%"
+                                y "0%"
+                                width "25%"
+                                height "25%"
+                        }
             }
         }
         tab name="hack THM" focus=false {
