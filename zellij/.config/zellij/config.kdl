@@ -136,11 +136,11 @@ keybinds {
              floating true;
              }
         }
-        // bind "F2" {
-        //      NewTab {
-        //         layout "test"
-        //      }
-        // }
+        bind "Alt t" {
+             NewTab {
+                layout "default"
+             }
+        }
         bind "Ctrl g" { SwitchToMode "Locked"; }
         bind "Ctrl q" { Quit; }
         bind "Alt n" { NewPane; }
