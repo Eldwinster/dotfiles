@@ -92,7 +92,7 @@ fi
 # EDITOR LOCAL AND REMOTE:1 ends here
 
 # [[file:zshrc.org::*Get keyboard input][Get keyboard input:1]]
-keyinput ()
+describe-key ()
 {
 xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
 }
@@ -215,6 +215,9 @@ alias zz="zellij"
 # [[file:zshrc.org::*vim and emacs][vim and emacs:1]]
 alias v="vim"
 alias vi="vim"
+alias m='ee --eval "(progn (magit-status) (delete-other-windows))"'
+alias mt="m -t"
+alias et="ee -t"
 alias e="emacsclient -nw"
 alias em="emacsclient -nw"
 # vim and emacs:1 ends here
@@ -293,7 +296,7 @@ alias getpath="PATH=$(/usr/bin/getconf PATH)"
 # reset $PATH:1 ends here
 
 # [[file:zshrc.org::*COLORSCRIPT][COLORSCRIPT:1]]
-colorscript random
+# colorscript random
 # COLORSCRIPT:1 ends here
 
 # [[file:zshrc.org::*zellij (multiplexer)][zellij (multiplexer):1]]
