@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+OVPN_DIR=$HOME/.vpn
+
+SCRIPT_NAME="${0##*/}"
+
+usage() {
+    cat<<EOF
+Use an regular expression to select your .ovpn file in $OVPN_DIR
+
+USAGE:
+    $SCRIPT_NAME [VPN-PATH]
+EOF
+}
+
+if [[ $# -eq 1 ]]; then
+    current_vpn="$(fd --type file "$1" "${OVPN_DIR}")"
+    sudo openvpn "${current_vpn}"
+else
+    usage
+fi

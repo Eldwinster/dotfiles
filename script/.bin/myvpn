@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# let you choose your ovpn file interactively
+# TODO change fd for find this is more portable this way
+set -euo pipefail
+
+OVPN_DIR=$HOME/.vpn
+
+if [[ -d $OVPN_DIR ]]; then
+    MY_VPN="$(fd --type file . "${OVPN_DIR}" \
+        | sk \
+        || exit)"
+    sudo openvpn "${MY_VPN}"
+fi
