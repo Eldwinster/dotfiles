@@ -1,0 +1,26 @@
+themes {{
+ 	pywal {{
+        // background option tabs
+ 		fg "{color4}"
+        // highlight
+ 		bg "{color1}"
+        // background main bars
+ 		black "{color0}"
+        // I don't know
+ 		red "{color0}"
+        // active tab/pane
+ 		green "{color1}"
+        // I don't know
+ 		yellow "{color0}"
+        // I don't know
+ 		blue "{color0}"
+        // I don't know
+ 		magenta "{color0}"
+        // I don't know
+ 		cyan "{color0}"
+        // Color session name
+ 		white "{color3}"
+        // options activate
+ 		orange "{color3}"
+ 	}}
+}}
