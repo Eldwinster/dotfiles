@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+zellij_session_name=$1
+
+choose_session() {
+    ZJ_SESSIONS=$(zellij list-sessions)
+    NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
+    zellij attach \
+    "$(echo "${ZJ_SESSIONS}" | sk)"
+}
+
+start_session() {
+    if [[ -z "$ZELLIJ" ]]; then
+        zellij -s "$zellij_session_name"
+    fi
+}
+
+
+choose_layout() {
+    ZJ_LAYOUT_DIR=$(zellij setup --check \
+        | grep "LAYOUT DIR" - \
+        | grep -o '".*"' - | tr -d '"')
+
+    if [[ -d "${ZJ_LAYOUT_DIR}" ]];then
+            ZJ_LAYOUT="$(fd --type file . "${ZJ_LAYOUT_DIR}" \
+            | sed 's|.*/||' \
+            | sk \
+            || exit)"
+        zellij --layout "${ZJ_LAYOUT}"
+    fi
+}
+
+while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
+  -c | --choose-session )
+      choose_session
+      exit
+    ;;
+  * )
+      start_session
+      ;;
+esac; shift; done
+if [[ "$1" == '--' ]]; then shift; fi
