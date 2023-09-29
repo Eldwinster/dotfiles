@@ -645,7 +645,7 @@ alias getpath="PATH=$(/usr/bin/getconf PATH)"
 This print some image when you start your terminal.
 
 #+begin_src shell
-colorscript random
+# colorscript random
 #+end_src
 
 ** zellij (multiplexer)
