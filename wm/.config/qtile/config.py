@@ -47,6 +47,7 @@ vterm = shelter + " --eval '(+vterm/here nil)'"
 eshell = shelter + " --eval '(eshell)'"
 dotGit = shelter + " --eval '(me/magit-status-dotfiles)'"
 orgGit = shelter + " --eval '(me/magit-status-org)'"
+doomGit = shelter + " --eval '(me/magit-status-doom)'"
 Magit = shelter + " --eval '(me/magit-status)'"
 bufferManager = shelter + " --eval '(ibuffer)'"
 forLife = "emacsclient --eval '(emacs-everywhere)'"
@@ -69,18 +70,20 @@ discord = "discord"
 # General Applications:1 ends here
 
 # [[file:config.org::*Org][Org:1]]
-orgCaptureMenu = st + " -c org -n org-capture -e org-capture"
+# orgCaptureMenu = st + " -c org -n org-capture -e org-capture"
 # orgInbox = "emacs --eval '(my/org-roam-open-inbox)'"
 # complains about dashboard because of the hook at start
 # Org:1 ends here
 
 # [[file:config.org::*Zellij][Zellij:1]]
 hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
-monitorView = st + "-c zellij -n zellij-monitor -e zj sys"
+monitorView = st + " -c zellij -n zellij-monitor -e zj sys"
 myvpn = st + " -c zellij -n zellij-vpn -e zj vpn"
 notesView = st + " -c scratch -n zellij-notes -e zj notes"
+orgCaptureMenu = st + " -c scratch -n zellij-bookmark -e zj bookmark"
 sshView = st + " -c zellij -n zellij-ssh -e zj ssh"
 vifmSetup = st + " -c scratch -n zellij-vifm -e zj vifm"
+zettelkasten = st + " -c scratch -n zellij-roam -e zj zettelkasten"
 # Zellij:1 ends here
 
 # [[file:config.org::*Keys][Keys:1]]
@@ -147,10 +150,11 @@ keys = [
     Key("M-S-<Return>", lazy.spawn(nuclear_shelter)),
     Key("M-C-<Return>", lazy.spawn(eshell)),
     Key("M-e", lazy.spawn(shelter)),
-    KeyChord([mod], "m", [
-        Key("d", lazy.spawn(dotGit)),
+    KeyChord([mod], "g", [
+        Key("<Period>", lazy.spawn(dotGit)),
         Key("o", lazy.spawn(orgGit)),
         Key("m", lazy.spawn(Magit)),
+        Key("d", lazy.spawn(doomGit)),
     ]),
     Key("M-f", lazy.spawn(screenshot)),
     Key("M-w", lazy.spawn(browser)),
@@ -173,6 +177,10 @@ keys = [
         Key("a", lazy.spawn(monitorView)),
         Key("s", lazy.spawn(sshView)),
     ]),
+    # KeyChord([mod], "z", [
+    #     Key("a", lazy.spawn(monitorView)),
+    #     Key("s", lazy.spawn(sshView)),
+    # ]),
     Key("<XF86ScreenSaver>", lazy.spawn(st + " -c slock -e unimatrix.sh")),
     Key("<XF86Display>", lazy.spawn("xset dpms force off")),
     Key("<Pause>", lazy.spawn("systemctl hibernate")),
@@ -229,7 +237,7 @@ layouts = [
     # layout.Floating(**layout_theme),
     # layout.Matrix(**layout_theme),
     layout.Max(**layout_theme),
-    layout.MonadTall(**layout_theme),
+    layout.MonadTall(ratio=0.6, **layout_theme),
     layout.MonadThreeCol(**layout_theme),
     # layout.MonadWide(**layout_theme),
     # layout.RatioTileWide(**layout_theme),
@@ -260,7 +268,7 @@ floating_types = [
     "notification",
     "toolbar",
     "splash",
-    "dialog"
+    "dialog",
     ]
 # Floating Layouts:1 ends here
 
@@ -344,27 +352,32 @@ screens = [mainScreen, mediaScreen]
 
 # [[file:config.org::*Groups][Groups:1]]
 groups = [
-    Group("h3ck"),
-    Group("www", layout="max"),
+    Group("h3ck", spawn=[], layout="monadtall"),
+    Group("www", layout="monadtall"),
     Group("GUI", layout="max"),
-    Group("h4ck", spawn=[shelter]),
-    Group("dot", spawn=[nuclear_shelter], layout="max"),
-    Group("git", spawn=[dotGit, orgGit], layout="max"),
-    Group("ssh", spawn=[sshView], layout="max"),
-    Group("misc", spawn=[refManager], layout="max"),
+    Group("h4ck", layout="monadtall"),
+    Group("dot", spawn=[], layout="monadthreecol"),
+    Group("git", spawn=[], layout="monadthreecol"),
+    Group("ssh", spawn=[], layout="max"),
+    Group("misc", spawn=[], layout="max"),
     Group("etc"),
-    Group("sys", spawn=[monitorView], layout="max"),
-    Group("irc", spawn=["discord"], layout="max"),
-    Group("/dev/null", spawn=[monitorView], layout="max"),
+    Group("sys", spawn=[], layout="max"),
+    Group("irc", spawn=[], layout="max"),
+    Group("/dev/null", layout="max"),
+    Group("F1", spawn=[], layout="max"),
+    Group("F2", spawn=[], layout="max"),
+    Group("F3", spawn=[], layout="max"),
+    Group("F4", spawn=[], layout="max"),
+    Group("F5", spawn=[], layout="max"),
 ]
 # Groups:1 ends here
 
 # [[file:config.org::*Groups][Groups:2]]
 # g = [0, 1, 0, 0, 1, 0, 1, 1, 1] # mons -e top
 # g = [1, 0, 1, 1, 0, 1, 0, 0, 0] # mons -e left
-g = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+g = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 # Investigate why after M-3 and M-4 I need to release M otherwise input are broken
-k = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "<Minus>", "<Equal>"]
+k = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "<Minus>", "<Equal>", "<F1>", "<F2>", "<F3>", "<F4>", "<F5>"]
 for index, group in enumerate(groups):
     keys.append(Key("M-"+(k[index]), lazy.group[group.name].toscreen(g[index]), lazy.to_screen(g[index])))
     keys.append(Key("M-S-"+(k[index]), lazy.window.togroup(group.name)))
@@ -372,10 +385,10 @@ for index, group in enumerate(groups):
 
 # [[file:config.org::*Windows position][Windows position:1]]
 centerWindow = {
-    'width': 0.8,
-    'height': 0.8,
-    'x': 0.1,
-    'y': 0.1,
+    'width': 1,
+    'height': 1,
+    'x': 0,
+    'y': 0,
     'opacity': 1,
 }
 
@@ -420,14 +433,17 @@ groups.append(ScratchPad("scratchpad", [
     DropDown("h4ck",
              hackSetup,
              **centerWindow),
-    DropDown("vifm",
-             vifmSetup,
+    DropDown("inbox",
+             notesView,
              **centerWindow),
     DropDown("org-capture",
              orgCaptureMenu,
              **centerWindow),
-    DropDown("inbox",
-             notesView,
+    DropDown("vifm",
+             vifmSetup,
+             **centerWindow),
+    DropDown("zettelkasten",
+             zettelkasten,
              **centerWindow),
 ]))
 # inbox, todo, agenda, dev:1 ends here
@@ -438,6 +454,7 @@ keys.extend([
     Key("M-v", lazy.group['scratchpad'].dropdown_toggle('vifm')),
     Key("M-n", lazy.group['scratchpad'].dropdown_toggle('h4ck')),
     Key("M-b", lazy.group['scratchpad'].dropdown_toggle('org-capture')),
+    Key("M-m", lazy.group['scratchpad'].dropdown_toggle('zettelkasten')),
     KeyChord([mod], "s", [
         Key("p", lazy.group['scratchpad'].dropdown_toggle('vpn')),
     ]),
