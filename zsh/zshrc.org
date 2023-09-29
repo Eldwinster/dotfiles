@@ -178,7 +178,7 @@ export ARCHFLAGS="-arch x86_64"
 See oh my zsh github page.
 
 #+begin_src shell
-fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins
 source $ZSH/oh-my-zsh.sh
 #+end_src
 
