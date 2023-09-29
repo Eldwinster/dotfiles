@@ -1,7 +1,7 @@
 #+title: Qtile Configuration
 #+description: This is my qtile config file
 #+created: [2023-09-13 Wed 18:32]
-#+last_modified: [2023-09-25 Mon 23:16]
+#+last_modified: [2023-09-29 Fri 22:12]
 #+startup: fold
 
 * Qtile Configuration
@@ -72,6 +72,7 @@ vterm = shelter + " --eval '(+vterm/here nil)'"
 eshell = shelter + " --eval '(eshell)'"
 dotGit = shelter + " --eval '(me/magit-status-dotfiles)'"
 orgGit = shelter + " --eval '(me/magit-status-org)'"
+doomGit = shelter + " --eval '(me/magit-status-doom)'"
 Magit = shelter + " --eval '(me/magit-status)'"
 bufferManager = shelter + " --eval '(ibuffer)'"
 forLife = "emacsclient --eval '(emacs-everywhere)'"
@@ -100,7 +101,7 @@ discord = "discord"
 *** Script
 **** Org
 #+begin_src python
-orgCaptureMenu = st + " -c org -n org-capture -e org-capture"
+# orgCaptureMenu = st + " -c org -n org-capture -e org-capture"
 # orgInbox = "emacs --eval '(my/org-roam-open-inbox)'"
 # complains about dashboard because of the hook at start
 #+end_src
@@ -282,10 +283,11 @@ Reset windows size:
 
 #+begin_src python
     Key("M-e", lazy.spawn(shelter)),
-    KeyChord([mod], "m", [
-        Key("d", lazy.spawn(dotGit)),
+    KeyChord([mod], "g", [
+        Key("<Period>", lazy.spawn(dotGit)),
         Key("o", lazy.spawn(orgGit)),
         Key("m", lazy.spawn(Magit)),
+        Key("d", lazy.spawn(doomGit)),
     ]),
     #+end_src
 
@@ -416,7 +418,7 @@ floating_types = [
     "notification",
     "toolbar",
     "splash",
-    "dialog"
+    "dialog",
     ]
 #+end_src
 
