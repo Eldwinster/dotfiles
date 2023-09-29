@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Otherwise I get a unbound variable error
+# This is because $ZELLIJ is set after zellij is launched so I have to initialise it before set.
+# https://stackoverflow.com/questions/45626610/getting-unbound-variable-error-in-shell-script
+ZELLIJ=""
+
+set -euo pipefail
+
+SCRIPT_NAME="${0##*/}"
+
+usage() {
+    cat<<EOF
+Simple script to start/attach zellij sessions
+
+USAGE:
+    ${SCRIPT_NAME} [OPTIONS] ZELLIJ-SESSION
+EOF
+}
+
+if [[ $# -eq 1 ]]; then
+    if [[ -z "$ZELLIJ" ]]; then
+        zellij -l "$1" -s "$1" || zellij attach "$1"
+        elif [[ -n "$ZELLIJ" ]]; then
+            echo "Nest is bad, right?"
+    fi
+else
+    usage
+fi
