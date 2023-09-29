@@ -1,7 +1,7 @@
 #+title: Qtile Configuration
 #+description: This is my qtile config file
 #+created: [2023-09-13 Wed 18:32]
-#+last_modified: [2023-09-29 Fri 22:12]
+#+last_modified: [2023-09-30 Sat 00:59]
 #+startup: fold
 
 * Qtile Configuration
@@ -110,6 +110,7 @@ discord = "discord"
 I plan to use zellij over tmux even if I have to nest tmux in it remotely.
 
 #+begin_src python
+docView = st + " -c scratch -n zellij-doc -e zj doc"
 hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
 monitorView = st + " -c zellij -n zellij-monitor -e zj sys"
 myvpn = st + " -c zellij -n zellij-vpn -e zj vpn"
@@ -317,8 +318,9 @@ Reset windows size:
     KeyChord([mod], "z", [
         Key("a", lazy.spawn(monitorView)),
         Key("s", lazy.spawn(sshView)),
+        Key("d", lazy.spawn(docView)),
     ]),
-#+end_src
+    #+end_src
 
 **** System Management
 #+begin_src python

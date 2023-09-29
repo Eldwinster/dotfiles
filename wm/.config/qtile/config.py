@@ -76,6 +76,7 @@ discord = "discord"
 # Org:1 ends here
 
 # [[file:config.org::*Zellij][Zellij:1]]
+docView = st + " -c scratch -n zellij-doc -e zj doc"
 hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
 monitorView = st + " -c zellij -n zellij-monitor -e zj sys"
 myvpn = st + " -c zellij -n zellij-vpn -e zj vpn"
@@ -176,11 +177,8 @@ keys = [
     KeyChord([mod], "z", [
         Key("a", lazy.spawn(monitorView)),
         Key("s", lazy.spawn(sshView)),
+        Key("d", lazy.spawn(docView)),
     ]),
-    # KeyChord([mod], "z", [
-    #     Key("a", lazy.spawn(monitorView)),
-    #     Key("s", lazy.spawn(sshView)),
-    # ]),
     Key("<XF86ScreenSaver>", lazy.spawn(st + " -c slock -e unimatrix.sh")),
     Key("<XF86Display>", lazy.spawn("xset dpms force off")),
     Key("<Pause>", lazy.spawn("systemctl hibernate")),
