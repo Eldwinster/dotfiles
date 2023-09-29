@@ -531,6 +531,9 @@ alias zz="zellij"
 #+begin_src shell
 alias v="vim"
 alias vi="vim"
+alias m='ee --eval "(progn (magit-status) (delete-other-windows))"'
+alias mt="m -t"
+alias et="ee -t"
 alias e="emacsclient -nw"
 alias em="emacsclient -nw"
 #+end_src
