@@ -1,0 +1,93 @@
+# ~/.config/starship.toml
+# [](clight_brown)\
+# $username\
+# [](fg:clight_brown bg:cred)\
+# [](fg:cred bg:csand)\
+# $git_branch\
+# $git_status\
+# [](fg:csand bg:cdark_brown)\
+# [](fg:cdark_brown bg:cwhite)\
+# $docker_context\
+# [](cwhite)\
+format = """
+\\[$directory\\]\
+$character
+"""
+right_format= """
+$time
+"""
+
+scan_timeout = 10
+add_newline = false
+palette = "cappuccino"
+
+[palettes.cappuccino]
+clight_brown = "#4b3832"
+cred = "#854442"
+cwhite = "#fff4e6"
+cdark_brown = "#3c2f2f"
+csand = "#be9b7b"
+
+
+# Disable the blank line at the start of the prompt
+# add_newline = false
+
+# You can also replace your username with a neat symbol like  to save some space
+[username]
+show_always = true
+style_user = "bg:#4b3832"
+style_root = "bg:#4b3832"
+format = '[$user ]($style)'
+
+[directory]
+# style = "bg:#854442"
+format = "[ $path ]($style)"
+truncate_to_repo = false
+home_symbol = "~"
+
+# Here is how you can shorten some long paths by text replacement
+# similar to mapped_locations in Oh My Posh:
+[directory.substitutions]
+"Documents" = " "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+# Keep in mind that the order matters. For example:
+# "Important Documents" = "  "
+# will not be replaced, because "Documents" was already substituted before.
+# So either put "Important Documents" before "Documents" or use the substituted version:
+# "Important  " = "  "
+
+[docker_context]
+symbol = " "
+style = "bg:#06969A"
+format = '[ $symbol $context ]($style) $path'
+
+[git_branch]
+symbol = ""
+style = "bg:csand"
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+style = "bg:csand"
+format = '[$all_status$ahead_behind ]($style)'
+
+[time]
+disabled = false
+time_format = "%H:%M:%S" # Hour:Minute Format
+format = '[ $time ]($style)'
+
+[cmd_duration]
+min_time = 500
+format = "[ $duration](bold cwhite)"
+
+[character]
+# success_symbol = " [⋊>](fg:#fff4e6)"
+# error_symbol = " [⋊>](fg:#854442)"
+
+success_symbol            = " [λ]($style)"
+error_symbol              = " [ξ]($style)"
+vimcmd_symbol             = " [ζ]($style)"
+vimcmd_replace_one_symbol = " [ρ]($style)"
+vimcmd_replace_symbol     = " [ρ]($style)"
+vimcmd_visual_symbol      = " [ν]($style)"
