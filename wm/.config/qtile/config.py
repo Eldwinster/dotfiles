@@ -76,16 +76,20 @@ discord = "discord"
 # Org:1 ends here
 
 # [[file:config.org::*Zellij][Zellij:1]]
-docView = st + " -c scratch -n zellij-doc -e zj doc"
-hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
 monitorView = st + " -c zellij -n zellij-monitor -e zj sys"
 myvpn = st + " -c zellij -n zellij-vpn -e zj vpn"
-notesView = st + " -c scratch -n zellij-notes -e zj notes"
-orgCaptureMenu = st + " -c scratch -n zellij-bookmark -e zj bookmark"
 sshView = st + " -c zellij -n zellij-ssh -e zj ssh"
+# Zellij:1 ends here
+
+# [[file:config.org::*Scratchpads][Scratchpads:1]]
+docView = st + " -c scratch -n zellij-doc -e zj doc"
+hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
+inboxView = st + " -c scratch -n zellij-inbox -e zj inbox"
+orgCapture = st + " -c scratch -n zellij-capture -e org-capture"
+orgView = st + " -c scratch -n zellij-org -e zj organiser"
 vifmSetup = st + " -c scratch -n zellij-vifm -e zj vifm"
 zettelkasten = st + " -c scratch -n zellij-roam -e zj zettelkasten"
-# Zellij:1 ends here
+# Scratchpads:1 ends here
 
 # [[file:config.org::*Keys][Keys:1]]
 mod = "mod4"
@@ -351,18 +355,18 @@ screens = [mainScreen, mediaScreen]
 # [[file:config.org::*Groups][Groups:1]]
 groups = [
     Group("h3ck", spawn=[], layout="monadtall"),
-    Group("www", layout="monadtall"),
-    Group("GUI", layout="max"),
+    Group("www", spawn=[], layout="monadtall"),
+    Group("GUI", spawn=[], layout="max"),
     Group("h4ck", layout="monadtall"),
     Group("dot", spawn=[], layout="monadthreecol"),
     Group("git", spawn=[], layout="monadthreecol"),
-    Group("ssh", spawn=[], layout="max"),
-    Group("misc", spawn=[], layout="max"),
-    Group("etc"),
-    Group("sys", spawn=[], layout="max"),
+    Group("ssh", spawn=[sshView], layout="max"),
+    Group("misc", spawn=["zotero"], layout="max"),
+    Group("etc", spawn=[], layout="monadtall"),
+    Group("sys", spawn=[monitorView], layout="max"),
     Group("irc", spawn=[], layout="max"),
     Group("/dev/null", layout="max"),
-    Group("F1", spawn=[], layout="max"),
+    Group("F1", spawn=[docView], layout="max"),
     Group("F2", spawn=[], layout="max"),
     Group("F3", spawn=[], layout="max"),
     Group("F4", spawn=[], layout="max"),
@@ -432,10 +436,13 @@ groups.append(ScratchPad("scratchpad", [
              hackSetup,
              **centerWindow),
     DropDown("inbox",
-             notesView,
+             inboxView,
              **centerWindow),
     DropDown("org-capture",
-             orgCaptureMenu,
+             orgCapture,
+             **centerWindow),
+    DropDown("org",
+             orgView,
              **centerWindow),
     DropDown("vifm",
              vifmSetup,
@@ -452,6 +459,7 @@ keys.extend([
     Key("M-v", lazy.group['scratchpad'].dropdown_toggle('vifm')),
     Key("M-n", lazy.group['scratchpad'].dropdown_toggle('h4ck')),
     Key("M-b", lazy.group['scratchpad'].dropdown_toggle('org-capture')),
+    Key("M-o", lazy.group['scratchpad'].dropdown_toggle('org')),
     Key("M-m", lazy.group['scratchpad'].dropdown_toggle('zettelkasten')),
     KeyChord([mod], "s", [
         Key("p", lazy.group['scratchpad'].dropdown_toggle('vpn')),

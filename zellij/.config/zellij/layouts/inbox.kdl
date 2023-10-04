@@ -14,6 +14,7 @@ layout {
                 name "inbox"
                 command "emacsclient"
                 args "-nw" "--eval" "(my/org-roam-open-inbox)"
+                start_suspended true
                 }
              }
         }

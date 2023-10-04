@@ -1,7 +1,7 @@
 #+title: Qtile Configuration
 #+description: This is my qtile config file
 #+created: [2023-09-13 Wed 18:32]
-#+last_modified: [2023-09-30 Sat 00:59]
+#+last_modified: [2023-10-04 Wed 17:13]
 #+startup: fold
 
 * Qtile Configuration
@@ -110,13 +110,18 @@ discord = "discord"
 I plan to use zellij over tmux even if I have to nest tmux in it remotely.
 
 #+begin_src python
-docView = st + " -c scratch -n zellij-doc -e zj doc"
-hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
 monitorView = st + " -c zellij -n zellij-monitor -e zj sys"
 myvpn = st + " -c zellij -n zellij-vpn -e zj vpn"
-notesView = st + " -c scratch -n zellij-notes -e zj notes"
-orgCaptureMenu = st + " -c scratch -n zellij-bookmark -e zj bookmark"
 sshView = st + " -c zellij -n zellij-ssh -e zj ssh"
+#+end_src
+*** Scratchpads
+
+#+begin_src python
+docView = st + " -c scratch -n zellij-doc -e zj doc"
+hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
+inboxView = st + " -c scratch -n zellij-inbox -e zj inbox"
+orgCapture = st + " -c scratch -n zellij-capture -e org-capture"
+orgView = st + " -c scratch -n zellij-org -e zj organiser"
 vifmSetup = st + " -c scratch -n zellij-vifm -e zj vifm"
 zettelkasten = st + " -c scratch -n zellij-roam -e zj zettelkasten"
 #+end_src
@@ -615,10 +620,13 @@ groups.append(ScratchPad("scratchpad", [
              hackSetup,
              **centerWindow),
     DropDown("inbox",
-             notesView,
+             inboxView,
              **centerWindow),
     DropDown("org-capture",
-             orgCaptureMenu,
+             orgCapture,
+             **centerWindow),
+    DropDown("org",
+             orgView,
              **centerWindow),
     DropDown("vifm",
              vifmSetup,
@@ -640,6 +648,7 @@ keys.extend([
     Key("M-v", lazy.group['scratchpad'].dropdown_toggle('vifm')),
     Key("M-n", lazy.group['scratchpad'].dropdown_toggle('h4ck')),
     Key("M-b", lazy.group['scratchpad'].dropdown_toggle('org-capture')),
+    Key("M-o", lazy.group['scratchpad'].dropdown_toggle('org')),
     Key("M-m", lazy.group['scratchpad'].dropdown_toggle('zettelkasten')),
     KeyChord([mod], "s", [
         Key("p", lazy.group['scratchpad'].dropdown_toggle('vpn')),

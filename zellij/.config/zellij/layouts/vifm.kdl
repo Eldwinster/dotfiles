@@ -8,13 +8,15 @@ layout {
                 plugin location="zellij:status-bar"
             }
         }
-        tab name="File Manager" focus=true {
+        tab name="Dot/Org files" focus=true {
+        pane {
+        name "vifm"
+        command "vifm"
+        args "/home/yann/.dotfiles" "/home/yann/org"
+            }
+        }
+        tab name="File Manager" focus=false {
             pane stacked=true {
-                pane {
-                name "dired"
-                command "emacsclient"
-                args "-nw" "--eval" "(dired nil)"
-                }
                 pane {
                 name "backup"
                 command "vifm"

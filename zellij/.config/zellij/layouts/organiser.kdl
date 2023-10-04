@@ -8,13 +8,6 @@ layout {
                 plugin location="zellij:status-bar"
                 }
         }
-        tab name="Org Capture" focus=true {
-            pane focus=true {
-            name "capture"
-            command "org-capture"
-            start_suspended true
-            }
-        }
         tab name="Bookmarks" focus=false {
             pane focus=true {
             name "bookmarks list"
