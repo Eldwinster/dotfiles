@@ -1,0 +1,34 @@
+layout {
+        default_tab_template {
+            pane size=1 borderless=true {
+                plugin location="zellij:tab-bar"
+                }
+            children
+            pane size=2 borderless=true {
+                plugin location="zellij:status-bar"
+                }
+        }
+        tab name="Org Capture" focus=true {
+            pane focus=true {
+            name "capture"
+            command "org-capture"
+            start_suspended true
+            }
+        }
+        tab name="Bookmarks" focus=false {
+            pane focus=true {
+            name "bookmarks list"
+            command "emacsclient"
+            args "-nw" "--eval" "(my/org-roam-open-bookmarks))"
+            start_suspended true
+            }
+        }
+        tab name="Shopping" focus=false {
+            pane focus=true {
+            name "shopping list"
+            command "emacsclient"
+            args "-nw" "--eval" "(my/org-roam-open-shopping))"
+            start_suspended true
+            }
+        }
+}
