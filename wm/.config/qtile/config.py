@@ -82,7 +82,7 @@ sshView = st + " -c zellij -n zellij-ssh -e zj ssh"
 # Zellij:1 ends here
 
 # [[file:config.org::*Scratchpads][Scratchpads:1]]
-docView = st + " -c scratch -n zellij-doc -e zj doc"
+docView = st + " -c scratch -n zellij-doc -e zj emacs-docs"
 hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
 inboxView = st + " -c scratch -n zellij-inbox -e zj inbox"
 orgCapture = st + " -c scratch -n zellij-capture -e org-capture"

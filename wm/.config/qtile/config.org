@@ -1,7 +1,7 @@
 #+title: Qtile Configuration
 #+description: This is my qtile config file
 #+created: [2023-09-13 Wed 18:32]
-#+last_modified: [2023-10-04 Wed 17:13]
+#+last_modified: [2023-10-06 Fri 17:47]
 #+startup: fold
 
 * Qtile Configuration
@@ -117,7 +117,7 @@ sshView = st + " -c zellij -n zellij-ssh -e zj ssh"
 *** Scratchpads
 
 #+begin_src python
-docView = st + " -c scratch -n zellij-doc -e zj doc"
+docView = st + " -c scratch -n zellij-doc -e zj emacs-docs"
 hackSetup = st + " -c scratch -n zellij-hack -e zj hack"
 inboxView = st + " -c scratch -n zellij-inbox -e zj inbox"
 orgCapture = st + " -c scratch -n zellij-capture -e org-capture"
