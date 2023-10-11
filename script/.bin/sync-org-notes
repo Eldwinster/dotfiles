@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+
+# set -euo pipefail
+
+SCRIPT_NAME="${0##*/}"
+NOTES_DIR="${HOME}/org"
+timestamp=$(date +%Y%m%dT%H:%M:%S)
+LOG_DIR="${HOME}/.log"
+log_file="${LOG_DIR}/org-sync.log"
+
+usage() {
+    cat<<EOF
+USAGE:
+    $SCRIPT_NAME [OPTIONS] ACTIONS [PATH ...]
+EOF
+}
+
+sync_note() {
+    /usr/bin/keychain --eval --agents ssh github
+    /usr/bin/git -C "$NOTES_DIR" stash
+    /usr/bin/git -C "$NOTES_DIR" add --all
+    /usr/bin/git -C "$NOTES_DIR" commit -m "New notes added"
+    /usr/bin/git -C "$NOTES_DIR" stash pop
+    /usr/bin/git -C "$NOTES_DIR" commit -a -m "Synced modified notes at $timestamp"
+    /usr/bin/git -C "$NOTES_DIR" push origin main
+}
+
+if [[ -z $(git status --porcelain) ]]; then
+    echo "Nothing to commit at $timestamp" >> "$log_file"
+else
+    sync_note >> "$log_file"
+fi
