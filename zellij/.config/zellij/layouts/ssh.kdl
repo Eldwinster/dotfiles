@@ -45,9 +45,10 @@ layout {
             floating_panes {
                            pane {
                                 name "secret vars"
-                                command "cat"
-                                args "./vars/vault.yaml"
+                                command "make"
+                                args "secret"
                                 cwd "$HOME/mygit/devnull"
+                                start_suspended true
                                 x "80%"
                                 y 0
                                 width 59
@@ -110,9 +111,10 @@ layout {
             floating_panes {
                            pane {
                                 name "secret vars"
-                                command "cat"
-                                args "./vars/vault.yaml"
+                                command "make"
+                                args "secret"
                                 cwd "$HOME/mygit/devnull"
+                                start_suspended true
                                 x "80%"
                                 y 0
                                 width 59
