@@ -44,7 +44,7 @@ preset() {
 random() {
     wal -s -n -i $wallPath
     feh --bg-fill "$(< "$walpath")"
-    pywalfox update
+    # pywalfox update
 }
 
 presetgif() {
