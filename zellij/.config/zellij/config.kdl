@@ -196,6 +196,7 @@ plugins {
     status-bar { path "status-bar"; }
     strider { path "strider"; }
     compact-bar { path "compact-bar"; }
+    session-manager { path "sesson-manager"; }
 }
 
 // Choose what to do when zellij receives SIGTERM, SIGINT, SIGQUIT or SIGHUP
@@ -224,6 +225,20 @@ default_shell "/usr/bin/zsh"
 //   - false
 //
 // pane_frames true
+
+// Whether sessions should be serialized to the cache folder (including their tabs/panes, cwds
+// and running commands) so that they can later be resurrected
+// Options:
+//   - true (default)
+//   - false
+//
+session_serialization false
+
+// Whether pane viewports are serialized along with the session, default is false
+// Options:
+//   - true
+//   - false (default)
+// serialize_pane_viewport true
 
 // Define color themes for Zellij
 // For more examples, see: https://github.com/zellij-org/zellij/tree/main/example/themes

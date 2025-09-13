@@ -82,10 +82,17 @@ layout {
                          command "$HOME/.bin/ssh-tmux"
                          args "devnull" "bash"
                     }
+                    pane stacked=true {
+                    pane {
+                         name "ncdu mnt"
+                         command "$HOME/.bin/ssh-tmux"
+                         args "devnull" "ncdu"
+                         }
                     pane {
                          name "ctop"
                          command "$HOME/.bin/ssh-tmux"
                          args "devnull" "ctop"
+                    }
                     }
                 }
                 pane split_direction="vertical" {

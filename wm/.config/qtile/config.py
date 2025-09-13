@@ -34,7 +34,7 @@ from libqtile.lazy import lazy
 # Imports:1 ends here
 
 # [[file:config.org::*Terminal][Terminal:1]]
-# alac = "alacritty"
+alac = "alacritty"
 st = "st"
 shelter = "emacsclient -c -a ''"
 # I keep this one to do the same with st using scratchpad group.
@@ -54,7 +54,7 @@ forLife = "emacsclient --eval '(emacs-everywhere)'"
 # Emacs:1 ends here
 
 # [[file:config.org::*General Applications][General Applications:1]]
-fileManager = st + " -c scratch -n vifm -e vifm"
+fileManager = shelter + " --eval '(dired nil)'"
 screenshot = "flameshot gui"
 refManager = "zotero"
 browser = "firefox"
@@ -64,7 +64,13 @@ proxyOpenSource = "zaproxy"
 networkAnalyser = "sudo wireshark"
 metasploit = st + " -c app -n st-metasploit -e msfconsole"
 helpDeskApp = "anydesk"
-discord = "discord"
+# https://www.reddit.com/r/archlinux/comments/qd66vo/discord_black_window/
+discord = "discord --disable-gpu"
+telegram = "telegram-desktop"
+dMenu = "dmenu_run"
+music = "clementine"
+bambuSlicer = "bambu-studio"
+orcaSlicer = "orca-slicer"
 # utilityViewer = st + " -n bottom -e sudo btm"
 # diskSpace = st + " -n ncdu -e sudo ncdu"
 # General Applications:1 ends here
@@ -102,9 +108,17 @@ keys = [
         Key("r", lazy.restart()),
         Key("q", lazy.shutdown()),
     ]),
-    Key("M-h", lazy.layout.left()),
-    Key("M-j", lazy.layout.down(),),
-    Key("M-k", lazy.layout.up()),
+    Key("M-h",
+        lazy.layout.left(),
+        ),
+    Key("M-j",
+        lazy.layout.down(),
+        # lazy.group.next_window(),
+        # lazy.window.move_down()
+        ),
+    Key("M-k",
+        lazy.layout.up(),
+        lazy.window.move_up()),
     Key("M-l", lazy.layout.right()),
     # Key("M-j", lazy.group.next_window()),
     # Key("M-k", lazy.group.prev_window()),
@@ -154,6 +168,7 @@ keys = [
     Key("M-<Return>", lazy.spawn(st)),
     Key("M-S-<Return>", lazy.spawn(nuclear_shelter)),
     Key("M-C-<Return>", lazy.spawn(eshell)),
+    Key("C-S-<Return>", lazy.spawn(alac)),
     Key("M-e", lazy.spawn(shelter)),
     KeyChord([mod], "g", [
         Key("<Period>", lazy.spawn(dotGit)),
@@ -164,26 +179,32 @@ keys = [
     Key("M-f", lazy.spawn(screenshot)),
     Key("M-w", lazy.spawn(browser)),
     Key("M-d", lazy.spawn(fileManager)),
+    Key("M-p", lazy.spawn(dMenu)),
     KeyChord([mod], "a", [
+        Key("s", lazy.spawn(bambuSlicer)),
+        Key("k", lazy.spawn(orcaSlicer)),
         Key("r", lazy.spawn(remoteDesktop)),
         Key("i", lazy.spawn(bufferManager)),
         Key("a", lazy.spawn(forLife)),
         Key("o", lazy.spawn(refManager)),
         # Key("t", lazy.spawn(utilityViewer)),
         # Key("n", lazy.spawn(diskSpace)),
-        Key("b", lazy.spawn(proxyFreemium)),
+        # Key("b", lazy.spawn(proxyFreemium)),
         Key("z", lazy.spawn(proxyOpenSource)),
         Key("w", lazy.spawn(networkAnalyser)),
-        Key("m", lazy.spawn(metasploit)),
+        # Key("m", lazy.spawn(metasploit)),
+        Key("m", lazy.spawn(music)),
         Key("l", lazy.spawn(helpDeskApp)),
         Key("d", lazy.spawn(discord)),
+        Key("t", lazy.spawn(telegram)),
     ]),
     KeyChord([mod], "z", [
         Key("a", lazy.spawn(monitorView)),
         Key("s", lazy.spawn(sshView)),
         Key("d", lazy.spawn(docView)),
     ]),
-    Key("<XF86ScreenSaver>", lazy.spawn(st + " -c slock -e unimatrix.sh")),
+    Key("<XF86ScreenSaver>", lazy.group["F5"].toscreen(0), lazy.spawn(st + " -c slock -e unimatrix.sh")),
+    # Key("<XF86ScreenSaver>", lazy.group["F5"].toscreen(0), lazy.spawn(alac + " --class slock -e unimatrix.sh")),
     Key("<XF86Display>", lazy.spawn("xset dpms force off")),
     Key("<Pause>", lazy.spawn("systemctl hibernate")),
     Key("<XF86MonBrightnessUp>", lazy.spawn("xbacklight -inc 5 -time 100")),
@@ -236,9 +257,9 @@ layout_theme = init_layout_theme()
 layouts = [
     # layout.Bsp(**layout_theme),
     layout.Columns(**layout_theme),
-    # layout.Floating(**layout_theme),
     # layout.Matrix(**layout_theme),
     layout.Max(**layout_theme),
+    # layout.Floating(**layout_theme),
     layout.MonadTall(ratio=0.6, **layout_theme),
     layout.MonadThreeCol(**layout_theme),
     # layout.MonadWide(**layout_theme),
@@ -311,8 +332,8 @@ soft_sep = {
 # Decorations:1 ends here
 
 # [[file:config.org::*Bar configuration][Bar configuration:1]]
-AGroupBoxTheme = {
-}
+# AGroupBoxTheme = {
+# }
 mainBar = bar.Bar(
     [
         widget.CurrentLayoutIcon(**widgetTheme),
@@ -354,8 +375,8 @@ screens = [mainScreen, mediaScreen]
 
 # [[file:config.org::*Groups][Groups:1]]
 groups = [
-    Group("h3ck", spawn=[], layout="monadtall"),
-    Group("www", spawn=[], layout="monadtall"),
+    Group("h3ck", spawn=[], layout="columns"),
+    Group("www", spawn=[], layout="max"),
     Group("GUI", spawn=[], layout="max"),
     Group("h4ck", layout="monadtall"),
     Group("dot", spawn=[], layout="monadthreecol"),
@@ -364,7 +385,7 @@ groups = [
     Group("misc", spawn=["zotero"], layout="max"),
     Group("etc", spawn=[], layout="monadtall"),
     Group("sys", spawn=[monitorView], layout="max"),
-    Group("irc", spawn=[], layout="max"),
+    Group("irc", spawn=[telegram], layout="max"),
     Group("/dev/null", layout="max"),
     Group("F1", spawn=[docView], layout="max"),
     Group("F2", spawn=[], layout="max"),
@@ -427,7 +448,7 @@ downRightWindow = {
 }
 # Windows position:1 ends here
 
-# [[file:config.org::*inbox, todo, agenda, dev][inbox, todo, agenda, dev:1]]
+# [[file:config.org::*Scratchpad groups][Scratchpad groups:1]]
 groups.append(ScratchPad("scratchpad", [
     DropDown("vpn",
              myvpn,
@@ -451,7 +472,7 @@ groups.append(ScratchPad("scratchpad", [
              zettelkasten,
              **centerWindow),
 ]))
-# inbox, todo, agenda, dev:1 ends here
+# Scratchpad groups:1 ends here
 
 # [[file:config.org::*Scratchpad keybinds][Scratchpad keybinds:1]]
 keys.extend([
@@ -460,7 +481,7 @@ keys.extend([
     Key("M-n", lazy.group['scratchpad'].dropdown_toggle('h4ck')),
     Key("M-b", lazy.group['scratchpad'].dropdown_toggle('org-capture')),
     Key("M-o", lazy.group['scratchpad'].dropdown_toggle('org')),
-    Key("M-m", lazy.group['scratchpad'].dropdown_toggle('zettelkasten')),
+    Key("M-x", lazy.group['scratchpad'].dropdown_toggle('zettelkasten')),
     KeyChord([mod], "s", [
         Key("p", lazy.group['scratchpad'].dropdown_toggle('vpn')),
     ]),
@@ -472,7 +493,7 @@ dgroup_key_binder = None
 # dgroups:1 ends here
 
 # [[file:config.org::*dgroups][dgroups:2]]
-dgroups_app_rules = [] # type: List
+# dgroups_app_rules = [] # type: List
 # dgroups:2 ends here
 
 # [[file:config.org::*Mouse][Mouse:1]]
@@ -500,5 +521,5 @@ wmname = "LG3D"
 @hook.subscribe.startup_once
 def autostart():
     startOnce = os.path.expanduser('~/.config/qtile/autostart.sh')
-    subprocess.call([startOnce])
+    subprocess.Popen([startOnce])
 # Startup:1 ends here

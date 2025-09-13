@@ -1,9 +1,8 @@
 #+title: Qtile Configuration
 #+description: This is my qtile config file
 #+created: [2023-09-13 Wed 18:32]
-#+last_modified: [2024-02-25 Sun 17:33]
+#+last_modified: [2024-10-17 Thu 20:55]
 #+startup: fold
-#+auto_tangle: t
 
 * Qtile Configuration
 :PROPERTIES:
@@ -55,7 +54,7 @@ I switch back to ~st~ because ~alacritty~ is weirdly bugging and ~st~ just
 works. Easy choice.
 
 #+begin_src python
-# alac = "alacritty"
+alac = "alacritty"
 st = "st"
 shelter = "emacsclient -c -a ''"
 # I keep this one to do the same with st using scratchpad group.
@@ -94,7 +93,13 @@ proxyOpenSource = "zaproxy"
 networkAnalyser = "sudo wireshark"
 metasploit = st + " -c app -n st-metasploit -e msfconsole"
 helpDeskApp = "anydesk"
-discord = "discord"
+# https://www.reddit.com/r/archlinux/comments/qd66vo/discord_black_window/
+discord = "discord --disable-gpu"
+telegram = "telegram-desktop"
+dMenu = "dmenu_run"
+music = "clementine"
+bambuSlicer = "bambu-studio"
+orcaSlicer = "orca-slicer"
 # utilityViewer = st + " -n bottom -e sudo btm"
 # diskSpace = st + " -n ncdu -e sudo ncdu"
 #+end_src
@@ -187,9 +192,17 @@ Self explanatory.
 Focus window movements:
 
 #+begin_src python
-    Key("M-h", lazy.layout.left()),
-    Key("M-j", lazy.layout.down(),),
-    Key("M-k", lazy.layout.up()),
+    Key("M-h",
+        lazy.layout.left(),
+        ),
+    Key("M-j",
+        lazy.layout.down(),
+        # lazy.group.next_window(),
+        # lazy.window.move_down()
+        ),
+    Key("M-k",
+        lazy.layout.up(),
+        lazy.window.move_up()),
     Key("M-l", lazy.layout.right()),
 #+end_src
 
@@ -284,11 +297,16 @@ Reset windows size:
 
 **** Terminal, programs, and applications
 
+***** Terminal
+
 #+begin_src python
     Key("M-<Return>", lazy.spawn(st)),
     Key("M-S-<Return>", lazy.spawn(nuclear_shelter)),
     Key("M-C-<Return>", lazy.spawn(eshell)),
+    Key("C-S-<Return>", lazy.spawn(alac)),
 #+end_src
+
+***** Magit buffer
 
 #+begin_src python
     Key("M-e", lazy.spawn(shelter)),
@@ -300,25 +318,34 @@ Reset windows size:
     ]),
     #+end_src
 
+***** Spawn apps
+
     #+begin_src python
     Key("M-f", lazy.spawn(screenshot)),
     Key("M-w", lazy.spawn(browser)),
     Key("M-d", lazy.spawn(fileManager)),
+    Key("M-p", lazy.spawn(dMenu)),
     KeyChord([mod], "a", [
+        Key("s", lazy.spawn(bambuSlicer)),
+        Key("k", lazy.spawn(orcaSlicer)),
         Key("r", lazy.spawn(remoteDesktop)),
         Key("i", lazy.spawn(bufferManager)),
         Key("a", lazy.spawn(forLife)),
         Key("o", lazy.spawn(refManager)),
         # Key("t", lazy.spawn(utilityViewer)),
         # Key("n", lazy.spawn(diskSpace)),
-        Key("b", lazy.spawn(proxyFreemium)),
+        # Key("b", lazy.spawn(proxyFreemium)),
         Key("z", lazy.spawn(proxyOpenSource)),
         Key("w", lazy.spawn(networkAnalyser)),
-        Key("m", lazy.spawn(metasploit)),
+        # Key("m", lazy.spawn(metasploit)),
+        Key("m", lazy.spawn(music)),
         Key("l", lazy.spawn(helpDeskApp)),
         Key("d", lazy.spawn(discord)),
+        Key("t", lazy.spawn(telegram)),
     ]),
 #+end_src
+
+***** Custom terminals
 
 #+begin_src python
     KeyChord([mod], "z", [
@@ -329,8 +356,10 @@ Reset windows size:
     #+end_src
 
 **** System Management
+
 #+begin_src python
-    Key("<XF86ScreenSaver>", lazy.spawn(st + " -c slock -e unimatrix.sh")),
+    Key("<XF86ScreenSaver>", lazy.group["F5"].toscreen(0), lazy.spawn(st + " -c slock -e unimatrix.sh")),
+    # Key("<XF86ScreenSaver>", lazy.group["F5"].toscreen(0), lazy.spawn(alac + " --class slock -e unimatrix.sh")),
     Key("<XF86Display>", lazy.spawn("xset dpms force off")),
     Key("<Pause>", lazy.spawn("systemctl hibernate")),
     Key("<XF86MonBrightnessUp>", lazy.spawn("xbacklight -inc 5 -time 100")),
@@ -393,9 +422,9 @@ If there is any specific options for theme put it here.
 layouts = [
     # layout.Bsp(**layout_theme),
     layout.Columns(**layout_theme),
-    # layout.Floating(**layout_theme),
     # layout.Matrix(**layout_theme),
     layout.Max(**layout_theme),
+    # layout.Floating(**layout_theme),
     layout.MonadTall(ratio=0.6, **layout_theme),
     layout.MonadThreeCol(**layout_theme),
     # layout.MonadWide(**layout_theme),
@@ -438,6 +467,7 @@ floating_types = [
 [[https://qtile-extras.readthedocs.io/en/stable/manual/ref/decorations.html][Decorations — qtile-extras 0.22.2.dev0+gbed30ac.d20220922 documentation]]
 
 [[https://qtile-extras.readthedocs.io/en/stable/manual/ref/widgets.html][Widgets — qtile-extras 0.22.2.dev0+gbed30ac.d20220922 documentation]]
+
 *** Bar themes
 - Improvement?
   Instead of general dictionary I could use a function returning a list of all
@@ -532,8 +562,8 @@ screens = [mainScreen, mediaScreen]
 *** Groups
 #+begin_src python
 groups = [
-    Group("h3ck", spawn=[], layout="monadtall"),
-    Group("www", spawn=[], layout="monadtall"),
+    Group("h3ck", spawn=[], layout="columns"),
+    Group("www", spawn=[], layout="max"),
     Group("GUI", spawn=[], layout="max"),
     Group("h4ck", layout="monadtall"),
     Group("dot", spawn=[], layout="monadthreecol"),
@@ -542,7 +572,7 @@ groups = [
     Group("misc", spawn=["zotero"], layout="max"),
     Group("etc", spawn=[], layout="monadtall"),
     Group("sys", spawn=[monitorView], layout="max"),
-    Group("irc", spawn=[], layout="max"),
+    Group("irc", spawn=[telegram], layout="max"),
     Group("/dev/null", layout="max"),
     Group("F1", spawn=[docView], layout="max"),
     Group("F2", spawn=[], layout="max"),
@@ -615,25 +645,25 @@ downRightWindow = {
 groups.append(ScratchPad("scratchpad", [
     DropDown("vpn",
              myvpn,
-             **centerWindow),
+             ,**centerWindow),
     DropDown("h4ck",
              hackSetup,
-             **centerWindow),
+             ,**centerWindow),
     DropDown("inbox",
              inboxView,
-             **centerWindow),
+             ,**centerWindow),
     DropDown("org-capture",
              orgCapture,
-             **centerWindow),
+             ,**centerWindow),
     DropDown("org",
              orgView,
-             **centerWindow),
+             ,**centerWindow),
     DropDown("vifm",
              vifmSetup,
-             **centerWindow),
+             ,**centerWindow),
     DropDown("zettelkasten",
              zettelkasten,
-             **centerWindow),
+             ,**centerWindow),
 ]))
 #+end_src
 
@@ -642,6 +672,9 @@ groups.append(ScratchPad("scratchpad", [
 # TODO better org capture
 go dmenu way
 
+Trouve un lecteur de music utilisable dans le terminal qui soit compatible avec
+airsonic ou bien connectes toi direct au dossier via ssh truc du genre.
+
 #+begin_src python
 keys.extend([
     Key("M-i", lazy.group['scratchpad'].dropdown_toggle('inbox')),
@@ -649,7 +682,7 @@ keys.extend([
     Key("M-n", lazy.group['scratchpad'].dropdown_toggle('h4ck')),
     Key("M-b", lazy.group['scratchpad'].dropdown_toggle('org-capture')),
     Key("M-o", lazy.group['scratchpad'].dropdown_toggle('org')),
-    Key("M-m", lazy.group['scratchpad'].dropdown_toggle('zettelkasten')),
+    Key("M-x", lazy.group['scratchpad'].dropdown_toggle('zettelkasten')),
     KeyChord([mod], "s", [
         Key("p", lazy.group['scratchpad'].dropdown_toggle('vpn')),
     ]),
@@ -719,18 +752,18 @@ wmname = "LG3D"
 @hook.subscribe.startup_once
 def autostart():
     startOnce = os.path.expanduser('~/.config/qtile/autostart.sh')
-    subprocess.run([startOnce])
+    subprocess.Popen([startOnce])
 #+end_src
 * Autostart.sh
 
-#+begin_src shell :tangle autostart.sh :tangle-mode (identity #o755)
-#!/bin/bash
+#+begin_src shell :tangle autostart.sh :tangle-mode (identity #o755) :comments no
+#!/bin/sh
 # mons --primary LVDS2 -e top || mons --primary LVDS1 -e top
 # mons -a -x "$HOME/.bin/mons.sh" & disown
 picom &
 xbanish &
 emacs --daemon &
-wallpaper.sh random auto 10m &
+wallpaper.sh random auto 60m &
 setxkbmap us qwerty-fr &
 #+end_src
 
@@ -747,7 +780,6 @@ setxkbmap us qwerty-fr &
 - [[https://gitlab.com/dwt1/dotfiles][Derek Taylor / Dotfiles · GitLab]]
 
 - [[https://gitlab.com/thelinuxcast/my-dots][Matthew Weber / My Dots · GitLab]]
-
 
 # -- Generated by estow.el --
 

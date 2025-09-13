@@ -1,9 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 # mons --primary LVDS2 -e top || mons --primary LVDS1 -e top
+# mons -a -x "$HOME/.bin/mons.sh" & disown
 picom &
 xbanish &
-# mons -a -x "$HOME/.bin/mons.sh" & disown
 emacs --daemon &
-wallpaper.sh random auto 6h &
+wallpaper.sh random auto 60m &
 setxkbmap us qwerty-fr &
-# mons --pr

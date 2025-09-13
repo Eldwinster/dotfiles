@@ -10,7 +10,12 @@ export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mod
 export ZSH="$HOME/.oh-my-zsh"
 
 export TZ="Europe/Paris"
+# export DISPLAY=0
 # EXPORT:1 ends here
+
+# [[file:zshrc.org::*EXPORT][EXPORT:2]]
+# export GOPROXY="direct"
+# EXPORT:2 ends here
 
 # [[file:zshrc.org::*Umatrix][Umatrix:1]]
 export LANG=en_US.utf8

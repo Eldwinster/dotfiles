@@ -8,21 +8,29 @@ layout {
                 plugin location="zellij:status-bar"
             }
         }
-        tab name="Dot/Org files" focus=true {
+        tab name="Dired" focus=true {
+        pane {
+        name "Dired"
+        command "emacsclient"
+        args "-nw" "--eval" "(dired \"/home/yann\")"
+            }
+        }
+        tab name="Vifm Dot/Org files" focus=false {
         pane {
         name "vifm"
         command "vifm"
         args "/home/yann/.dotfiles" "/home/yann/org"
             }
         }
-        tab name="File Manager" focus=false {
+        tab name="Vifm Backup File Manager" focus=false {
             pane stacked=true {
                 pane {
-                name "backup"
+                name "Vifm"
                 command "vifm"
+                args "/home/yann" "/home/yann"
                 }
                 pane {
-                name "backup sudo"
+                name "Vifm sudo"
                 command "sudo"
                 args "vifm" "/" "/"
                 }

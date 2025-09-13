@@ -44,7 +44,8 @@ preset() {
 random() {
     wal -s -n -i $wallPath
     feh --bg-fill "$(< "$walpath")"
-    # pywalfox update
+    pywalfox update
+    qtile cmd-obj -o cmd -f reload_config
 }
 
 presetgif() {
